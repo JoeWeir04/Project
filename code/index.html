@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Audio Classifier + STT</title>
+    <style>
+        body { font-family: sans-serif; background: #222; color: #fff; }
+        .data { font-size: 1.5em; margin: 0.5em 0; }
+    </style>
+</head>
+<body>
+    <h1>Audio Classifier + STT</h1>
+    <div class="data">VAD: <span id="vad"></span></div>
+    <div class="data">Angle: <span id="angle"></span>°</div>
+    <div class="data">Mic: <span id="mic"></span></div>
+    <div class="data">Classification: <span id="class"></span></div>
+    <div class="data">Transcript: <span id="transcript"></span></div>
+
+    <script>
+        const ws = new WebSocket("ws://localhost:8765");
+        ws.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            document.getElementById("vad").innerText = data.vad;
+            document.getElementById("angle").innerText = data.angle;
+            document.getElementById("mic").innerText = data.mic;
+            document.getElementById("class").innerText = data.classification;
+            document.getElementById("transcript").innerText = data.transcript;
+        };
+    </script>
+</body>
+</html>
