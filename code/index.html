@@ -1,30 +1,92 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Audio Classifier + STT</title>
-    <style>
-        body { font-family: sans-serif; background: #222; color: #fff; }
-        .data { font-size: 1.5em; margin: 0.5em 0; }
-    </style>
+  <meta charset="utf-8">
+  <title>UMA-8 Angle</title>
+  <style>
+    body {
+      background: #f3f3f3;
+      color: #000000;
+      font-family: Arial, sans-serif;
+      font-size: 20px;
+      font-weight: 550;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    canvas {
+      background: #ffffff;
+      border: 0px solid #ffffff;
+      border-radius: 50%;
+    }
+    .info {
+      margin-top: 10px;
+      text-align: center;
+    }
+  </style>
 </head>
 <body>
-    <h1>Audio Classifier + STT</h1>
-    <div class="data">VAD: <span id="vad"></span></div>
-    <div class="data">Angle: <span id="angle"></span>°</div>
-    <div class="data">Mic: <span id="mic"></span></div>
-    <div class="data">Classification: <span id="class"></span></div>
-    <div class="data">Transcript: <span id="transcript"></span></div>
+  <canvas id="compass" width="300" height="300"></canvas>
+  <div class="info">
+    <div>VAD: <span id="vad">-</span></div>
+    <div>Angle: <span id="angle">-</span>°</div>
+    <div>Class: <span id="class">Waiting</span></div>
+    <div>Transcript: <span id="transcript"></span></div>
+  </div>
 
-    <script>
-        const ws = new WebSocket("ws://localhost:8765");
-        ws.onmessage = (event) => {
-            const data = JSON.parse(event.data);
-            document.getElementById("vad").innerText = data.vad;
-            document.getElementById("angle").innerText = data.angle;
-            document.getElementById("mic").innerText = data.mic;
-            document.getElementById("class").innerText = data.classification;
-            document.getElementById("transcript").innerText = data.transcript;
-        };
-    </script>
+  <script>
+    const canvas = document.getElementById('compass');
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width, h = canvas.height;
+    const cx = w / 2, cy = h / 2;
+    const radius = 120;
+
+    const vadEl = document.getElementById('vad');
+    const angleEl = document.getElementById('angle');
+    const classEl = document.getElementById('class');
+    const transcriptEl = document.getElementById('transcript');
+
+    // Draw simple circle and dot
+    function draw(angleDeg) {
+      ctx.clearRect(0, 0, w, h);
+
+      // Outer circle
+      ctx.strokeStyle = '#888';
+      ctx.lineWidth = 5;
+      ctx.beginPath();
+      ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // Dot at angle
+      const rad = (angleDeg - 90) * Math.PI / 180;
+      const dotX = cx + radius * Math.cos(rad);
+      const dotY = cy + radius * Math.sin(rad);
+
+      ctx.fillStyle = '#25ff78';
+      ctx.beginPath();
+      ctx.arc(dotX, dotY, 10, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Connect to WebSocket
+    const ws = new WebSocket("ws://localhost:8765");
+
+    ws.onmessage = (evt) => {
+      const data = JSON.parse(evt.data);
+
+      const angle = Number(data.angle || 0);
+      draw(angle);
+
+      vadEl.textContent = data.vad || '-';
+      angleEl.textContent = angle;
+      classEl.textContent = data.classification || 'Waiting';
+      transcriptEl.textContent = data.transcript || '';
+    };
+
+    draw(0); // initial
+  </script>
 </body>
 </html>

@@ -8,6 +8,7 @@ from RealtimeSTT import AudioToTextRecorder
 import threading
 import asyncio
 import json
+import sys
 
 
 MODEL_PATH = "../classifier.tflite"
@@ -62,7 +63,7 @@ def process_text(text):
 
 def start_stt():
     recorder = AudioToTextRecorder(
-        model="base.en",             
+        model="base.en",      
         enable_realtime_transcription=True,
         realtime_model_type="base.en",
         silero_sensitivity=0.6,
@@ -111,6 +112,7 @@ async def main_loop():
             except KeyboardInterrupt:
                 print()
                 print("--- Exiting Program ---")
+                sys.exit()
 
 
 async def main():
