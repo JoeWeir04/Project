@@ -16,6 +16,9 @@ SAMPLE_RATE = 16000
 BUFFER_SIZE = 0.1
 TIME_INCREMENT = int(BUFFER_SIZE*1000)
 
+
+BUFFER_SAMPLES = int()
+
 last_classification = "Waiting"
 last_transcript = ""
 last_vad = 0
@@ -24,6 +27,9 @@ timestamp = 0
 classifier = None
 
 clients = set()
+
+print(sd.query_devices())
+
 
 
 async def broadcast_loop():

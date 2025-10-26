@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>UMA-8 Multi-Source DOA Visualizer</title>
+  <style>
+    body {
+      background: #f3f3f3;
+      color: #000000;
+      font-family: Arial, sans-serif;
+      font-size: 20px;
+      font-weight: 550;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    canvas {
+      background: #ffffff;
+      border-radius: 50%;
+    }
+    .info {
+      margin-top: 15px;
+      text-align: center;
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="compass" width="350" height="350"></canvas>
+  <div class="info">
+    <div id="status">Waiting for data...</div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('compass');
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width, h = canvas.height;
+    const cx = w / 2, cy = h / 2;
+    const radius = 120;
+
+    const statusEl = document.getElementById('status');
+
+    function drawBaseCircle() {
+      // Draw outer circle
+      ctx.strokeStyle = '#888';
+      ctx.lineWidth = 5;
+      ctx.beginPath();
+      ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // Draw degree markers every 90°
+      const marks = [0, 90, 180, 270];
+      ctx.fillStyle = '#000';
+      ctx.font = '16px Arial';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+
+      marks.forEach(angle => {
+        const rad = (angle - 90) * Math.PI / 180;
+        const labelRadius = radius + 20;
+        const tx = cx + labelRadius * Math.cos(rad);
+        const ty = cy + labelRadius * Math.sin(rad);
+        ctx.fillText(`${angle}°`, tx, ty);
+      });
+    }
+
+    function draw(sources) {
+      ctx.clearRect(0, 0, w, h);
+      drawBaseCircle();
+
+      if (!sources || sources.length === 0) {
+        statusEl.textContent = "No active sound detected";
+        return;
+      }
+
+      let textInfo = [];
+      for (const src of sources) {
+        const angle = src.angle || 0;
+        const strength = src.strength || 0;
+        const classification = src.classification;
+        const rad = (angle - 90) * Math.PI / 180;
+        const dotX = cx + radius * Math.cos(rad);
+        const dotY = cy + radius * Math.sin(rad);
+
+        // Map strength [0–1] → dot size [6–20]
+        const dotSize = 6 + 14 * Math.min(Math.max(strength, 0), 1);
+
+        ctx.fillStyle = `rgba(37,255,120,${0.6 + 0.4 * strength})`;
+        ctx.beginPath();
+        ctx.arc(dotX, dotY, dotSize, 0, Math.PI * 2);
+        ctx.fill();
+
+        textInfo.push(`${angle.toFixed(1)}° (${(strength * 100).toFixed(0)}%) ${classification}`);
+      }
+
+      statusEl.textContent = "Detected: " + textInfo.join(", ");
+    }
+
+    // Connect to Python WebSocket
+    const ws = new WebSocket("ws://localhost:8765");
+
+    ws.onopen = () => {
+      statusEl.textContent = "Connected. Waiting for detections...";
+    };
+
+    ws.onmessage = (evt) => {
+      const data = JSON.parse(evt.data);
+      draw(data.sources || []);
+    };
+
+    ws.onerror = () => {
+      statusEl.textContent = "WebSocket error — make sure Python script is running.";
+    };
+
+    ws.onclose = () => {
+      statusEl.textContent = "Connection closed.";
+    };
+
+    draw([]);
+  </script>
+</body>
+</html>
