@@ -8,8 +8,10 @@ Requirements:
 
 import numpy as np
 import sounddevice as sd
+import soundfile as sf
 import pyroomacoustics as pra
 from scipy.signal import find_peaks
+from datetime import datetime
 import queue
 import threading
 import asyncio
@@ -23,8 +25,9 @@ import time
 from collections import defaultdict, deque
 
 # ------------------- USER PARAMETERS -------------------
+SAVE_BEAMFORMED = True
 ENERGY_THRESHOLD = 0.00008
-FS = 48000
+FS = 16000
 N_MICS = 8
 FRAME_SIZE = 2048
 HOP_SIZE = FRAME_SIZE // 2
@@ -33,13 +36,13 @@ SPEED_OF_SOUND = 343.0
 RADIUS = 0.04
 AZ_RES_DEG = 2.0
 MAX_SOURCES = 3
-PEAK_THRESHOLD = 0.35
+PEAK_THRESHOLD = 0.5
 DEVICE = None
 CENTER_INDEX = 0
 ANGLE_OFFSET = 90
 MODEL_PATH = "../classifier.tflite"
-ANGLE_BIN_WIDTH = 20
-MIN_CLIP_DURATION = 0.5
+ANGLE_BIN_WIDTH = 30
+MIN_CLIP_DURATION = 1
 
 beam_buffers = defaultdict(lambda: deque (maxlen=int(FS * MIN_CLIP_DURATION)))
 last_classification = {}
@@ -93,8 +96,7 @@ classifier = create_classifier()
 def classify_beamformed(beamformed, fs=FS):
     import pyroomacoustics as pra
     beamformed = beamformed / (np.max(np.abs(beamformed)) + 1e-6)
-    beamformed *= 3.0  # optional boost
-    beamformed = np.clip(beamformed, -1.0, 1.0)
+    beamformed = np.clip(beamformed * 5.0, -1.0, 1.0)
 
     # resample to 16k for classifier
     beamformed_16k = pra.resample(beamformed, fs, 16000)
@@ -249,7 +251,11 @@ def processing_thread():
                     beam_buffers[key].extend(beamformed.tolist())
 
                     if len(beam_buffers[key]) >= FS * MIN_CLIP_DURATION:
-                        clip = np.array(beam_buffers[key], dtype = np.float32)
+                        clip = np.array(beam_buffers[key], dtype=np.float32)
+                        if SAVE_BEAMFORMED:
+                            filename = f"beamformed_{int(key)}deg_{datetime.now().strftime('%H%M%S')}.wav"
+                            sf.write(filename, clip, FS)
+                            print(f"Saved beamformed clip for {key}° -> {filename}")
                         label = classify_beamformed(clip)
                         last_classification[key] = label
                         beam_buffers[key].clear()
@@ -287,4 +293,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    main()S

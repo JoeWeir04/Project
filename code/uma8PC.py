@@ -107,7 +107,7 @@ async def main_loop():
 
 async def main():
     import websockets
-    server = await websockets.serve(websocket_handler, "localhost", 8765)
+    server = await websockets.serve(websocket_handler, "0.0.0.0", 8765)
     await asyncio.gather(main_loop(), broadcast_loop())
 
 if __name__ == "__main__":
