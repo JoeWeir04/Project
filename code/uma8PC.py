@@ -27,10 +27,6 @@ classifier = None
 
 clients = set()
 
-print(sd.query_devices())
-
-
-
 async def broadcast_loop():
     global last_classification, last_transcript, last_vad, last_angle
     while True:
@@ -47,10 +43,12 @@ async def broadcast_loop():
 
 
 async def websocket_handler(websocket):
+    print("Clients connected")
     clients.add(websocket)
     try:
         await websocket.wait_closed()
     finally:
+        print("Client disconnected.")
         clients.remove(websocket)
 
 
@@ -107,7 +105,7 @@ async def main_loop():
 
 async def main():
     import websockets
-    server = await websockets.serve(websocket_handler, "0.0.0.0", 8765)
+    server = await websockets.serve(websocket_handler, "0.0.0.0", 8765, subprotocols=None, ping_interval=None)
     await asyncio.gather(main_loop(), broadcast_loop())
 
 if __name__ == "__main__":
