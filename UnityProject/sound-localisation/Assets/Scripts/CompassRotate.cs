@@ -5,6 +5,8 @@ using UnityEngine;
 public class CompassRotate : MonoBehaviour
 {
     public MicSocket micSocket;
+    public float rotationspeed = 180f;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -16,7 +18,12 @@ public class CompassRotate : MonoBehaviour
     {
         if (!micSocket.isConnected) return;
         float angle = micSocket.angle;
-        transform.localRotation = Quaternion.Euler(0,angle,0);
+        Quaternion targetRotation = Quaternion.Euler(0, angle, 0);
+
+        transform.localRotation = Quaternion.RotateTowards(
+            transform.localRotation,
+            targetRotation,
+            rotationspeed*Time.deltaTime);
         Debug.Log("Angle from the mic socket" + micSocket.angle);
     }
 }
