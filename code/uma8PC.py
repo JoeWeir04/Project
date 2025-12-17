@@ -4,7 +4,6 @@ import mediapipe as mp
 from mediapipe.tasks import python
 from mediapipe.tasks.python import audio
 from mediapipe.tasks.python.components import containers
-import threading
 import asyncio
 import json
 import sys
@@ -27,6 +26,7 @@ classifier = None
 
 clients = set()
 
+
 async def broadcast_loop():
     global last_classification, last_transcript, last_vad, last_angle
     while True:
@@ -38,18 +38,27 @@ async def broadcast_loop():
                 "transcript": last_transcript
             }
             message = json.dumps(data)
-            await asyncio.gather(*[client.send(message) for client in clients])
+
+            dead_clients = set()
+            for client in list(clients):
+                try:
+                    await client.send(message)
+                except Exception as e:
+                    print("Client send failed: removing the client:", e)
+                    dead_clients.add(client)
+            for client in dead_clients:
+                clients.discard(client)
         await asyncio.sleep(0.05)
 
 
 async def websocket_handler(websocket):
-    print("Clients connected")
     clients.add(websocket)
+    print("Clients connected")
     try:
         await websocket.wait_closed()
     finally:
         print("Client disconnected.")
-        clients.remove(websocket)
+        clients.discard(websocket)
 
 
 def print_result(result: mp.tasks.audio.AudioClassifierResult, timestamp_ms: int):
