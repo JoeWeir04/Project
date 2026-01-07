@@ -1,10 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class CompassRotate : MonoBehaviour
 {
     public MicSocket micSocket;
+    public TMP_Text angleText;
     public float rotationspeed = 180f;
 
     // Start is called before the first frame update
@@ -24,6 +26,11 @@ public class CompassRotate : MonoBehaviour
             transform.localRotation,
             targetRotation,
             rotationspeed*Time.deltaTime);
-        Debug.Log("Angle from the mic socket" + micSocket.angle);
+
+        if(angleText != null)
+        {
+            angleText.text = $"Angle: {angle:F1}°";
+        }
+        
     }
 }
