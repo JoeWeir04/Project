@@ -8,14 +8,20 @@ public class RadarRotate : MonoBehaviour
     public MicSocket micSocket;
     public float binSize = 30f;
     public TMP_Text angleText;
-    // Start is called before the first frame update
-    void Start()
+    private SpriteRenderer spriteRenderer;
+    public float fadeSpeed = 3f;
+    public float visibleDuration = 1f;
+    public float currentTimer = 0f;
+    public float currentAlpha = 0f;
+
+
+    void Awake()
     {
-        
+        spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+        SetAlpha(0f);
     }
 
-    // Update is called once per frame
-    void Update()
+        void Update()
     {
         if (!micSocket.isConnected) return;
         float angle = micSocket.angle;
@@ -29,5 +35,34 @@ public class RadarRotate : MonoBehaviour
         
             angleText.text = $"Bin Angle: {binAngle:F1}°\n" + $"Mic Angle: {angle:F1}°\n" + $"Classification:{classification}\n";
         }
+        fade();
+    }
+
+    void fade()
+    {
+        bool soundReceived = micSocket.vad ==1;
+        if (soundReceived)
+        {
+            currentAlpha = 1f;
+            currentTimer = visibleDuration;
+        }
+        else
+        {
+            currentTimer -= Time.deltaTime;
+            if(currentTimer <= 0)
+            {
+                currentAlpha = Mathf.MoveTowards(
+                    currentAlpha,0f,fadeSpeed * Time.deltaTime
+                );
+            }
+        }
+        SetAlpha(currentAlpha);
+    }
+
+    void SetAlpha(float alpha)
+    {
+        Color c = spriteRenderer.color;
+        c.a = alpha;
+        spriteRenderer.color = c;
     }
 }

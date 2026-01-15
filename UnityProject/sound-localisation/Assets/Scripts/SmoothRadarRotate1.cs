@@ -3,37 +3,35 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-public class CompassRotate : MonoBehaviour
+public class SmoothRadarRotate : MonoBehaviour
 {
     public MicSocket micSocket;
     public TMP_Text angleText;
-    public float rotationspeed = 180f;
-    public float visibleDuration = 1f;
-    private float currentTimer = 0f;
+
+    private SpriteRenderer spriteRenderer;
     public float fadeSpeed = 3f;
-    private Renderer[] renderers;
-    private float currentAlpha = 0f;
+    public float visibleDuration = 1f;
+    public float currentTimer = 0f;
+    public float currentAlpha = 0f;
 
     void Awake()
     {
-        renderers = GetComponentsInChildren<Renderer>();
+        spriteRenderer = GetComponentInChildren<SpriteRenderer>();
         SetAlpha(0f);
     }
 
+    // Update is called once per frame
     void Update()
     {
         if (!micSocket.isConnected) return;
-        float angle = micSocket.angle;
-        Quaternion targetRotation = Quaternion.Euler(0, angle, 0);
+        float angle = micSocket.angle - 7.5f;
 
-        transform.localRotation = Quaternion.RotateTowards(
-            transform.localRotation,
-            targetRotation,
-            rotationspeed*Time.deltaTime);
-
-        if(angleText != null)
-        {
-            angleText.text = $"Angle: {angle:F1}°";
+        transform.localRotation = Quaternion.Euler(0,0,angle);
+        string classification = micSocket.classification;
+        
+        if(angleText != null){
+        
+            angleText.text = $"Mic Angle: {angle:F1}°\n" + $"Classification:{classification}\n";
         }
         fade();
     }
@@ -60,14 +58,8 @@ public class CompassRotate : MonoBehaviour
 
     void SetAlpha(float alpha)
     {
-        foreach (Renderer r in renderers)
-        {
-            foreach(Material mat in r.materials)
-            {
-                Color c = mat.color;
-                c.a = alpha;
-                mat.color = c;
-            }
-        }
+        Color c = spriteRenderer.color;
+        c.a = alpha;
+        spriteRenderer.color = c;
     }
 }
