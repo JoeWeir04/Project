@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using System.Text.RegularExpressions;
 
 public class SmoothRadarRotate : MonoBehaviour
 {
@@ -13,6 +14,10 @@ public class SmoothRadarRotate : MonoBehaviour
     public float visibleDuration = 1f;
     public float currentTimer = 0f;
     public float currentAlpha = 0f;
+    private bool isWarning = false;
+    private static readonly Regex warningRegex = new Regex(@"\b(alarm|beep|horn|siren)\b", RegexOptions.IgnoreCase);
+    public Color normalColor = Color.green;
+    public Color warningColor = Color.red;
 
     void Awake()
     {
@@ -28,9 +33,10 @@ public class SmoothRadarRotate : MonoBehaviour
 
         transform.localRotation = Quaternion.Euler(0,0,angle);
         string classification = micSocket.classification;
+        isWarning = warningRegex.IsMatch(classification);
         
         if(angleText != null){
-        
+            
             angleText.text = $"Mic Angle: {angle:F1}°\n" + $"Classification:{classification}\n";
         }
         fade();
@@ -58,7 +64,7 @@ public class SmoothRadarRotate : MonoBehaviour
 
     void SetAlpha(float alpha)
     {
-        Color c = spriteRenderer.color;
+        Color c = isWarning ? warningColor : normalColor;
         c.a = alpha;
         spriteRenderer.color = c;
     }
