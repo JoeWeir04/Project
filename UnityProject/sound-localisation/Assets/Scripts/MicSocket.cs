@@ -36,7 +36,7 @@ public class MicSocket : MonoBehaviour
 
      ws.OnMessage += (sender, e) => 
      {
-        Debug.Log("message received" + e.Data);
+        //Debug.Log("message received" + e.Data);
         JObject json = JObject.Parse(e.Data);
         angle = (float)json["angle"];
         vad = (int)json["vad"];
@@ -44,7 +44,7 @@ public class MicSocket : MonoBehaviour
         transcript = (string)json["transcript"];
      };
 
-     ws.Connect();
+     ws.ConnectAsync();
     }
 
     void OnDestroy(){
@@ -52,11 +52,5 @@ public class MicSocket : MonoBehaviour
             ws.Close();
         }
         
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
     }
 }

@@ -6,6 +6,17 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/SampleScene.unity
+    path: Assets/Scenes/RealLocalisation.unity
     guid: 99c9720ab356a0642a771bea13969a05
-  m_configObjects: {}
+  - enabled: 0
+    path: Assets/Scenes/VR.unity
+    guid: 9353b48cba03a5f4db8195eb3e4bf3e9
+  m_configObjects:
+    com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 971de5b9c18f2214b9faa08f1893461b,
+      type: 3}
+    com.unity.xr.management.loader_settings: {fileID: 11400000, guid: f08588036d4792f4aafb9bcd89af3556,
+      type: 2}
+    com.unity.xr.openxr.settings4: {fileID: 11400000, guid: 4091f5809b7b8cd45aa7ee4cbedea5be,
+      type: 2}
+    xr.sdk.mock-hmd.settings: {fileID: 11400000, guid: aca4dcdc260d7d84484128fafe551147,
+      type: 2}
