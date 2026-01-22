@@ -29,7 +29,7 @@ public class changeVisual : MonoBehaviour
     public void OnButtonPress(InputAction.CallbackContext context)
     {
         visualCounter ++;
-        if(visualCounter > 2)
+        if(visualCounter > 3)
         {
             visualCounter = 0;
         }
@@ -47,9 +47,18 @@ public class changeVisual : MonoBehaviour
             visuals[0].SetActive(true);
             visuals[1].SetActive(true);
         }
+        
         else
         {
-            visuals[index].SetActive(true);  
+            if(index == 3)
+            {
+                visuals[0].SetActive(true);
+                visuals[2].SetActive(true);
+            }
+            else
+            {
+            visuals[index].SetActive(true);
+            }  
         }
             
         visualizationText.text = $"Visulization {index} Selected";    

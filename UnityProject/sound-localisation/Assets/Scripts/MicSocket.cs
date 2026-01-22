@@ -4,11 +4,11 @@ using WebSocketSharp;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 
-public class MicSocket : MonoBehaviour
+public class MicSocket : MonoBehaviour, IMicSocket
 {
     WebSocket ws;
 
-    public float angle;
+    public float angle ;
     public int vad;
     public string classification;
     public string transcript;
