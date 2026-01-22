@@ -35,7 +35,7 @@ N_FFT = FRAME_SIZE
 SPEED_OF_SOUND = 343.0
 RADIUS = 0.04
 AZ_RES_DEG = 2.0
-MAX_SOURCES = 3
+MAX_SOURCES = 1
 PEAK_THRESHOLD = 0.5
 DEVICE = None
 CENTER_INDEX = 0
@@ -248,10 +248,11 @@ def processing_thread():
                     beamformed = np.fft.irfft(beamformed_spec)
                     
                     key = round(a_norm / ANGLE_BIN_WIDTH) * ANGLE_BIN_WIDTH
-                    beam_buffers[key].extend(beamformed.tolist())
-
+                    #beam_buffers[key].extend(beamformed.tolist())
+                    
                     if len(beam_buffers[key]) >= FS * MIN_CLIP_DURATION:
                         clip = np.array(beam_buffers[key], dtype=np.float32)
+                        """
                         if SAVE_BEAMFORMED:
                             filename = f"beamformed_{int(key)}deg_{datetime.now().strftime('%H%M%S')}.wav"
                             sf.write(filename, clip, FS)
@@ -259,6 +260,7 @@ def processing_thread():
                         label = classify_beamformed(clip)
                         last_classification[key] = label
                         beam_buffers[key].clear()
+                        """
          
                     label = last_classification.get(key, 'Waiting')
 
@@ -293,4 +295,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()S
+    main()
