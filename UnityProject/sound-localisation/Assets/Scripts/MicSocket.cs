@@ -4,16 +4,15 @@ using WebSocketSharp;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 
-public class MicSocket : MonoBehaviour
+public class MicSocket : MonoBehaviour, IMicSocket
 {
     WebSocket ws;
 
-    public float angle;
-    public int vad;
-    public string classification;
-    public string transcript;
+    public float angle { get; private set; }
+    public int vad { get; private set; }
 
-    public bool isConnected = false;
+    public bool isConnected { get; private set; } = false;
+    public string classification { get; private set; }
 
     // Start is called before the first frame update
     void Start()
@@ -41,7 +40,6 @@ public class MicSocket : MonoBehaviour
         angle = (float)json["angle"];
         vad = (int)json["vad"];
         classification = (string)json["classification"];
-        transcript = (string)json["transcript"];
      };
 
      ws.ConnectAsync();

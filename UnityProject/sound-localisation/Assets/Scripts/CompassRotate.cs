@@ -5,7 +5,8 @@ using TMPro;
 
 public class CompassRotate : MonoBehaviour
 {
-    public MicSocket micSocket;
+    [SerializeField] private MonoBehaviour micSocketBehaviour;
+    private IMicSocket micSocket;
     public TMP_Text angleText;
     public float rotationspeed = 180f;
     public float visibleDuration = 1f;
@@ -18,6 +19,8 @@ public class CompassRotate : MonoBehaviour
     {
         renderers = GetComponentsInChildren<Renderer>();
         SetAlpha(0f);
+
+        micSocket = micSocketBehaviour as IMicSocket;
     }
 
     void Update()

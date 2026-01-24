@@ -6,9 +6,9 @@ using System.Text.RegularExpressions;
 
 public class SmoothRadarRotate : MonoBehaviour
 {
-    public MicSocket micSocket;
+    [SerializeField] private MonoBehaviour micSocketBehaviour;
+    private IMicSocket micSocket;
     public TMP_Text angleText;
-
     private SpriteRenderer spriteRenderer;
     public float fadeSpeed = 3f;
     public float visibleDuration = 1f;
@@ -23,15 +23,17 @@ public class SmoothRadarRotate : MonoBehaviour
     {
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
         SetAlpha(0f);
+        
+        micSocket = micSocketBehaviour as IMicSocket;
     }
 
     // Update is called once per frame
     void Update()
     {
         if (!micSocket.isConnected) return;
-        float angle = micSocket.angle - 7.5f;
+        float angle = micSocket.angle;
 
-        transform.localRotation = Quaternion.Euler(0,0,angle);
+        transform.localRotation = Quaternion.Euler(0,0,angle-15f);
         string classification = micSocket.classification;
         isWarning = warningRegex.IsMatch(classification);
         

@@ -5,7 +5,8 @@ using TMPro;
 
 public class RadarRotate : MonoBehaviour
 {
-    public MicSocket micSocket;
+    [SerializeField] private MonoBehaviour micSocketBehaviour;
+    public IMicSocket micSocket;
     public float binSize = 30f;
     public TMP_Text angleText;
     private SpriteRenderer spriteRenderer;
@@ -19,6 +20,8 @@ public class RadarRotate : MonoBehaviour
     {
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
         SetAlpha(0f);
+
+        micSocket = micSocketBehaviour as IMicSocket;
     }
 
         void Update()
