@@ -37,6 +37,17 @@ public class MicSocketVR : MonoBehaviour, IMicSocket
     }
     void Update()
     {
+
+        if (currentAudioSource == null || !currentAudioSource.isPlaying)
+        {
+            vad = 0;
+            return;
+        }
+
+        vad = 1;
+        angle = GetAngleToUser(currentAudioSource);
+
+        /*
         AudioSource activeSource = GetActiveSource();
         if(activeSource == null)
         {
@@ -45,8 +56,10 @@ public class MicSocketVR : MonoBehaviour, IMicSocket
         }
         vad = 1;
         angle = GetAngleToUser(activeSource);
+        */
     }
 
+    /*
     AudioSource GetActiveSource()
     {
         foreach (var src in audioSources)
@@ -58,6 +71,7 @@ public class MicSocketVR : MonoBehaviour, IMicSocket
         }
         return null;
     }
+    */
 
     float GetAngleToUser(AudioSource src)
     {
@@ -70,13 +84,21 @@ public class MicSocketVR : MonoBehaviour, IMicSocket
 
     public void NextSource(int audioIndex)
         {
-            AudioSource current = audioSources[audioIndex];
-            if (current != null)
+            if (currentAudioSource != null)
             {
-                current.Stop();
-                current.gameObject.SetActive(false);
+                currentAudioSource.Stop();
+                currentAudioSource.gameObject.SetActive(false);
             }
-        Debug.Log($"Playing audio source {currentSourceIndex}");
+            if (audioIndex < 0 || audioIndex >= audioSources.Count)
+            {
+                Debug.LogError("Invalid audio index");
+                return;
+            }
+            currentAudioSource = audioSources[audioIndex];
+            currentAudioSource.gameObject.SetActive(true);
+            currentAudioSource.Play();
+
+        Debug.Log($"Playing audio source {audioIndex}");
         }
        
 

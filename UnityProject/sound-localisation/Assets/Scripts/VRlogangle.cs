@@ -3,24 +3,32 @@ using UnityEngine.InputSystem;
 using System.IO;
 using TMPro;
 using Unity.XR.CoreUtils;
+using System.Collections.Generic;
 
 public class VRlogAngle : MonoBehaviour
 {
     public InputActionReference aButton; 
+    public InputActionReference startExperimentButton;
     public TMP_Text logText;
     public TMP_Text ExperimentText;
     public XROrigin playerRig;
     private string filePath;
     public MicSocketVR micSocket;
     public List<Transform> spawnPoints;
-    private current spawnPointCounter;
     private float trialStartTime;
     private bool trialActive = false;
     public ChangeVisual changeVisual;
     public float TrialsPerVisualCount = 6;
-
+    [SerializeField] private bool isPractice = true;
     private List<Trial> trials = new List<Trial>();
     private int currentTrialIndex = 0;
+
+    [System.Serializable]
+    public struct Trial
+{
+    public int spawnIndex;
+    public int audioIndex;
+}
 
     void GenerateTrials()
     {
@@ -54,8 +62,9 @@ public class VRlogAngle : MonoBehaviour
         filePath = Application.persistentDataPath + "/VR_log.csv";
         if (!File.Exists(filePath))
         {
-            File.WriteAllText(filePath, "Time,AudioSource,AudioAngle,Error,ResponseTime,Visualisation\n");
+            File.WriteAllText(filePath, "Time,SpawnIndex,AudioIndex,AudioAngle,Error,ResponseTime,Visualisation\n");
         }
+        GenerateTrials();
     }
 
     void Update()
@@ -70,45 +79,77 @@ public class VRlogAngle : MonoBehaviour
     {
         aButton.action.Enable();
         aButton.action.performed += OnButtonPress;
+        startExperimentButton.action.Enable();
+    startExperimentButton.action.performed += StartExperiment;
     }
 
     private void OnDestroy()
     {
         aButton.action.performed -= OnButtonPress;
         aButton.action.Disable();
+        startExperimentButton.action.performed -= StartExperiment;
+        startExperimentButton.action.Disable();
+    }
+
+    private void StartExperiment(InputAction.CallbackContext ctx)
+    {
+        isPractice = false;
+
+        currentTrialIndex = 0;
+        trialActive = false;
+        GenerateTrials();   
+        ExperimentText.text = "Experiment started";
+        Debug.Log("Logging enabled");
     }
 
     public void OnButtonPress(InputAction.CallbackContext context)
     {
         if (!trialActive)
             return;
-        float audioAngle = micSocket.angle; 
-        float error = Mathf.DeltaAngle(0f, audioAngle);
-        float responseTime = Time.time - trialStartTime;
-        AudioSource audioSource = micSocket.currentAudioSource;
-
-        File.AppendAllText(filePath, $"{Time.time},{audioSource},{audioAngle},{error},{responseTime},{Visualisation}\n");
-
-        if (logText != null)
+        if(!isPractice)
         {
-            $"Audio angle: {audioAngle:F1}°\n" +
-            $"Error: {error:F1}°\n" +
-            $"RT: {responseTime:F2}s";
+            float audioAngle = micSocket.angle; 
+            float error = Mathf.DeltaAngle(0f, audioAngle);
+            float responseTime = Time.time - trialStartTime;
+            AudioSource audioSource = micSocket.currentAudioSource;
+            int visualisation = changeVisual.visualCounter+1;
+
+            File.AppendAllText(filePath, $"{Time.time},{trials[currentTrialIndex].spawnIndex},{trials[currentTrialIndex].audioIndex},{audioAngle},{error},{responseTime},{visualisation}\n");
+
+            if (logText != null)
+            {
+                logText.text = 
+                $"Audio angle: {audioAngle:F1}°\n" +
+                $"Error: {error:F1}°\n" +
+                $"RT: {responseTime:F2}s";
+            }
         }
         callNextSource();
     }
 
     public void callNextSource()
     {
+        if (currentTrialIndex >= trials.Count)
+        {
+            ExperimentText.text = "Experiment complete";
+            return;
+        }
+        if (isPractice)
+        {
+            ExperimentText.text = $"Trial: ({trials[currentTrialIndex].spawnIndex}, {trials[currentTrialIndex].audioIndex}) ";
+        }
+        else{
+            ExperimentText.text = $"Trial: {currentTrialIndex+1} / {trials.Count}  /n ({trials[currentTrialIndex].spawnIndex}, {trials[currentTrialIndex].audioIndex}) ";
+        }
         Trial t = trials[currentTrialIndex]; 
         trialStartTime = Time.time;
         playerRig.transform.SetPositionAndRotation(
             spawnPoints[t.spawnIndex].position,
             spawnPoints[t.spawnIndex].rotation
         );
-        spawnPointCounter = (spawnPointCounter + 1) % spawnPoints.Count;
         micSocket.NextSource(t.audioIndex);
         trialActive = false;
+        currentTrialIndex++;
     }
 
 }
