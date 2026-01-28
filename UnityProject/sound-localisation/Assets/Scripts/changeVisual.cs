@@ -4,14 +4,16 @@ using UnityEngine.InputSystem;
 using UnityEngine;
 using TMPro;
 
-public class changeVisual : MonoBehaviour
+public class ChangeVisual : MonoBehaviour
 {
     // Start is called before the first frame update
 
     public InputActionReference leftPrimaryButton;
     public TMP_Text visualizationText;
     public  List<GameObject> visuals;
-    private int visualCounter = 0;
+    public int visualCounter = 0;
+
+    
 
 
     private void Awake()

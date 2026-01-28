@@ -8,12 +8,33 @@ public class MicSocketVR : MonoBehaviour, IMicSocket
 {
     public Camera mainCamera;
     public List<AudioSource> audioSources;
+    public AudioSource currentAudioSource;
     public float angle{ get; private set; }
     public int vad{ get; private set; }
-    public string classification { get; private set; } = "speech";
+    public string classification { get; private set; } = "NA";
     public bool isConnected { get; private set; } = true;
 
-    // Start is called before the first frame update
+
+    [System.Serializable]
+    public struct Trial
+    {
+        public int spawnIndex;
+        public int audioIndex;
+    }
+
+    
+    void Start()
+    {   
+        foreach (var src in audioSources)
+        {
+            if (src != null)
+            {
+                src.Stop();
+                src.gameObject.SetActive(false);
+            }
+        }
+
+    }
     void Update()
     {
         AudioSource activeSource = GetActiveSource();
@@ -39,24 +60,24 @@ public class MicSocketVR : MonoBehaviour, IMicSocket
     }
 
     float GetAngleToUser(AudioSource src)
-{
-    // 1. Convert the audio source's world position to the Camera's local space
-    // This accounts for the player's head rotation and position automatically.
-    Vector3 localPosition = mainCamera.transform.InverseTransformPoint(src.transform.position);
+    {
+        Vector3 localPosition = mainCamera.transform.InverseTransformPoint(src.transform.position);
+        float angle = Mathf.Atan2(localPosition.x, localPosition.z) * Mathf.Rad2Deg;
+        if (angle < 0) angle += 360f;
 
-    // 2. Calculate the angle on the local XZ plane
-    // Atan2(x, z) gives 0 degrees when Z is positive (Forward)
-    float angle = Mathf.Atan2(localPosition.x, localPosition.z) * Mathf.Rad2Deg;
-    
-    // Result: 
-    // 0 = Straight Ahead
-    // 90 = Right
-    // -90 = Left
-    // 180 = Behind
-    
-    // Optional: Normalize to 0-360 range if your receiving socket expects positive integers
-    if (angle < 0) angle += 360f;
+        return angle;
+    }
 
-    return angle;
-}
+    public void NextSource(int audioIndex)
+        {
+            AudioSource current = audioSources[audioIndex];
+            if (current != null)
+            {
+                current.Stop();
+                current.gameObject.SetActive(false);
+            }
+        Debug.Log($"Playing audio source {currentSourceIndex}");
+        }
+       
+
 }
