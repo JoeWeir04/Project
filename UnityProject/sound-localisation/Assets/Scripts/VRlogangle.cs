@@ -65,6 +65,7 @@ public class VRlogAngle : MonoBehaviour
             File.WriteAllText(filePath, "Time,SpawnIndex,AudioIndex,AudioAngle,Error,ResponseTime,Visualisation\n");
         }
         GenerateTrials();
+        callNextSource();
     }
 
     void Update()
@@ -80,7 +81,7 @@ public class VRlogAngle : MonoBehaviour
         aButton.action.Enable();
         aButton.action.performed += OnButtonPress;
         startExperimentButton.action.Enable();
-    startExperimentButton.action.performed += StartExperiment;
+        startExperimentButton.action.performed += StartExperiment;
     }
 
     private void OnDestroy()
@@ -100,6 +101,7 @@ public class VRlogAngle : MonoBehaviour
         GenerateTrials();   
         ExperimentText.text = "Experiment started";
         Debug.Log("Logging enabled");
+        callNextSource();
     }
 
     public void OnButtonPress(InputAction.CallbackContext context)
@@ -139,7 +141,7 @@ public class VRlogAngle : MonoBehaviour
             ExperimentText.text = $"Trial: ({trials[currentTrialIndex].spawnIndex}, {trials[currentTrialIndex].audioIndex}) ";
         }
         else{
-            ExperimentText.text = $"Trial: {currentTrialIndex+1} / {trials.Count}  /n ({trials[currentTrialIndex].spawnIndex}, {trials[currentTrialIndex].audioIndex}) ";
+            ExperimentText.text = $"Trial: {currentTrialIndex+1} / {trials.Count}  \n ({trials[currentTrialIndex].spawnIndex}, {trials[currentTrialIndex].audioIndex}) ";
         }
         Trial t = trials[currentTrialIndex]; 
         trialStartTime = Time.time;

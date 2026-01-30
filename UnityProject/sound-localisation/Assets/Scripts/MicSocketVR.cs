@@ -33,6 +33,7 @@ public class MicSocketVR : MonoBehaviour, IMicSocket
                 src.gameObject.SetActive(false);
             }
         }
+        
 
     }
     void Update()
