@@ -7,6 +7,7 @@ from mediapipe.tasks.python.components import containers
 import asyncio
 import json
 import sys
+import time
 
 
 MODEL_PATH = "../classifier.tflite"
@@ -89,8 +90,6 @@ async def main_loop():
         result_callback=print_result
     )
 
-    h = hid.Device(0x2752, 0x01C)
-
     with audio.AudioClassifier.create_from_options(options) as classifier:
         with sd.InputStream(channels=1, samplerate=SAMPLE_RATE,
                             blocksize=int(SAMPLE_RATE * BUFFER_SIZE),
@@ -98,8 +97,15 @@ async def main_loop():
             try:
                 print()
                 print("--- Program ---")
+                h = open_hid()
                 while True:
-                    data = h.read(6, timeout=00)
+                    try:
+                        data = h.read(6, timeout=10)
+                    except hid.HIDException:
+                        print("HID device lost, reconnectting...")
+                        h.close()
+                        h = open_hid()
+                        continue
                     if len(data) == 6 and data[0] == 0x06 and data[1] == 0x36:
                         last_vad = data[2]
                         last_angle = (data[3] << 8) | data[4]
@@ -110,6 +116,17 @@ async def main_loop():
                 print()
                 print("--- Exiting Program ---")
                 sys.exit()
+
+
+def open_hid():
+    while True:
+        try:
+            h = hid.Device(0x2752, 0x01C)
+            print("HID connected")
+            return h
+        except Exception:
+            print("waiting for HID device")
+            time.sleep(1)
 
 
 async def main():
