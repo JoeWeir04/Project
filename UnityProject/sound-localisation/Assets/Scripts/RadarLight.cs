@@ -9,17 +9,25 @@ public class RadarLight : MonoBehaviour
     public Image leftLight;
     public Image rightLight;
     public Camera mainCamera;
-    public MicSocket micSocket;
+    public GameObject arrow;
+    [SerializeField] private MonoBehaviour micSocketBehaviour;
+    public IMicSocket micSocket;
     float currentAlpha = 0f;
     float currentTimer = 0f;
     public float visibleDuration = 1f;
     public float fadeSpeed = 3f;
 
-    public float facingThreshold = 60f;
+    public float facingThreshold = 30f;
     void Awake()
     {
         SetAlpha(leftLight,0f);
         SetAlpha(rightLight,0f);
+        micSocket = micSocketBehaviour as IMicSocket;
+    }
+
+    void OnEnable()
+    {
+        arrow.SetActive(false);
     }
 
     void Update()
@@ -29,17 +37,13 @@ public class RadarLight : MonoBehaviour
         float cameraYaw = mainCamera.transform.eulerAngles.y;
         float angle = micSocket.angle;
 
-        float angleDiff = Mathf.Abs(
-            Mathf.DeltaAngle(cameraYaw, angle)
-        );
-
-        if(angleDiff <= facingThreshold)
+        if(angle <= facingThreshold || angle >= (360f - facingThreshold))
         {
             SetAlpha(leftLight, 0f);
             SetAlpha(rightLight, 0f);
             return;
         }
-
+        
         bool showRight = angle < 180f;
         bool showLeft  = !showRight;
 

@@ -8,6 +8,7 @@ public class CompassRotate : MonoBehaviour
     [SerializeField] private MonoBehaviour micSocketBehaviour;
     private IMicSocket micSocket;
     public TMP_Text angleText;
+    public Camera mainCamera;
     public float rotationspeed = 180f;
     public float visibleDuration = 1f;
     private float currentTimer = 0f;
@@ -26,11 +27,11 @@ public class CompassRotate : MonoBehaviour
     void Update()
     {
         if (!micSocket.isConnected) return;
-        float angle = micSocket.angle;
+        float angle = micSocket.angle + mainCamera.transform.eulerAngles.y;
         Quaternion targetRotation = Quaternion.Euler(0, angle, 0);
 
-        transform.localRotation = Quaternion.RotateTowards(
-            transform.localRotation,
+        transform.rotation = Quaternion.RotateTowards(
+            transform.rotation,
             targetRotation,
             rotationspeed*Time.deltaTime);
 

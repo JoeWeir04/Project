@@ -5,4 +5,5 @@ public interface IMicSocket
     bool isConnected { get; }
     string classification { get; }
     
+    
 }
