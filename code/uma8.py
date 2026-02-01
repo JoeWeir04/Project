@@ -4,7 +4,6 @@ import mediapipe as mp
 from mediapipe.tasks import python
 from mediapipe.tasks.python import audio
 from mediapipe.tasks.python.components import containers
-import threading
 import asyncio
 import json
 import sys
