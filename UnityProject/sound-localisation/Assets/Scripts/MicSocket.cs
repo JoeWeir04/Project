@@ -10,9 +10,12 @@ public class MicSocket : MonoBehaviour, IMicSocket
 
     public float angle { get; private set; }
     public int vad { get; private set; }
+    public float realDistance {get; private set; } = 1;
+    public float distanceProxy {get; private set; } = 1;
 
     public bool isConnected { get; private set; } = false;
     public string classification { get; private set; }
+    
 
     // Start is called before the first frame update
     void Start()

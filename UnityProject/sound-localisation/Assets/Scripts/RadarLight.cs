@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class RadarLight : MonoBehaviour
 {
@@ -9,6 +10,7 @@ public class RadarLight : MonoBehaviour
     public Image leftLight;
     public Image rightLight;
     public Camera mainCamera;
+    public TMP_Text logText;
     public GameObject arrow;
     [SerializeField] private MonoBehaviour micSocketBehaviour;
     public IMicSocket micSocket;
@@ -25,10 +27,17 @@ public class RadarLight : MonoBehaviour
         micSocket = micSocketBehaviour as IMicSocket;
     }
 
+    /*
     void OnEnable()
     {
         arrow.SetActive(false);
     }
+
+    void OnDisable()
+    {
+        arrow.SetActive(true);
+    }
+    */
 
     void Update()
     {
@@ -36,19 +45,24 @@ public class RadarLight : MonoBehaviour
 
         float cameraYaw = mainCamera.transform.eulerAngles.y;
         float angle = micSocket.angle;
+        float alpha = micSocket.distanceProxy;
 
         if(angle <= facingThreshold || angle >= (360f - facingThreshold))
         {
-            SetAlpha(leftLight, 0f);
-            SetAlpha(rightLight, 0f);
+            SetAlpha(leftLight, alpha);
+            SetAlpha(rightLight, alpha);
             return;
         }
         
+        if (logText)
+        {
+            logText.text = $"Angle: {angle}";
+        }
+
         bool showRight = angle < 180f;
         bool showLeft  = !showRight;
 
         bool soundReceived = micSocket.vad == 1;
-
         fade(soundReceived);
 
        
@@ -56,12 +70,12 @@ public class RadarLight : MonoBehaviour
 
         if (showRight)
         {
-            SetAlpha(rightLight, currentAlpha);
+            SetAlpha(rightLight, alpha);
             SetAlpha(leftLight,0f);
         }
         else
         {
-            SetAlpha(leftLight, currentAlpha);
+            SetAlpha(leftLight, alpha);
             SetAlpha(rightLight, 0f);
         }        
 

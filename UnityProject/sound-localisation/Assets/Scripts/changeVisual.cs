@@ -49,19 +49,10 @@ public class ChangeVisual : MonoBehaviour
             visuals[0].SetActive(true);
             visuals[1].SetActive(true);
         }
-        
-        else
-        {
-            if(index == 3)
-            {
-                visuals[0].SetActive(true);
-                visuals[2].SetActive(true);
-            }
-            else
             {
             visuals[index].SetActive(true);
             }  
-        }
+        
             
         visualizationText.text = $"Visulization {index} Selected";    
     }

@@ -15,6 +15,7 @@ public class CompassRotate : MonoBehaviour
     public float fadeSpeed = 3f;
     private Renderer[] renderers;
     private float currentAlpha = 0f;
+    public bool isVR = true;
 
     void Awake()
     {
@@ -27,18 +28,32 @@ public class CompassRotate : MonoBehaviour
     void Update()
     {
         if (!micSocket.isConnected) return;
-        float angle = micSocket.angle + mainCamera.transform.eulerAngles.y;
-        Quaternion targetRotation = Quaternion.Euler(0, angle, 0);
+        float angle;
+        if (isVR){
+            angle = micSocket.angle + mainCamera.transform.eulerAngles.y;
+            Quaternion targetRotation = Quaternion.Euler(0, angle, 0);
 
-        transform.rotation = Quaternion.RotateTowards(
+            transform.rotation = Quaternion.RotateTowards(
             transform.rotation,
             targetRotation,
             rotationspeed*Time.deltaTime);
+        } else
+        {
+            angle = micSocket.angle;
+            Quaternion targetRotation = Quaternion.Euler(0, angle, 0);
+
+            transform.localRotation = Quaternion.RotateTowards(
+            transform.localRotation,
+            targetRotation,
+            rotationspeed*Time.deltaTime);
+        }
+        
 
         if(angleText != null)
         {
             angleText.text = $"Angle: {angle:F1}°";
         }
+        SetAlpha(micSocket.distanceProxy);
         fade();
     }
     void fade()

@@ -41,6 +41,7 @@ public class SmoothRadarRotate : MonoBehaviour
             
             angleText.text = $"Mic Angle: {angle:F1}°\n" + $"Classification:{classification}\n";
         }
+        SetAlpha(micSocket.distanceProxy);
         fade();
     }
     void fade()

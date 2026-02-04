@@ -56,16 +56,27 @@ public class VRlogAngle : MonoBehaviour
         }
     }
 
+    void SetSpawnPointsInvisible(){
+        foreach (Transform spawn in spawnPoints)
+        {
+            MeshRenderer mr = spawn.GetComponent<MeshRenderer>();
+            if (mr != null)
+            {
+                mr.enabled = false;
+            }
+        }
+    }
 
     void Start()
     {
         filePath = Application.persistentDataPath + "/VR_log.csv";
         if (!File.Exists(filePath))
         {
-            File.WriteAllText(filePath, "Time,SpawnIndex,AudioIndex,AudioAngle,Error,ResponseTime,Visualisation\n");
+            File.WriteAllText(filePath, "Time,SpawnIndex,AudioIndex,AudioAngle,absError,DistanceFromSource,ResponseTime,Visualisation\n");
         }
         GenerateTrials();
         callNextSource();
+        SetSpawnPointsInvisible();
     }
 
     void Update()
@@ -99,7 +110,7 @@ public class VRlogAngle : MonoBehaviour
         currentTrialIndex = 0;
         trialActive = false;
         GenerateTrials();   
-        ExperimentText.text = "Experiment started";
+        ExperimentText.text = "Started";
         Debug.Log("Logging enabled");
         callNextSource();
     }
@@ -111,18 +122,20 @@ public class VRlogAngle : MonoBehaviour
         if(!isPractice)
         {
             float audioAngle = micSocket.angle; 
-            float error = Mathf.DeltaAngle(0f, audioAngle);
+            float signedError = Mathf.DeltaAngle(0f, audioAngle);
+            float absError = Mathf.Abs(signedError);
             float responseTime = Time.time - trialStartTime;
             AudioSource audioSource = micSocket.currentAudioSource;
             int visualisation = changeVisual.visualCounter+1;
+            float distance = micSocket.realDistance;
 
-            File.AppendAllText(filePath, $"{Time.time},{trials[currentTrialIndex].spawnIndex},{trials[currentTrialIndex].audioIndex},{audioAngle},{error},{responseTime},{visualisation}\n");
+            File.AppendAllText(filePath, $"{Time.time},{trials[currentTrialIndex].spawnIndex},{trials[currentTrialIndex].audioIndex},{audioAngle},{absError},{distance},{responseTime},{visualisation}\n");
 
             if (logText != null)
             {
                 logText.text = 
                 $"Audio angle: {audioAngle:F1}°\n" +
-                $"Error: {error:F1}°\n" +
+                $"Error: {absError:F1}°\n" +
                 $"RT: {responseTime:F2}s";
             }
         }
@@ -133,15 +146,15 @@ public class VRlogAngle : MonoBehaviour
     {
         if (currentTrialIndex >= trials.Count)
         {
-            ExperimentText.text = "Experiment complete";
+            ExperimentText.text = "Finished";
             return;
         }
         if (isPractice)
         {
-            ExperimentText.text = $"Trial: ({trials[currentTrialIndex].spawnIndex}, {trials[currentTrialIndex].audioIndex}) ";
+            ExperimentText.text = $"Practice";
         }
         else{
-            ExperimentText.text = $"Trial: {currentTrialIndex+1} / {trials.Count}  \n ({trials[currentTrialIndex].spawnIndex}, {trials[currentTrialIndex].audioIndex}) ";
+            ExperimentText.text = $"Trial: {currentTrialIndex+1} / {trials.Count}";
         }
         Trial t = trials[currentTrialIndex]; 
         trialStartTime = Time.time;

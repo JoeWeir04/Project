@@ -461,6 +461,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "changeScene",
+                    "type": "Button",
+                    "id": "4f0f6dc4-1bc0-426f-b789-93bb41fd9fa0",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -714,6 +723,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "StartExperiment",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "893a57eb-1366-40bc-b433-0f3e0202597f",
+                    "path": "<XRController>{LeftHand}/{SecondaryButton}",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "changeScene",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
@@ -1288,6 +1308,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "changeSceneRight",
+                    "type": "Button",
+                    "id": "39b8fc7e-9634-4c1d-b021-4dc833a112bd",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -1530,6 +1559,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "logangle",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "e4ab1671-542e-4e56-a0b9-8f87fa84b18f",
+                    "path": "<XRController>{RightHand}/{SecondaryButton}",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "changeSceneRight",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
