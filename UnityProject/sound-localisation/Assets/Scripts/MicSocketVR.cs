@@ -105,7 +105,7 @@ public class MicSocketVR : MonoBehaviour, IMicSocket
         float gain = Mathf.Clamp01(1f - (distance - minDist) / (maxDist - minDist));
         gain *= src.volume; 
 
-        return gain;
+        return gain/2;
     }
 
     float GetListenerLevel()

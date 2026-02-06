@@ -29,6 +29,7 @@ public class CompassRotate : MonoBehaviour
     {
         if (!micSocket.isConnected) return;
         float angle;
+        float distance = micSocket.distanceProxy; 
         if (isVR){
             angle = micSocket.angle + mainCamera.transform.eulerAngles.y;
             Quaternion targetRotation = Quaternion.Euler(0, angle, 0);
@@ -37,6 +38,14 @@ public class CompassRotate : MonoBehaviour
             transform.rotation,
             targetRotation,
             rotationspeed*Time.deltaTime);
+            distance = micSocket.distanceProxy;
+            Debug.Log($"This is the distance being set {distance}");
+            if(angleText != null)
+            {
+                angleText.text = $"Distance: {distance:F1}°";
+                
+            }
+            SetAlpha(distance);
         } else
         {
             angle = micSocket.angle;
@@ -49,11 +58,8 @@ public class CompassRotate : MonoBehaviour
         }
         
 
-        if(angleText != null)
-        {
-            angleText.text = $"Angle: {angle:F1}°";
-        }
-        SetAlpha(micSocket.distanceProxy);
+        
+        
         fade();
     }
     void fade()

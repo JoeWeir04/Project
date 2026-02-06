@@ -49,12 +49,16 @@ public class ChangeVisual : MonoBehaviour
             visuals[0].SetActive(true);
             visuals[1].SetActive(true);
         }
-            {
-            visuals[index].SetActive(true);
-            }  
-        
-            
-        visualizationText.text = $"Visulization {index} Selected";    
+        else
+        {
+        visuals[index].SetActive(true);
+        }
+
+        if (visualizationText != null)
+        {
+            visualizationText.text = $"Visulization {index} Selected"; 
+        }
+           
     }
 
     // Update is called once per frame
