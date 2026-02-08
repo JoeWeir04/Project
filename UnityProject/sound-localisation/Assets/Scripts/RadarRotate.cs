@@ -24,7 +24,8 @@ public class RadarRotate : MonoBehaviour
         micSocket = micSocketBehaviour as IMicSocket;
     }
 
-        void Update()
+
+    void Update()
     {
         if (!micSocket.isConnected) return;
         float angle = micSocket.angle;
@@ -38,10 +39,11 @@ public class RadarRotate : MonoBehaviour
         
             angleText.text = $"Bin Angle: {binAngle:F1}°\n" + $"Mic Angle: {angle:F1}°\n" + $"Classification:{classification}\n";
         }
-        fade();
+        Fade();
     }
 
-    void fade()
+
+    void Fade()
     {
         bool soundReceived = micSocket.vad ==1;
         if (soundReceived)
@@ -61,6 +63,7 @@ public class RadarRotate : MonoBehaviour
         }
         SetAlpha(currentAlpha);
     }
+
 
     void SetAlpha(float alpha)
     {

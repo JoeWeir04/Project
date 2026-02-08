@@ -16,6 +16,11 @@ public class MicSocketVR : MonoBehaviour, IMicSocket
     public float distanceProxy{get; private set; }
     public float realDistance {get; private set; }
 
+    [Header("Distance Settings")]
+    public float maxDistance = 10f; 
+    public float minDistance = 0.5f;
+
+
 
     [System.Serializable]
     public struct Trial
@@ -35,9 +40,9 @@ public class MicSocketVR : MonoBehaviour, IMicSocket
                 src.gameObject.SetActive(false);
             }
         }
-        
-
     }
+
+    
     void Update()
     {
 
@@ -51,32 +56,8 @@ public class MicSocketVR : MonoBehaviour, IMicSocket
         angle = GetAngleToUser(currentAudioSource);
         realDistance = GetRealDistanceToUser(currentAudioSource);
         distanceProxy = GetProxyDistanceToUser(currentAudioSource);
-
-        /*
-        AudioSource activeSource = GetActiveSource();
-        if(activeSource == null)
-        {
-            vad = 0;
-            return;
-        }
-        vad = 1;
-        angle = GetAngleToUser(activeSource);
-        */
     }
 
-    /*
-    AudioSource GetActiveSource()
-    {
-        foreach (var src in audioSources)
-        {
-            if (src != null && src.isPlaying)
-            {
-                return src;
-            }
-        }
-        return null;
-    }
-    */
 
     float GetAngleToUser(AudioSource src)
     {
@@ -87,6 +68,7 @@ public class MicSocketVR : MonoBehaviour, IMicSocket
         return angle;
     }
 
+
     float GetRealDistanceToUser(AudioSource src)
     {
         Vector3 toSource = currentAudioSource.transform.position - mainCamera.transform.position;
@@ -94,32 +76,14 @@ public class MicSocketVR : MonoBehaviour, IMicSocket
         return distance;
     }
 
+
     float GetProxyDistanceToUser(AudioSource src)
     {
-        Vector3 toSource = src.transform.position - mainCamera.transform.position;
-        float distance = toSource.magnitude;
-
-        float minDist = src.minDistance;
-        float maxDist = src.maxDistance;
-    
-        float gain = Mathf.Clamp01(1f - (distance - minDist) / (maxDist - minDist));
-        gain *= src.volume; 
-
-        return gain/2;
+        float distance = GetRealDistanceToUser(src);
+        float normalized = Mathf.InverseLerp(maxDistance, minDistance, distance);
+        return Mathf.Lerp(0.1f,1f,normalized);
     }
 
-    float GetListenerLevel()
-    {
-        float[] samples = new float[256]; // small buffer
-        AudioListener.GetOutputData(samples, 0); // left channel
-
-        float sum = 0f;
-        foreach (float s in samples)
-            sum += Mathf.Abs(s);
-
-        float rms = sum / samples.Length;
-        return rms; // 0..1 approximate loudness
-    }
 
     public void NextSource(int audioIndex)
         {
@@ -139,6 +103,4 @@ public class MicSocketVR : MonoBehaviour, IMicSocket
 
         Debug.Log($"Playing audio source {audioIndex}");
         }
-       
-
 }

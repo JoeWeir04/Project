@@ -17,7 +17,6 @@ public class MicSocket : MonoBehaviour, IMicSocket
     public string classification { get; private set; }
     
 
-    // Start is called before the first frame update
     void Start()
     {
     Debug.Log("Connecting to websocet");
@@ -35,7 +34,6 @@ public class MicSocket : MonoBehaviour, IMicSocket
         Debug.Log($"Websocket disconnected! Code: {e.Code}, Reason: {e.Reason}");
     };
 
-
      ws.OnMessage += (sender, e) => 
      {
         //Debug.Log("message received" + e.Data);
@@ -47,6 +45,7 @@ public class MicSocket : MonoBehaviour, IMicSocket
 
      ws.ConnectAsync();
     }
+
 
     void OnDestroy(){
         if (ws != null){

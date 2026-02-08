@@ -6,7 +6,6 @@ using TMPro;
 
 public class RadarLight : MonoBehaviour
 {
-    // Start is called before the first frame update
     public Image leftLight;
     public Image rightLight;
     public Camera mainCamera;
@@ -27,17 +26,17 @@ public class RadarLight : MonoBehaviour
         micSocket = micSocketBehaviour as IMicSocket;
     }
 
-    /*
+    
     void OnEnable()
     {
-        arrow.SetActive(false);
+        //arrow.SetActive(false);
     }
 
     void OnDisable()
     {
-        arrow.SetActive(true);
+        //arrow.SetActive(true);
     }
-    */
+    
 
     void Update()
     {
@@ -54,7 +53,7 @@ public class RadarLight : MonoBehaviour
             return;
         }
         
-        if (logText)
+        if (logText != null)
         {
             logText.text = $"Angle: {angle}";
         }
@@ -63,10 +62,7 @@ public class RadarLight : MonoBehaviour
         bool showLeft  = !showRight;
 
         bool soundReceived = micSocket.vad == 1;
-        fade(soundReceived);
-
-       
-
+        Fade(soundReceived);
 
         if (showRight)
         {
@@ -78,15 +74,14 @@ public class RadarLight : MonoBehaviour
             SetAlpha(leftLight, alpha);
             SetAlpha(rightLight, 0f);
         }        
-
-        
     }
 
-    void fade(bool soundReceived)
+
+    void Fade(bool soundReceived)
     {
         if (soundReceived)
         {
-            currentAlpha = 1f;
+            currentAlpha = micSocket.distanceProxy;
             currentTimer = visibleDuration;
         }
         else
@@ -104,10 +99,12 @@ public class RadarLight : MonoBehaviour
     }
 
 
-        void SetAlpha(Image image,float alpha)
+void SetAlpha(Image image,float alpha)
     {
-        Color c = image.color;
-        c.a = alpha;
-        image.color = c;
+        {
+            Color c = image.color;
+            c.a = alpha;
+            image.color = c;
+        }
     }
 }

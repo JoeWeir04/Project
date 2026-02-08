@@ -17,6 +17,7 @@ public class CompassRotate : MonoBehaviour
     private float currentAlpha = 0f;
     public bool isVR = true;
 
+
     void Awake()
     {
         renderers = GetComponentsInChildren<Renderer>();
@@ -24,6 +25,7 @@ public class CompassRotate : MonoBehaviour
 
         micSocket = micSocketBehaviour as IMicSocket;
     }
+
 
     void Update()
     {
@@ -55,19 +57,17 @@ public class CompassRotate : MonoBehaviour
             transform.localRotation,
             targetRotation,
             rotationspeed*Time.deltaTime);
-        }
-        
-
-        
-        
-        fade();
+        }   
+        Fade(distance);
     }
-    void fade()
+
+
+    void Fade(float distance)
     {
         bool soundReceived = micSocket.vad ==1;
         if (soundReceived)
         {
-            currentAlpha = 1f;
+            currentAlpha = distance;
             currentTimer = visibleDuration;
         }
         else
@@ -82,6 +82,7 @@ public class CompassRotate : MonoBehaviour
         }
         SetAlpha(currentAlpha);
     }
+    
 
     void SetAlpha(float alpha)
     {

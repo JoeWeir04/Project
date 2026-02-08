@@ -16,11 +16,13 @@ public class ChangeScene : MonoBehaviour
     private bool loading = false;
     public TMP_Text logtext;
 
+
     void OnEnable()
     {
         buttonA.action.Enable();
         buttonB.action.Enable();
     }
+
 
     void OnDisable()
     {
@@ -28,7 +30,7 @@ public class ChangeScene : MonoBehaviour
         buttonB.action.Disable();
     }
 
-    // Update is called once per frame
+
     void Update()
     {
         bool aPressed = buttonA.action.IsPressed();

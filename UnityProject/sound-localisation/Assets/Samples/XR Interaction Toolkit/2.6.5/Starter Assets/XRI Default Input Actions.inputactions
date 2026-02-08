@@ -1317,6 +1317,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "pidSelect",
+                    "type": "Button",
+                    "id": "2cc19a2e-500b-470d-974f-71d5fe841b97",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -1570,6 +1579,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "changeSceneRight",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "cfe53c57-7a88-4ab7-866b-f62aaf2f3682",
+                    "path": "<XRController>{RightHand}/{SecondaryButton}",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "pidSelect",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

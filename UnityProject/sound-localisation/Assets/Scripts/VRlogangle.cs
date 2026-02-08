@@ -22,6 +22,11 @@ public class VRlogAngle : MonoBehaviour
     [SerializeField] private bool isPractice = true;
     private List<Trial> trials = new List<Trial>();
     private int currentTrialIndex = 0;
+    public int currentPid = 0;
+    public string pidFileName = "last_pid.txt";
+    private string pidFilePath;
+
+    public TMP_Text pidText;
 
     [System.Serializable]
     public struct Trial
@@ -29,6 +34,7 @@ public class VRlogAngle : MonoBehaviour
     public int spawnIndex;
     public int audioIndex;
 }
+
 
     void GenerateTrials()
     {
@@ -47,6 +53,7 @@ public class VRlogAngle : MonoBehaviour
         Shuffle(trials);
     }
 
+
     void Shuffle<T>(List<T> list)
     {
         for (int i = list.Count - 1; i > 0; i--)
@@ -55,6 +62,7 @@ public class VRlogAngle : MonoBehaviour
             (list[i], list[j]) = (list[j], list[i]);
         }
     }
+
 
     void SetSpawnPointsInvisible(){
         foreach (Transform spawn in spawnPoints)
@@ -67,33 +75,81 @@ public class VRlogAngle : MonoBehaviour
         }
     }
 
+
     void Start()
     {
         filePath = Application.persistentDataPath + "/VR_log.csv";
         if (!File.Exists(filePath))
         {
-            File.WriteAllText(filePath, "Time,SpawnIndex,AudioIndex,AudioAngle,absError,DistanceFromSource,ResponseTime,Visualisation\n");
+            File.WriteAllText(filePath, "PID,Time,SpawnIndex,AudioIndex,AudioAngle,absError,DistanceFromSource,ResponseTime,Visualisation\n");
         }
         GenerateTrials();
-        callNextSource();
+        CallNextSource();
         SetSpawnPointsInvisible();
     }
 
+
     void Update()
-{
+    {
     if (!trialActive && micSocket.vad == 1)
         {
             trialStartTime = Time.time;
             trialActive = true;
         }
     }
+
+
     private void Awake()
     {
         aButton.action.Enable();
         aButton.action.performed += OnButtonPress;
         startExperimentButton.action.Enable();
         startExperimentButton.action.performed += StartExperiment;
+        pidFilePath = Path.Combine(Application.persistentDataPath, pidFileName);
+        currentPid = GetPid();
+        if (pidText != null)
+        {
+            pidText.text = $"PID: {currentPid}";
+        }
+        
     }
+
+
+    private int GetPid()
+    {
+        if (File.Exists(pidFilePath))
+        {
+            try
+            {
+                string content = File.ReadAllText(pidFilePath).Trim();
+                int pid = int.Parse(content);
+                return pid; 
+            }
+            catch(System.Exception e)
+            {
+                Debug.LogError($"Failed to read PID file: {e.Message}, will start from 0");
+                return 0;
+            }
+        }
+        else
+        {
+            return 0;
+        }
+    }
+
+
+    private void WritePid(int pid)
+    {
+        try
+        {
+            File.WriteAllText(pidFilePath,pid.ToString());
+            Debug.Log($"Saved PID {pid} to file");
+        }
+        catch(System.Exception e){
+            Debug.Log($"Failed to save PID to file: {e.Message}");
+        }
+    }
+
 
     private void OnDestroy()
     {
@@ -103,17 +159,24 @@ public class VRlogAngle : MonoBehaviour
         startExperimentButton.action.Disable();
     }
 
+
     private void StartExperiment(InputAction.CallbackContext ctx)
     {
+        currentPid += 1;
+        WritePid(currentPid);
+        if (pidText != null)
+        {
+            pidText.text = $"PID: {currentPid}";
+        }
         isPractice = false;
-
         currentTrialIndex = 0;
         trialActive = false;
         GenerateTrials();   
         ExperimentText.text = "Started";
         Debug.Log("Logging enabled");
-        callNextSource();
+        CallNextSource();
     }
+
 
     public void OnButtonPress(InputAction.CallbackContext context)
     {
@@ -129,7 +192,7 @@ public class VRlogAngle : MonoBehaviour
             int visualisation = changeVisual.visualCounter+1;
             float distance = micSocket.realDistance;
 
-            File.AppendAllText(filePath, $"{Time.time},{trials[currentTrialIndex].spawnIndex},{trials[currentTrialIndex].audioIndex},{audioAngle},{absError},{distance},{responseTime},{visualisation}\n");
+            File.AppendAllText(filePath, $"{currentPid},{Time.time},{trials[currentTrialIndex].spawnIndex},{trials[currentTrialIndex ].audioIndex},{audioAngle},{absError},{distance},{responseTime},{visualisation}\n");
 
             if (logText != null)
             {
@@ -139,10 +202,11 @@ public class VRlogAngle : MonoBehaviour
                 $"RT: {responseTime:F2}s";
             }
         }
-        callNextSource();
+        CallNextSource();
     }
 
-    public void callNextSource()
+
+    public void CallNextSource()
     {
         if (currentTrialIndex >= trials.Count)
         {
