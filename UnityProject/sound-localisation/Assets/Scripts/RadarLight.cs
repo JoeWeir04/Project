@@ -44,7 +44,7 @@ public class RadarLight : MonoBehaviour
 
         float cameraYaw = mainCamera.transform.eulerAngles.y;
         float angle = micSocket.angle;
-        float alpha = micSocket.distanceProxy;
+        float alpha = Mathf.Clamp(micSocket.distanceProxy, 0.2f, 1f);
 
         if(angle <= facingThreshold || angle >= (360f - facingThreshold))
         {
@@ -81,7 +81,7 @@ public class RadarLight : MonoBehaviour
     {
         if (soundReceived)
         {
-            currentAlpha = micSocket.distanceProxy;
+            currentAlpha = Mathf.Clamp(micSocket.distanceProxy, 0.2f, 1f);
             currentTimer = visibleDuration;
         }
         else

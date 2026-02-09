@@ -27,13 +27,21 @@ public class VRlogAngle : MonoBehaviour
     private string pidFilePath;
 
     public TMP_Text pidText;
+    public TMP_Text errorText;
+    public float pathLogInterval = 0.5f;
+    private float nextPathLogTime = 0f;
+    private string pathFilePath;
+    
+
+
 
     [System.Serializable]
     public struct Trial
-{
-    public int spawnIndex;
-    public int audioIndex;
-}
+    {
+        public int spawnIndex;
+        public int audioIndex;
+        
+    }
 
 
     void GenerateTrials()
@@ -78,10 +86,18 @@ public class VRlogAngle : MonoBehaviour
 
     void Start()
     {
+        nextPathLogTime = Time.time + pathLogInterval;
         filePath = Application.persistentDataPath + "/VR_log.csv";
         if (!File.Exists(filePath))
         {
-            File.WriteAllText(filePath, "PID,Time,SpawnIndex,AudioIndex,AudioAngle,absError,DistanceFromSource,ResponseTime,Visualisation\n");
+            File.WriteAllText(filePath, "PID,Time,TrialIndex,SpawnIndex,AudioIndex,AudioAngle,absError,DistanceFromSource,ResponseTime,Visualisation\n");
+        }
+
+        pathFilePath = Application.persistentDataPath + "/VR_paths.csv";
+        if (!File.Exists(pathFilePath))
+        {
+            File.WriteAllText(pathFilePath, "PID,Time,TrialIndex,Visualisation,PosX,PosY,PosZ,RotY\n"
+            );
         }
         GenerateTrials();
         CallNextSource();
@@ -91,10 +107,10 @@ public class VRlogAngle : MonoBehaviour
 
     void Update()
     {
-    if (!trialActive && micSocket.vad == 1)
+        if(!isPractice && trialActive &&Time.time >= nextPathLogTime)
         {
-            trialStartTime = Time.time;
-            trialActive = true;
+            LogPathSample();
+            nextPathLogTime = Time.time + pathLogInterval; 
         }
     }
 
@@ -162,6 +178,7 @@ public class VRlogAngle : MonoBehaviour
 
     private void StartExperiment(InputAction.CallbackContext ctx)
     {
+        nextPathLogTime = Time.time + pathLogInterval;
         currentPid += 1;
         WritePid(currentPid);
         if (pidText != null)
@@ -170,7 +187,7 @@ public class VRlogAngle : MonoBehaviour
         }
         isPractice = false;
         currentTrialIndex = 0;
-        trialActive = false;
+        trialActive = true;
         GenerateTrials();   
         ExperimentText.text = "Started";
         Debug.Log("Logging enabled");
@@ -191,9 +208,18 @@ public class VRlogAngle : MonoBehaviour
             AudioSource audioSource = micSocket.currentAudioSource;
             int visualisation = changeVisual.visualCounter+1;
             float distance = micSocket.realDistance;
-
-            File.AppendAllText(filePath, $"{currentPid},{Time.time},{trials[currentTrialIndex].spawnIndex},{trials[currentTrialIndex ].audioIndex},{audioAngle},{absError},{distance},{responseTime},{visualisation}\n");
-
+            try
+            {
+                File.AppendAllText(filePath, $"{currentPid},{Time.time},{currentTrialIndex-1},{trials[currentTrialIndex-1].spawnIndex},{trials[currentTrialIndex-1].audioIndex},{audioAngle},{absError},{distance},{responseTime},{visualisation}\n");
+            }
+            catch(System.Exception)
+            {
+                if(errorText != null)
+                {
+                    errorText.text=$"Error: Cant write to log file. Restart application.";
+                    trialActive = false;
+                }
+            }
             if (logText != null)
             {
                 logText.text = 
@@ -206,11 +232,37 @@ public class VRlogAngle : MonoBehaviour
     }
 
 
+    private void LogPathSample()
+    {
+        try
+        {
+            Vector3 pos = playerRig.Camera.transform.position;
+            float rotY = playerRig.Camera.transform.eulerAngles.y;
+
+            int trialIndexForLog = currentTrialIndex - 1;
+            int visualisation = changeVisual.visualCounter + 1;
+
+            string line =
+                $"{currentPid},{Time.time},{trialIndexForLog},{visualisation},{pos.x},{pos.y},{pos.z},{rotY}\n";
+            File.AppendAllText(pathFilePath, line);
+        }
+        catch (System.Exception)
+        {
+            if (errorText != null)
+            {
+                errorText.text = "Error: Cant write to path log file. Restart application.";
+                trialActive = false;
+            }
+        }
+    }
+
     public void CallNextSource()
     {
+        nextPathLogTime = Time.time + pathLogInterval;
         if (currentTrialIndex >= trials.Count)
         {
             ExperimentText.text = "Finished";
+            trialActive = false;
             return;
         }
         if (isPractice)
@@ -227,7 +279,7 @@ public class VRlogAngle : MonoBehaviour
             spawnPoints[t.spawnIndex].rotation
         );
         micSocket.NextSource(t.audioIndex);
-        trialActive = false;
+        trialActive = true;
         currentTrialIndex++;
     }
 
