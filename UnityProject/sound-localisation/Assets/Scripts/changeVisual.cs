@@ -11,10 +11,12 @@ public class ChangeVisual : MonoBehaviour
     public TMP_Text visualizationText;
     public  List<GameObject> visuals;
     public int visualCounter = 0;
+    public bool allowChange = true;
 
 
     private void Awake()
     {
+        allowChange = true;
         leftPrimaryButton.action.Enable();
         leftPrimaryButton.action.performed += OnButtonPress;
         SetVisual(visualCounter);
@@ -30,6 +32,10 @@ public class ChangeVisual : MonoBehaviour
 
     public void OnButtonPress(InputAction.CallbackContext context)
     {
+        if (!allowChange)
+        {
+            return;
+        }
         visualCounter ++;
         if(visualCounter > 5)
         {
@@ -37,6 +43,8 @@ public class ChangeVisual : MonoBehaviour
         }
         SetVisual(visualCounter);
     }
+
+
 
 
     private void SetVisual(int index)

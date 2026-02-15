@@ -10,6 +10,7 @@ public class MicSocketVR : MonoBehaviour, IMicSocket
     public List<AudioSource> audioSources;
     public AudioSource currentAudioSource;
     public float angle{ get; private set; }
+    public float realAngle {get; private set;}
     public int vad{ get; private set; }
     public string classification { get; private set; } = "NA";
     public bool isConnected { get; private set; } = true;
@@ -19,6 +20,12 @@ public class MicSocketVR : MonoBehaviour, IMicSocket
     [Header("Distance Settings")]
     public float maxDistance = 10f; 
     public float minDistance = 0.5f;
+    [Header("Noise Settings")]
+    public float angleNoiseDeg = 5f;     
+    public float distanceNoise = 0.03f; 
+    float smoothing = 0.8f; 
+    public float angleUpdateInterval = 0.05f; 
+    private float nextAngleUpdateTime = 0f;
 
 
 
@@ -53,9 +60,17 @@ public class MicSocketVR : MonoBehaviour, IMicSocket
         }
 
         vad = 1;
-        angle = GetAngleToUser(currentAudioSource);
+        realAngle = GetAngleToUser(currentAudioSource);
+        angle = GetNoisyAngleToUser();
         realDistance = GetRealDistanceToUser(currentAudioSource);
         distanceProxy = GetProxyDistanceToUser(currentAudioSource);
+
+        if (Time.time >= nextAngleUpdateTime)
+        {
+            float noisyAngle = GetNoisyAngleToUser();
+            angle = Mathf.Lerp(angle, noisyAngle, smoothing);
+            nextAngleUpdateTime = Time.time + angleUpdateInterval;
+        }
     }
 
 
@@ -66,6 +81,14 @@ public class MicSocketVR : MonoBehaviour, IMicSocket
         if (angle < 0) angle += 360f;
 
         return angle;
+    }
+
+    float GetNoisyAngleToUser()
+    {
+        float noisy = realAngle + Random.Range(-angleNoiseDeg, angleNoiseDeg);
+        noisy %= 360f;            // ensures <360
+        if (noisy < 0f) noisy += 360f;
+        return noisy;
     }
 
 
@@ -81,7 +104,15 @@ public class MicSocketVR : MonoBehaviour, IMicSocket
     {
         float distance = GetRealDistanceToUser(src);
         float normalized = Mathf.InverseLerp(maxDistance, minDistance, distance);
-        return Mathf.Lerp(0.1f,1f,normalized);
+        normalized += Random.Range(-distanceNoise, distanceNoise);
+
+        if (normalized < 0.4f)
+        return 0.2f;   
+        else if (normalized < 0.7f)
+            return 0.5f;   
+        else
+            return 1f; 
+        //return Mathf.Lerp(0.1f,1f,normalized);
     }
 
 

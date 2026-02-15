@@ -31,7 +31,14 @@ public class VRlogAngle : MonoBehaviour
     public float pathLogInterval = 0.5f;
     private float nextPathLogTime = 0f;
     private string pathFilePath;
-    
+    private bool onBreak;
+
+
+    public AudioSource feedbackAudioSource;
+    public AudioClip experimentStart;
+    public AudioClip experimentFinish;     
+    public AudioClip conditionBegun;
+    public AudioClip conditionComplete;
 
 
 
@@ -125,7 +132,7 @@ public class VRlogAngle : MonoBehaviour
         currentPid = GetPid();
         if (pidText != null)
         {
-            pidText.text = $"PID: {currentPid}";
+            pidText.text = $"PID: {currentPid+1}";
         }
         
     }
@@ -178,6 +185,8 @@ public class VRlogAngle : MonoBehaviour
 
     private void StartExperiment(InputAction.CallbackContext ctx)
     {
+        PlayClip(experimentStart);
+        changeVisual.allowChange = false;
         nextPathLogTime = Time.time + pathLogInterval;
         currentPid += 1;
         WritePid(currentPid);
@@ -192,16 +201,28 @@ public class VRlogAngle : MonoBehaviour
         ExperimentText.text = "Started";
         Debug.Log("Logging enabled");
         CallNextSource();
+        startExperimentButton.action.performed -= StartExperiment;
+        startExperimentButton.action.performed += NextCondition;
     }
+
+    private void NextCondition(InputAction.CallbackContext ctx)
+    {
+        changeVisual.allowChange = false;
+        trialActive = true;
+        PlayClip(conditionBegun);
+    }
+        
 
 
     public void OnButtonPress(InputAction.CallbackContext context)
     {
         if (!trialActive)
-            return;
-        if(!isPractice)
         {
-            float audioAngle = micSocket.angle; 
+           return; 
+        }   
+        if(!isPractice && !onBreak)
+        {
+            float audioAngle = micSocket.realAngle; 
             float signedError = Mathf.DeltaAngle(0f, audioAngle);
             float absError = Mathf.Abs(signedError);
             float responseTime = Time.time - trialStartTime;
@@ -261,10 +282,23 @@ public class VRlogAngle : MonoBehaviour
         nextPathLogTime = Time.time + pathLogInterval;
         if (currentTrialIndex >= trials.Count)
         {
+            PlayClip(experimentFinish);
             ExperimentText.text = "Finished";
             trialActive = false;
             return;
         }
+        if (currentTrialIndex % 10 == 0 && currentTrialIndex > 0 && onBreak==false)
+        {
+            PlayClip(conditionComplete);
+            ExperimentText.text = "Break";
+            changeVisual.allowChange = true;
+            onBreak = true;
+            trialActive = false;
+            return;
+        }
+        onBreak = false;
+        trialActive = true;
+        
         if (isPractice)
         {
             ExperimentText.text = $"Practice";
@@ -279,8 +313,15 @@ public class VRlogAngle : MonoBehaviour
             spawnPoints[t.spawnIndex].rotation
         );
         micSocket.NextSource(t.audioIndex);
-        trialActive = true;
         currentTrialIndex++;
+    }
+
+    void PlayClip(AudioClip clip)
+    {
+        if (feedbackAudioSource != null && clip != null)
+        {
+            feedbackAudioSource.PlayOneShot(clip);
+        }
     }
 
 }
