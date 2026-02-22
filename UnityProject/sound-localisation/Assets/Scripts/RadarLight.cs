@@ -24,11 +24,11 @@ public class RadarLight : MonoBehaviour
     public float facingThreshold = 30f;
     void Awake()
     {
+        micSocket = micSocketBehaviour as IMicSocket;
         leftBaseScale = leftLight.rectTransform.localScale;
         rightBaseScale = rightLight.rectTransform.localScale;
         SetAlpha(leftLight,0f);
         SetAlpha(rightLight,0f);
-        micSocket = micSocketBehaviour as IMicSocket;
     }
 
     
@@ -47,6 +47,7 @@ public class RadarLight : MonoBehaviour
     {
          if (!micSocket.isConnected) return;
 
+        bool soundReceived = micSocket.vad == 1;
         float distance = micSocket.distanceProxy;
         float cameraYaw = mainCamera.transform.eulerAngles.y;
         float angle = micSocket.angle;
@@ -60,23 +61,24 @@ public class RadarLight : MonoBehaviour
         rightScale.y *= distanceScale;
         rightLight.rectTransform.localScale = rightScale;
 
-
+        if (logText != null)
+            {
+                logText.text = $"Angle: {angle} \n Facing threshold: {facingThreshold} \n bool: {angle <= facingThreshold || angle >= (360f - facingThreshold)}";
+            }
         if(angle <= facingThreshold || angle >= (360f - facingThreshold))
         {
-            SetAlpha(leftLight, 1f);
-            SetAlpha(rightLight, 1f);
+            SetAlpha(leftLight, 1f * currentAlpha);
+            SetAlpha(rightLight, 1f * currentAlpha);
+            Fade(soundReceived);
             return;
         }
         
-        if (logText != null)
-        {
-            logText.text = $"Angle: {angle}";
-        }
+        
 
         bool showRight = angle < 180f;
         bool showLeft  = !showRight;
 
-        bool soundReceived = micSocket.vad == 1;
+        
         Fade(soundReceived);
 
         float degreesFromCentre = Mathf.Abs(Mathf.DeltaAngle(angle, 0f));
@@ -84,12 +86,12 @@ public class RadarLight : MonoBehaviour
 
         if (showRight)
         {
-            SetAlpha(rightLight, distanceFromCenter);
+            SetAlpha(rightLight, distanceFromCenter * currentAlpha);
             SetAlpha(leftLight, 0f);
         }
         else
         {
-            SetAlpha(leftLight, distanceFromCenter);
+            SetAlpha(leftLight, distanceFromCenter * currentAlpha);
             SetAlpha(rightLight, 0f);
         }        
     }
@@ -99,7 +101,8 @@ public class RadarLight : MonoBehaviour
     {
         if (soundReceived)
         {
-            currentAlpha = distanceFromCenter;
+            
+            currentAlpha = 1f;
             currentTimer = visibleDuration;
         }
         else
