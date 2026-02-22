@@ -23,6 +23,9 @@ from mediapipe.tasks.python.components import containers
 import mediapipe as mp
 import time
 from collections import defaultdict, deque
+import statistics
+import csv
+import sys
 
 # ------------------- USER PARAMETERS -------------------
 SAVE_BEAMFORMED = True
@@ -53,6 +56,7 @@ audio_q = queue.Queue(maxsize=40)
 
 latest_sources = []
 latest_classification = "Waiting"
+angles = []
 
 
 def normalize_angle_deg(a):
@@ -156,6 +160,20 @@ def start_classification():
     t = threading.Thread(target=start_classifier_thread, daemon=True)
     t.start()
 
+def save_angles_to_csv(angles, std_dev=None, angle_range=None):
+    with open("angles.csv", "w", newline="") as f:
+        writer = csv.writer(f)
+        writer.writerow(["sample", "timestamp", "angle"])
+        for i, (ts,angle) in enumerate(angles):
+            writer.writerow([i, ts, angle])
+
+        if std_dev is not None:
+            writer.writerow([])
+            writer.writerow(["STATISTICS"])
+            writer.writerow(["samples", len(angles)])
+            writer.writerow(["std_dev", f"{std_dev:.4f}"])
+            writer.writerow(["range", f"{angle_range:.4f}"])
+
 
 def stft_frame(block_frame):
     windowed = block_frame * win[np.newaxis, :]
@@ -234,6 +252,7 @@ def processing_thread():
             if len(angles_deg) > 0:
                 for a, s in zip(angles_deg, strengths):
                     a_norm = normalize_angle_deg(float(a) + ANGLE_OFFSET)
+                    angles.append((time.time(), a_norm))
                     #try:
                     # compute steering delays for this azimuth
                     theta = np.deg2rad(a)
@@ -291,7 +310,20 @@ def main():
         t = threading.Thread(target=processing_thread, daemon=True)
         t.start()
         #start_classification()
-        asyncio.run(ws_server())
+        try:
+            asyncio.run(ws_server())
+        except KeyboardInterrupt:
+            print("\n--- Exiting Program ---")
+            if len(angles) > 1:
+                angle_values = [angle for (_, angle) in angles]
+                std_dev = statistics.stdev(angle_values)
+                angle_range = max(angle_values) - min(angle_values)
+                print(f"Samples collected: {len(angles)} \nStd: {std_dev:.2f} \nAngles range: {angle_range:.2f}")
+                save_angles_to_csv(angles, std_dev, angle_range)
+            else:
+                print("Not enough samples to save.")
+            sys.exit()
+
 
 
 if __name__ == "__main__":
