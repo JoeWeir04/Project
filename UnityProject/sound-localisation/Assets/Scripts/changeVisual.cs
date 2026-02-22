@@ -6,69 +6,77 @@ using TMPro;
 
 public class ChangeVisual : MonoBehaviour
 {
-    // Start is called before the first frame update
 
     public InputActionReference leftPrimaryButton;
     public TMP_Text visualizationText;
     public  List<GameObject> visuals;
     public int visualCounter = 0;
-
-    
+    public bool allowChange = true;
 
 
     private void Awake()
     {
+        allowChange = true;
         leftPrimaryButton.action.Enable();
         leftPrimaryButton.action.performed += OnButtonPress;
         SetVisual(visualCounter);
     }
+
+
     private void OnDestroy()
     {
         leftPrimaryButton.action.performed -= OnButtonPress;
         leftPrimaryButton.action.Disable();
     }
 
+
     public void OnButtonPress(InputAction.CallbackContext context)
     {
+        if (!allowChange)
+        {
+            return;
+        }
         visualCounter ++;
-        if(visualCounter > 3)
+        if(visualCounter > 5)
         {
             visualCounter = 0;
         }
-            SetVisual(visualCounter);
+        SetVisual(visualCounter);
     }
+
+
+
 
     private void SetVisual(int index)
     {
         foreach (var v in visuals)
         {
-        v.SetActive(false);
+            v.SetActive(false);
         }
-        if (index == 2)
+        if(index < 3)
+        {
+
+            visuals[index].SetActive(true);
+        }
+        else if (index == 3)
         {
             visuals[0].SetActive(true);
             visuals[1].SetActive(true);
         }
-        
-        else
+        else if (index == 4)
         {
-            if(index == 3)
-            {
-                visuals[0].SetActive(true);
-                visuals[2].SetActive(true);
-            }
-            else
-            {
-            visuals[index].SetActive(true);
-            }  
+            visuals[0].SetActive(true);
+            visuals[2].SetActive(true);
         }
-            
-        visualizationText.text = $"Visulization {index} Selected";    
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        else if (index == 5)
+        {
+            visuals[1].SetActive(true);
+            visuals[2].SetActive(true);
+        }
+        if (visualizationText != null)
+        {
+            visualizationText.text = $"Visulization {index} Selected"; 
+        }
+           
     }
 }

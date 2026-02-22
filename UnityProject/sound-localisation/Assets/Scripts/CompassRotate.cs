@@ -15,6 +15,8 @@ public class CompassRotate : MonoBehaviour
     public float fadeSpeed = 3f;
     private Renderer[] renderers;
     private float currentAlpha = 0f;
+    public bool isVR = true;
+
 
     void Awake()
     {
@@ -24,29 +26,48 @@ public class CompassRotate : MonoBehaviour
         micSocket = micSocketBehaviour as IMicSocket;
     }
 
+
     void Update()
     {
         if (!micSocket.isConnected) return;
-        float angle = micSocket.angle + mainCamera.transform.eulerAngles.y;
-        Quaternion targetRotation = Quaternion.Euler(0, angle, 0);
+        float angle;
+        float distance = micSocket.distanceProxy; 
+        if (isVR){
+            angle = micSocket.angle + mainCamera.transform.eulerAngles.y;
+            Quaternion targetRotation = Quaternion.Euler(0, angle, 0);
 
-        transform.rotation = Quaternion.RotateTowards(
+            transform.rotation = Quaternion.RotateTowards(
             transform.rotation,
             targetRotation,
             rotationspeed*Time.deltaTime);
-
-        if(angleText != null)
+            distance = micSocket.distanceProxy;
+            Debug.Log($"This is the distance being set {distance}");
+            if(angleText != null)
+            {
+                angleText.text = $"Distance: {distance:F1}°";
+                
+            }
+            SetAlpha(distance);
+        } else
         {
-            angleText.text = $"Angle: {angle:F1}°";
-        }
-        fade();
+            angle = micSocket.angle;
+            Quaternion targetRotation = Quaternion.Euler(0, angle, 0);
+
+            transform.localRotation = Quaternion.RotateTowards(
+            transform.localRotation,
+            targetRotation,
+            rotationspeed*Time.deltaTime);
+        }   
+        Fade(distance);
     }
-    void fade()
+
+
+    void Fade(float distance)
     {
         bool soundReceived = micSocket.vad ==1;
         if (soundReceived)
         {
-            currentAlpha = 1f;
+            currentAlpha = distance;
             currentTimer = visibleDuration;
         }
         else
@@ -61,6 +82,7 @@ public class CompassRotate : MonoBehaviour
         }
         SetAlpha(currentAlpha);
     }
+    
 
     void SetAlpha(float alpha)
     {

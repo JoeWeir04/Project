@@ -19,6 +19,7 @@ public class SmoothRadarRotate : MonoBehaviour
     public Color normalColor = Color.green;
     public Color warningColor = Color.red;
 
+
     void Awake()
     {
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
@@ -27,28 +28,30 @@ public class SmoothRadarRotate : MonoBehaviour
         micSocket = micSocketBehaviour as IMicSocket;
     }
 
-    // Update is called once per frame
+
     void Update()
     {
         if (!micSocket.isConnected) return;
         float angle = micSocket.angle;
-
+        
         transform.localRotation = Quaternion.Euler(0,0,angle-15f);
         string classification = micSocket.classification;
         isWarning = warningRegex.IsMatch(classification);
         
         if(angleText != null){
-            
-            angleText.text = $"Mic Angle: {angle:F1}°\n" + $"Classification:{classification}\n";
+            angleText.text = $"Mic Angle: {angle:F1}°\n";
         }
-        fade();
+        SetAlpha(micSocket.distanceProxy);
+        Fade();
     }
-    void fade()
+
+
+    void Fade()
     {
         bool soundReceived = micSocket.vad ==1;
         if (soundReceived)
         {
-            currentAlpha = 1f;
+            currentAlpha = micSocket.distanceProxy;
             currentTimer = visibleDuration;
         }
         else
@@ -63,6 +66,7 @@ public class SmoothRadarRotate : MonoBehaviour
         }
         SetAlpha(currentAlpha);
     }
+
 
     void SetAlpha(float alpha)
     {

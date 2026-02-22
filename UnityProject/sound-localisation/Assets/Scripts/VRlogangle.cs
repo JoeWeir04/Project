@@ -22,13 +22,34 @@ public class VRlogAngle : MonoBehaviour
     [SerializeField] private bool isPractice = true;
     private List<Trial> trials = new List<Trial>();
     private int currentTrialIndex = 0;
+    public int currentPid = 0;
+    public string pidFileName = "last_pid.txt";
+    private string pidFilePath;
+
+    public TMP_Text pidText;
+    public TMP_Text errorText;
+    public float pathLogInterval = 0.5f;
+    private float nextPathLogTime = 0f;
+    private string pathFilePath;
+    private bool onBreak;
+
+
+    public AudioSource feedbackAudioSource;
+    public AudioClip experimentStart;
+    public AudioClip experimentFinish;     
+    public AudioClip conditionBegun;
+    public AudioClip conditionComplete;
+
+
 
     [System.Serializable]
     public struct Trial
-{
-    public int spawnIndex;
-    public int audioIndex;
-}
+    {
+        public int spawnIndex;
+        public int audioIndex;
+        
+    }
+
 
     void GenerateTrials()
     {
@@ -47,6 +68,7 @@ public class VRlogAngle : MonoBehaviour
         Shuffle(trials);
     }
 
+
     void Shuffle<T>(List<T> list)
     {
         for (int i = list.Count - 1; i > 0; i--)
@@ -57,32 +79,100 @@ public class VRlogAngle : MonoBehaviour
     }
 
 
+    void SetSpawnPointsInvisible(){
+        foreach (Transform spawn in spawnPoints)
+        {
+            MeshRenderer mr = spawn.GetComponent<MeshRenderer>();
+            if (mr != null)
+            {
+                mr.enabled = false;
+            }
+        }
+    }
+
+
     void Start()
     {
+        nextPathLogTime = Time.time + pathLogInterval;
         filePath = Application.persistentDataPath + "/VR_log.csv";
         if (!File.Exists(filePath))
         {
-            File.WriteAllText(filePath, "Time,SpawnIndex,AudioIndex,AudioAngle,Error,ResponseTime,Visualisation\n");
+            File.WriteAllText(filePath, "PID,Time,TrialIndex,SpawnIndex,AudioIndex,AudioAngle,absError,DistanceFromSource,ResponseTime,Visualisation\n");
+        }
+
+        pathFilePath = Application.persistentDataPath + "/VR_paths.csv";
+        if (!File.Exists(pathFilePath))
+        {
+            File.WriteAllText(pathFilePath, "PID,Time,TrialIndex,Visualisation,PosX,PosY,PosZ,RotY\n"
+            );
         }
         GenerateTrials();
-        callNextSource();
+        CallNextSource();
+        SetSpawnPointsInvisible();
     }
 
+
     void Update()
-{
-    if (!trialActive && micSocket.vad == 1)
+    {
+        if(!isPractice && trialActive &&Time.time >= nextPathLogTime)
         {
-            trialStartTime = Time.time;
-            trialActive = true;
+            LogPathSample();
+            nextPathLogTime = Time.time + pathLogInterval; 
         }
     }
+
+
     private void Awake()
     {
         aButton.action.Enable();
         aButton.action.performed += OnButtonPress;
         startExperimentButton.action.Enable();
         startExperimentButton.action.performed += StartExperiment;
+        pidFilePath = Path.Combine(Application.persistentDataPath, pidFileName);
+        currentPid = GetPid();
+        if (pidText != null)
+        {
+            pidText.text = $"PID: {currentPid+1}";
+        }
+        
     }
+
+
+    private int GetPid()
+    {
+        if (File.Exists(pidFilePath))
+        {
+            try
+            {
+                string content = File.ReadAllText(pidFilePath).Trim();
+                int pid = int.Parse(content);
+                return pid; 
+            }
+            catch(System.Exception e)
+            {
+                Debug.LogError($"Failed to read PID file: {e.Message}, will start from 0");
+                return 0;
+            }
+        }
+        else
+        {
+            return 0;
+        }
+    }
+
+
+    private void WritePid(int pid)
+    {
+        try
+        {
+            File.WriteAllText(pidFilePath,pid.ToString());
+            Debug.Log($"Saved PID {pid} to file");
+        }
+        catch(System.Exception e){
+            Debug.Log($"Failed to save PID to file: {e.Message}");
+        }
+    }
+
 
     private void OnDestroy()
     {
@@ -92,56 +182,129 @@ public class VRlogAngle : MonoBehaviour
         startExperimentButton.action.Disable();
     }
 
+
     private void StartExperiment(InputAction.CallbackContext ctx)
     {
+        PlayClip(experimentStart);
+        changeVisual.allowChange = false;
+        nextPathLogTime = Time.time + pathLogInterval;
+        currentPid += 1;
+        WritePid(currentPid);
+        if (pidText != null)
+        {
+            pidText.text = $"PID: {currentPid}";
+        }
         isPractice = false;
-
         currentTrialIndex = 0;
-        trialActive = false;
+        trialActive = true;
         GenerateTrials();   
-        ExperimentText.text = "Experiment started";
+        ExperimentText.text = "Started";
         Debug.Log("Logging enabled");
-        callNextSource();
+        CallNextSource();
+        startExperimentButton.action.performed -= StartExperiment;
+        startExperimentButton.action.performed += NextCondition;
     }
+
+    private void NextCondition(InputAction.CallbackContext ctx)
+    {
+        changeVisual.allowChange = false;
+        trialActive = true;
+        PlayClip(conditionBegun);
+    }
+        
+
 
     public void OnButtonPress(InputAction.CallbackContext context)
     {
         if (!trialActive)
-            return;
-        if(!isPractice)
         {
-            float audioAngle = micSocket.angle; 
-            float error = Mathf.DeltaAngle(0f, audioAngle);
+           return; 
+        }   
+        if(!isPractice && !onBreak)
+        {
+            float audioAngle = micSocket.realAngle; 
+            float signedError = Mathf.DeltaAngle(0f, audioAngle);
+            float absError = Mathf.Abs(signedError);
             float responseTime = Time.time - trialStartTime;
             AudioSource audioSource = micSocket.currentAudioSource;
             int visualisation = changeVisual.visualCounter+1;
-
-            File.AppendAllText(filePath, $"{Time.time},{trials[currentTrialIndex].spawnIndex},{trials[currentTrialIndex].audioIndex},{audioAngle},{error},{responseTime},{visualisation}\n");
-
+            float distance = micSocket.realDistance;
+            try
+            {
+                File.AppendAllText(filePath, $"{currentPid},{Time.time},{currentTrialIndex-1},{trials[currentTrialIndex-1].spawnIndex},{trials[currentTrialIndex-1].audioIndex},{audioAngle},{absError},{distance},{responseTime},{visualisation}\n");
+            }
+            catch(System.Exception)
+            {
+                if(errorText != null)
+                {
+                    errorText.text=$"Error: Cant write to log file. Restart application.";
+                    trialActive = false;
+                }
+            }
             if (logText != null)
             {
                 logText.text = 
                 $"Audio angle: {audioAngle:F1}°\n" +
-                $"Error: {error:F1}°\n" +
+                $"Error: {absError:F1}°\n" +
                 $"RT: {responseTime:F2}s";
             }
         }
-        callNextSource();
+        CallNextSource();
     }
 
-    public void callNextSource()
+
+    private void LogPathSample()
     {
+        try
+        {
+            Vector3 pos = playerRig.Camera.transform.position;
+            float rotY = playerRig.Camera.transform.eulerAngles.y;
+
+            int trialIndexForLog = currentTrialIndex - 1;
+            int visualisation = changeVisual.visualCounter + 1;
+
+            string line =
+                $"{currentPid},{Time.time},{trialIndexForLog},{visualisation},{pos.x},{pos.y},{pos.z},{rotY}\n";
+            File.AppendAllText(pathFilePath, line);
+        }
+        catch (System.Exception)
+        {
+            if (errorText != null)
+            {
+                errorText.text = "Error: Cant write to path log file. Restart application.";
+                trialActive = false;
+            }
+        }
+    }
+
+    public void CallNextSource()
+    {
+        nextPathLogTime = Time.time + pathLogInterval;
         if (currentTrialIndex >= trials.Count)
         {
-            ExperimentText.text = "Experiment complete";
+            PlayClip(experimentFinish);
+            ExperimentText.text = "Finished";
+            trialActive = false;
             return;
         }
+        if (currentTrialIndex % 10 == 0 && currentTrialIndex > 0 && onBreak==false)
+        {
+            PlayClip(conditionComplete);
+            ExperimentText.text = "Break";
+            changeVisual.allowChange = true;
+            onBreak = true;
+            trialActive = false;
+            return;
+        }
+        onBreak = false;
+        trialActive = true;
+        
         if (isPractice)
         {
-            ExperimentText.text = $"Trial: ({trials[currentTrialIndex].spawnIndex}, {trials[currentTrialIndex].audioIndex}) ";
+            ExperimentText.text = $"Practice";
         }
         else{
-            ExperimentText.text = $"Trial: {currentTrialIndex+1} / {trials.Count}  \n ({trials[currentTrialIndex].spawnIndex}, {trials[currentTrialIndex].audioIndex}) ";
+            ExperimentText.text = $"Trial: {currentTrialIndex+1} / {trials.Count}";
         }
         Trial t = trials[currentTrialIndex]; 
         trialStartTime = Time.time;
@@ -150,8 +313,15 @@ public class VRlogAngle : MonoBehaviour
             spawnPoints[t.spawnIndex].rotation
         );
         micSocket.NextSource(t.audioIndex);
-        trialActive = false;
         currentTrialIndex++;
+    }
+
+    void PlayClip(AudioClip clip)
+    {
+        if (feedbackAudioSource != null && clip != null)
+        {
+            feedbackAudioSource.PlayOneShot(clip);
+        }
     }
 
 }

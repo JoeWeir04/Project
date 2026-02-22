@@ -461,6 +461,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "changeScene",
+                    "type": "Button",
+                    "id": "4f0f6dc4-1bc0-426f-b789-93bb41fd9fa0",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -714,6 +723,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "StartExperiment",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "893a57eb-1366-40bc-b433-0f3e0202597f",
+                    "path": "<XRController>{LeftHand}/{SecondaryButton}",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "changeScene",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
@@ -1288,6 +1308,24 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "changeSceneRight",
+                    "type": "Button",
+                    "id": "39b8fc7e-9634-4c1d-b021-4dc833a112bd",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "pidSelect",
+                    "type": "Button",
+                    "id": "2cc19a2e-500b-470d-974f-71d5fe841b97",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -1530,6 +1568,28 @@
                     "processors": "",
                     "groups": "",
                     "action": "logangle",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "e4ab1671-542e-4e56-a0b9-8f87fa84b18f",
+                    "path": "<XRController>{RightHand}/{SecondaryButton}",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "changeSceneRight",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "cfe53c57-7a88-4ab7-866b-f62aaf2f3682",
+                    "path": "<XRController>{RightHand}/{SecondaryButton}",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "pidSelect",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
@@ -1924,7 +1984,7 @@
                     "path": "<XRController>{RightHand}/{Primary2DAxis}",
                     "interactions": "Sector(directions=12,sweepBehavior=1),Sector(directions=2,sweepBehavior=2)",
                     "processors": "",
-                    "groups": "Generic XR Controller",
+                    "groups": "Generic XR Controller;Continuous Move",
                     "action": "Turn",
                     "isComposite": false,
                     "isPartOfComposite": false

@@ -5,7 +5,7 @@ using TMPro;
 
 public class logAngle : MonoBehaviour
 {
-    public InputActionReference aButton; // Bind to A button
+    public InputActionReference aButton; 
     public TMP_Text logText;
     public TMP_Text ExperimentText;
     private string filePath;
@@ -22,6 +22,7 @@ public class logAngle : MonoBehaviour
     int experimentRound = 0;
     int step = 0;
 
+
     void Start()
     {
         filePath = Application.persistentDataPath + "/azimuth_log.csv";
@@ -31,17 +32,20 @@ public class logAngle : MonoBehaviour
         }
     }
 
+
     private void Awake()
     {
         aButton.action.Enable();
         aButton.action.performed += OnButtonPress;
     }
 
+
     private void OnDestroy()
     {
         aButton.action.performed -= OnButtonPress;
         aButton.action.Disable();
     }
+
 
     public void OnButtonPress(InputAction.CallbackContext context)
     {
