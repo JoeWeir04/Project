@@ -1,0 +1,168 @@
+import hid
+import sounddevice as sd
+import mediapipe as mp
+from mediapipe.tasks import python
+from mediapipe.tasks.python import audio
+from mediapipe.tasks.python.components import containers
+import asyncio
+import json
+import sys
+import time
+import statistics
+import csv 
+
+
+MODEL_PATH = "../classifier.tflite"
+SAMPLE_RATE = 16000
+BUFFER_SIZE = 0.1
+TIME_INCREMENT = int(BUFFER_SIZE*1000)
+
+
+BUFFER_SAMPLES = int()
+
+last_classification = "Waiting"
+last_transcript = ""
+last_vad = 0
+last_angle = 0
+timestamp = 0
+classifier = None
+
+clients = set()
+angles = []
+
+
+def save_angles_to_csv(angles, std_dev=None, angle_range=None):
+    with open("angles.csv", "w", newline="") as f:
+        writer = csv.writer(f)
+        writer.writerow(["sample", "timestamp", "angle"])
+        for i, (ts,angle) in enumerate(angles):
+            writer.writerow([i, ts, angle])
+
+        if std_dev is not None:
+            writer.writerow([])
+            writer.writerow(["STATISTICS"])
+            writer.writerow(["samples", len(angles)])
+            writer.writerow(["std_dev", f"{std_dev:.4f}"])
+            writer.writerow(["range", f"{angle_range:.4f}"])
+
+async def broadcast_loop():
+    global last_classification, last_transcript, last_vad, last_angle
+    while True:
+        if clients:
+            data = {
+                "vad": last_vad,
+                "angle": last_angle,
+                "classification": last_classification,
+                "transcript": last_transcript
+            }
+            message = json.dumps(data)
+            
+
+            dead_clients = set()
+            for client in list(clients):
+                try:
+                    await client.send(message)
+                except Exception as e:
+                    print("Client send failed: removing the client:", e)
+                    dead_clients.add(client)
+            for client in dead_clients:
+                clients.discard(client)
+        await asyncio.sleep(0.05)
+
+
+async def websocket_handler(websocket):
+    clients.add(websocket)
+    print("Clients connected")
+    try:
+        await websocket.wait_closed()
+    finally:
+        print("Client disconnected.")
+        clients.discard(websocket)
+
+
+def print_result(result: mp.tasks.audio.AudioClassifierResult, timestamp_ms: int):
+    global last_classification
+    if result and result.classifications:
+        top = result.classifications[0].categories[0]
+        last_classification = f"{top.category_name} ({top.score:.2f})"
+
+
+def process_text(text):
+    global last_transcript
+    last_transcript = text
+
+
+async def main_loop():
+    global classifier, timestamp, last_vad, last_angle
+
+    def audio_callback(indata, frames, time_info, status):
+        global timestamp
+        audio_data = containers.AudioData.create_from_array(indata[:, 0], SAMPLE_RATE)
+        classifier.classify_async(audio_data, timestamp)
+        timestamp += TIME_INCREMENT
+
+    options = audio.AudioClassifierOptions(
+        base_options=python.BaseOptions(model_asset_path=MODEL_PATH),
+        running_mode=mp.tasks.audio.RunningMode.AUDIO_STREAM,
+        max_results=1,
+        result_callback=print_result
+    )
+
+    with audio.AudioClassifier.create_from_options(options) as classifier:
+        with sd.InputStream(channels=1, samplerate=SAMPLE_RATE,
+                            blocksize=int(SAMPLE_RATE * BUFFER_SIZE),
+                            callback=audio_callback):
+            try:
+                print()
+                print("--- Program ---")
+                h = open_hid()
+                while True:
+                    try:
+                        data = h.read(6, timeout=10)
+                    except hid.HIDException:
+                        print("HID device lost, reconnectting...")
+                        h.close()
+                        h = open_hid()
+                        continue
+                    if len(data) == 6 and data[0] == 0x06 and data[1] == 0x36:
+                        last_vad = data[2]
+                        last_angle = (data[3] << 8) | data[4]
+                        angles.append((time.time(), last_angle))
+                        #print("\033[K", end='')
+                        #print(f" VAD={vad} | Angle={angle}° | classification={last_classification} | Transcript = {last_transcript}" , end='\r', flush=True)
+                    await asyncio.sleep(0.01)
+            except KeyboardInterrupt:
+                print()
+                print("--- Exiting Program ---")
+                
+
+
+def open_hid():
+    while True:
+        try:
+            h = hid.Device(0x2752, 0x01C)
+            print("HID connected")
+            return h
+        except Exception:
+            print("waiting for HID device")
+            time.sleep(1)
+
+
+async def main():
+    import websockets
+    server = await websockets.serve(websocket_handler, "0.0.0.0", 8765, subprotocols=None, ping_interval=None)
+    await asyncio.gather(main_loop(), broadcast_loop())
+
+if __name__ == "__main__":
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        print()
+        print("--- Exiting Program ---")
+        angle_values = [angle for (_, angle) in angles]
+        if len(angles) > 1:
+            std_dev = statistics.stdev(angle_values)
+            angle_range = max(angle_values) - min(angle_values)
+            print(f"Samples collected: {len(angles)} \n Std: {std_dev:.2f} \n angles range: {angle_range:.2f}")
+            save_angles_to_csv(angles, std_dev, angle_range)
+        sys.exit()
