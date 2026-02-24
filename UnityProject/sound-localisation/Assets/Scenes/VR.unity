@@ -2266,7 +2266,6 @@ MonoBehaviour:
   currentAudioSource: {fileID: 0}
   maxDistance: 10
   minDistance: 0.5
-  angleNoiseDeg: 8
   distanceNoise: 0.05
   angleUpdateInterval: 0.05
 --- !u!4 &570936838
@@ -5739,7 +5738,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e9a77cee4515d5f41af09846e7a151d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  arrowRenderer: {fileID: 1958830942}
+  arrowRenderers:
+  - {fileID: 1958830942}
+  - {fileID: 604710080}
+  - {fileID: 968229328}
   coneRenderer: {fileID: 1012953052}
 --- !u!1 &1355984578
 GameObject:
@@ -6253,7 +6255,6 @@ MonoBehaviour:
   micSocketBehaviour: {fileID: 570936837}
   angleText: {fileID: 89978702}
   mainCamera: {fileID: 1651567051}
-  rotationspeed: 180
   visibleDuration: 1
   fadeSpeed: 2
   isVR: 1

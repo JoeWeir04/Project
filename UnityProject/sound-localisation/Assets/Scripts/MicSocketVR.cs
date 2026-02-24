@@ -21,9 +21,9 @@ public class MicSocketVR : MonoBehaviour, IMicSocket
     public float maxDistance = 10f; 
     public float minDistance = 0.5f;
     [Header("Noise Settings")]
-    public float angleNoiseDeg = 5f;     
+    private float maxAngleError = 8f;     
+    private float angleSD = 2f;
     public float distanceNoise = 0.03f; 
-    float smoothing = 1f; 
     public float angleUpdateInterval = 0.05f; 
     private float nextAngleUpdateTime = 0f;
 
@@ -73,6 +73,7 @@ public class MicSocketVR : MonoBehaviour, IMicSocket
     }
 
 
+
     float GetAngleToUser(AudioSource src)
     {
         Vector3 localPosition = mainCamera.transform.InverseTransformPoint(src.transform.position);
@@ -83,10 +84,23 @@ public class MicSocketVR : MonoBehaviour, IMicSocket
 
     float GetNoisyAngleToUser()
     {
-        float noisy = GetAngleToUser(currentAudioSource) + Random.Range(-angleNoiseDeg, angleNoiseDeg);
-        noisy = noisy % 360f;          // ensures <360
+        //float noisy = GetAngleToUser(currentAudioSource) + Random.Range(-angleNoiseDeg, angleNoiseDeg);
+        float real = GetAngleToUser(currentAudioSource);
+        float noisy = real + GaussianRandom(0f, angleSD);  
+        noisy = Mathf.Clamp(noisy, real - maxAngleError, real + maxAngleError);
+        noisy = noisy % 360f;          
+        
         if (noisy < 0f) noisy += 360f;
         return noisy;
+    }
+
+    float GaussianRandom(float mean = 0f, float stdDev = 1f)
+    {
+        float u1 = 1.0f - Random.value; 
+        float u2 = 1.0f - Random.value;
+        float randStdNormal = Mathf.Sqrt(-2.0f * Mathf.Log(u1)) *
+                            Mathf.Sin(2.0f * Mathf.PI * u2); 
+        return mean + stdDev * randStdNormal;
     }
 
 

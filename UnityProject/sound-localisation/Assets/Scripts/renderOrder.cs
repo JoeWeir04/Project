@@ -5,12 +5,15 @@ using UnityEngine;
 public class renderOrder : MonoBehaviour
     
 {
-    public Renderer arrowRenderer;
+    public Renderer[] arrowRenderers;
     public Renderer coneRenderer;
     void Start()
     {
-    if (arrowRenderer != null)
-        arrowRenderer.material.renderQueue = 3010;
+    foreach (Renderer r in arrowRenderers)
+        {
+            if (r != null)
+                r.material.renderQueue = 3010;
+        }
 
     if (coneRenderer != null)
         coneRenderer.material.renderQueue = 3000;

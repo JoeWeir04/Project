@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-public class CompassRotate : MonoBehaviour
+public class ArrowRotate : MonoBehaviour
 {
     [SerializeField] private MonoBehaviour micSocketBehaviour;
     private IMicSocket micSocket;
     public TMP_Text angleText;
     public Camera mainCamera;
-    public float rotationspeed = 180f;
+    private float rotationspeed = 400f;
     public float visibleDuration = 1f;
     private float currentTimer = 0f;
     public float fadeSpeed = 3f;
