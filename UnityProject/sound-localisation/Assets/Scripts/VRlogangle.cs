@@ -28,7 +28,7 @@ public class VRlogAngle : MonoBehaviour
 
     public TMP_Text pidText;
     public TMP_Text errorText;
-    public float pathLogInterval = 0.5f;
+    public float pathLogInterval = 0.16f;
     private float nextPathLogTime = 0f;
     private string pathFilePath;
     private bool onBreak;

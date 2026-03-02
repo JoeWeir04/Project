@@ -2,25 +2,30 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using System.Text.RegularExpressions;
 
-public class RadarRotate : MonoBehaviour
+public class SmoothRadarRotate : MonoBehaviour
 {
     [SerializeField] private MonoBehaviour micSocketBehaviour;
-    public IMicSocket micSocket;
-    public float binSize = 30f;
+    private IMicSocket micSocket;
     public TMP_Text angleText;
     private SpriteRenderer spriteRenderer;
     public float fadeSpeed = 3f;
     public float visibleDuration = 1f;
     public float currentTimer = 0f;
     public float currentAlpha = 0f;
+    private bool isWarning = false;
+    private static readonly Regex warningRegex = new Regex(@"\b(alarm|beep|horn|siren)\b", RegexOptions.IgnoreCase);
+    public Color normalColor = Color.green;
+    public Color warningColor = Color.red;
+    private float rotationspeed = 400f;
 
 
     void Awake()
     {
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
         SetAlpha(0f);
-
+        
         micSocket = micSocketBehaviour as IMicSocket;
     }
 
@@ -29,16 +34,21 @@ public class RadarRotate : MonoBehaviour
     {
         if (!micSocket.isConnected) return;
         float angle = micSocket.angle;
+        
 
-        float binAngle = Mathf.Floor(angle/binSize) * binSize;
-        binAngle = (binAngle + 360f) % 360f;
-        transform.localRotation = Quaternion.Euler(0,0,binAngle);
+        Quaternion targetRotation = Quaternion.Euler(0,0,angle-15f);
+        transform.localRotation = Quaternion.RotateTowards(
+            transform.localRotation,
+            targetRotation,
+            rotationspeed*Time.deltaTime);
+        //transform.localRotation = Quaternion.Euler(0,0,angle-15f);
         string classification = micSocket.classification;
+        isWarning = warningRegex.IsMatch(classification);
         
         if(angleText != null){
-        
-            angleText.text = $"Bin Angle: {binAngle:F1}°\n" + $"Mic Angle: {angle:F1}°\n" + $"Classification:{classification}\n";
+            angleText.text = $"Mic Angle: {angle:F1}°\n";
         }
+        SetAlpha(micSocket.distanceProxy);
         Fade();
     }
 
@@ -48,7 +58,7 @@ public class RadarRotate : MonoBehaviour
         bool soundReceived = micSocket.vad ==1;
         if (soundReceived)
         {
-            currentAlpha = 1f;
+            currentAlpha = micSocket.distanceProxy;
             currentTimer = visibleDuration;
         }
         else
@@ -67,7 +77,7 @@ public class RadarRotate : MonoBehaviour
 
     void SetAlpha(float alpha)
     {
-        Color c = spriteRenderer.color;
+        Color c = isWarning ? warningColor : normalColor;
         c.a = alpha;
         spriteRenderer.color = c;
     }
