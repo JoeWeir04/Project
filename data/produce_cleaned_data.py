@@ -5,7 +5,7 @@ def main():
     input_file = "raw/VR_log.csv"
     output_file = "processed/VR_log_cleaned.csv"
 
-    pids_to_remove = {"1", "5", "11", "13"}  # remove pids not refering to participants
+    pids_to_remove = {"1", "5", "11"}  # remove pids not refering to participants
 
     with open(input_file, newline='', encoding='utf-8') as infile, \
          open(output_file, "w", newline='', encoding='utf-8') as outfile:

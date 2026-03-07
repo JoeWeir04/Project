@@ -30,7 +30,7 @@ def create_plot(columnToGroupBy):
     plt.ylabel(columnToGroupBy,  labelpad=10)
     plt.title("Distance Distribution by Visualization", pad=20)
     plt.ylim(bottom=0)
-    plt.savefig(f"graphs/{columnToGroupBy.replace(' ', '_')}Graph.svg", format="svg")
+    plt.savefig(f"graphs/{columnToGroupBy.replace(' ', '_')}Graphv3.svg", format="svg")
 
 
 if __name__ == "__main__":
