@@ -1,0 +1,132 @@
+Q4,Q1_1,Q1_2,Q1_3,Q1_4,Q1_5,Q1_6,Q2_1,Q2_2,Q2_3,Q3_1,Q3_2,Q3_3,Q3_4,Q3_5,Q3_6,Q3_7,Q3_8
+What is your Participant ID (PID)?,Please rank the visualizations from best to worst. - Arrow,Please rank the visualizations from best to worst. - Radar,Please rank the visualizations from best to worst. - Lights,Please rank the visualizations from best to worst. - Arrow and Radar,Please rank the visualizations from best to worst. - Radar and Lights,Please rank the visualizations from best to worst. - Lights and Arrow,Which visualizations would you prefer for different distances from the sound source? - Near,Which visualizations would you prefer for different distances from the sound source? - Medium,Which visualizations would you prefer for different distances from the sound source? - Far,"For the following questions please consider the system being used with modern smartglasses capable of full Augmented Reality.
+
+
+
+You will be asked to answer questions based on the following scenarios:
+
+Scenario 1: Working in a safety critical warehouse with hearing protection on.
+
+
+
+Scenario 2: Walking along a busy road with headphones on.
+
+
+
+Scenario 3: Responding to a fire alarm in a large building.
+Scenario 4: Sitting in a cafe with headphones on. - The system would be useful in Scenario 1.","For the following questions please consider the system being used with modern smartglasses capable of full Augmented Reality.
+
+
+
+You will be asked to answer questions based on the following scenarios:
+
+Scenario 1: Working in a safety critical warehouse with hearing protection on.
+
+
+
+Scenario 2: Walking along a busy road with headphones on.
+
+
+
+Scenario 3: Responding to a fire alarm in a large building.
+Scenario 4: Sitting in a cafe with headphones on. - I would choose to use the system in Scenario 1.","For the following questions please consider the system being used with modern smartglasses capable of full Augmented Reality.
+
+
+
+You will be asked to answer questions based on the following scenarios:
+
+Scenario 1: Working in a safety critical warehouse with hearing protection on.
+
+
+
+Scenario 2: Walking along a busy road with headphones on.
+
+
+
+Scenario 3: Responding to a fire alarm in a large building.
+Scenario 4: Sitting in a cafe with headphones on. - The system would be useful in Scenario 2.","For the following questions please consider the system being used with modern smartglasses capable of full Augmented Reality.
+
+
+
+You will be asked to answer questions based on the following scenarios:
+
+Scenario 1: Working in a safety critical warehouse with hearing protection on.
+
+
+
+Scenario 2: Walking along a busy road with headphones on.
+
+
+
+Scenario 3: Responding to a fire alarm in a large building.
+Scenario 4: Sitting in a cafe with headphones on. - I would choose to use the system in Scenario 2.","For the following questions please consider the system being used with modern smartglasses capable of full Augmented Reality.
+
+
+
+You will be asked to answer questions based on the following scenarios:
+
+Scenario 1: Working in a safety critical warehouse with hearing protection on.
+
+
+
+Scenario 2: Walking along a busy road with headphones on.
+
+
+
+Scenario 3: Responding to a fire alarm in a large building.
+Scenario 4: Sitting in a cafe with headphones on. - The system would be useful in Scenario 3.","For the following questions please consider the system being used with modern smartglasses capable of full Augmented Reality.
+
+
+
+You will be asked to answer questions based on the following scenarios:
+
+Scenario 1: Working in a safety critical warehouse with hearing protection on.
+
+
+
+Scenario 2: Walking along a busy road with headphones on.
+
+
+
+Scenario 3: Responding to a fire alarm in a large building.
+Scenario 4: Sitting in a cafe with headphones on. - I would choose to use the system in Scenario 3.","For the following questions please consider the system being used with modern smartglasses capable of full Augmented Reality.
+
+
+
+You will be asked to answer questions based on the following scenarios:
+
+Scenario 1: Working in a safety critical warehouse with hearing protection on.
+
+
+
+Scenario 2: Walking along a busy road with headphones on.
+
+
+
+Scenario 3: Responding to a fire alarm in a large building.
+Scenario 4: Sitting in a cafe with headphones on. - The system would be useful in Scenario 4.","For the following questions please consider the system being used with modern smartglasses capable of full Augmented Reality.
+
+
+
+You will be asked to answer questions based on the following scenarios:
+
+Scenario 1: Working in a safety critical warehouse with hearing protection on.
+
+
+
+Scenario 2: Walking along a busy road with headphones on.
+
+
+
+Scenario 3: Responding to a fire alarm in a large building.
+Scenario 4: Sitting in a cafe with headphones on. - I would choose to use the system in Scenario 4."
+"{""ImportId"":""QID5_TEXT""}","{""ImportId"":""QID1_1""}","{""ImportId"":""QID1_2""}","{""ImportId"":""QID1_3""}","{""ImportId"":""QID1_4""}","{""ImportId"":""QID1_5""}","{""ImportId"":""QID1_6""}","{""ImportId"":""QID2_1""}","{""ImportId"":""QID2_2""}","{""ImportId"":""QID2_3""}","{""ImportId"":""QID4_1""}","{""ImportId"":""QID4_2""}","{""ImportId"":""QID4_3""}","{""ImportId"":""QID4_4""}","{""ImportId"":""QID4_5""}","{""ImportId"":""QID4_6""}","{""ImportId"":""QID4_7""}","{""ImportId"":""QID4_8""}"
+2,6,3,5,4,1,2,Lights,"Radar,Lights","Arrow,Radar",6,5,6,6,5,5,5,6
+4,6,4,1,5,2,3,Radar,Lights,Lights,5,3,5,5,5,5,5,7
+6,5,4,6,3,1,2,"Arrow,Radar","Arrow,Radar,Lights",Lights,5,6,2,2,5,6,1,2
+7,5,3,1,6,2,4,"Arrow,Lights","Radar,Lights",Radar,5,7,6,7,5,5,3,3
+8,2,3,6,4,5,1,Radar,"Arrow,Lights","Arrow,Lights",6,5,3,3,1,1,6,5
+9,5,3,6,2,1,4,"Radar,Lights",Arrow,Radar,6,2,2,2,1,1,6,6
+10,1,5,6,2,4,3,Radar,Arrow,Arrow,1,1,1,1,1,1,1,1
+12,4,2,6,1,3,5,"Arrow,Radar","Arrow,Radar","Arrow,Radar",5,5,5,5,5,5,3,3
+13,6,1,3,4,2,5,Radar,Radar,Radar,7,6,4,4,1,1,1,1
