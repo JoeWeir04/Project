@@ -20,6 +20,8 @@ def main():
         writer.writeheader()  # write the header row
 
         for row in reader:
+            #if (int(row["TrialIndex"]) % 10 == 0 or int(row["TrialIndex"]) % 10 == 1):
+            #    continue
             match row["Visualisation"]:
                 case("1"):
                     row["Visualisation"] = "Arrow"
