@@ -1,0 +1,58 @@
+Q1,Q2,Q3_1,Q4_1,Q4_2,Q4_3,Q4_4,Q4_5,Q4_6,Q5_1,Q5_2,Q5_3,Q6_1,Q7,Q8
+What is your Participant ID (PID)?,Which visualization have you just completed?,Misery Scale (MISC) - Misery Scale,NASA TLX for this visualization. - Mental Demand. How mentally demanding was the task?,NASA TLX for this visualization. - Physical Demand. How physically demanding was the task?,NASA TLX for this visualization. - Temporal Demand. How hurried or rushed was the pace of the task?,NASA TLX for this visualization. - Performance. How successful were you in accomplishing what you were asked to do?,NASA TLX for this visualization. - Effort. How hard did you have to work to accomplish your level of performance?,"NASA TLX for this visualization. - Frustration. How insecure, discouraged, irritated, stressed, and annoyed were you?",Visual load. - This visualization was visually demanding.,Visual load. - The amount of visual information was overwhelming.,Visual load. - The visualization interfered with my awareness of the environment.,Confidence. - I felt confident using this visualization to localise sound.,Did you find anything confusing about this visualization?,Any suggestions for improving this visualization?
+"{""ImportId"":""QID15_TEXT""}","{""ImportId"":""QID14""}","{""ImportId"":""QID10_1""}","{""ImportId"":""QID3_1""}","{""ImportId"":""QID3_2""}","{""ImportId"":""QID3_3""}","{""ImportId"":""QID3_4""}","{""ImportId"":""QID3_5""}","{""ImportId"":""QID3_6""}","{""ImportId"":""QID11_1""}","{""ImportId"":""QID11_2""}","{""ImportId"":""QID11_3""}","{""ImportId"":""QID13_1""}","{""ImportId"":""QID9_TEXT""}","{""ImportId"":""QID8_TEXT""}"
+2,Arrow,2,0,1,0,18,1,1,2,2,2,6,I wasn't 100% sure if I had reached the target locations when I got there,A little chime/sound when you get the location
+2,Radar,2,1,1,0,18,1,1,2,2,2,6,No,Maybe again a sound 
+2,Lights,1,0,1,0,19,1,0,1,1,2,7,,
+2,Arrow and Radar,2,1,1,1,18,1,0,2,2,1,6,,
+2,Arrow and Lights,1,0,1,0,19,1,0,2,1,2,7,,
+2,Lights and Radar,0,1,1,0,19,1,0,1,2,2,7,,
+4,Radar,2,7,3,13,12,12,0,5,2,6,5,"When arriving at what I thought was the sound, the radar went a bit crazy so I was unsure if I was definitely at the sound.",Not at all.
+4,Lights,2,2,0,8,18,4,0,2,5,2,7,,
+4,Arrow,3,14,5,6,10,9,4,7,5,6,3,,
+4,Arrow and Lights,1,7,2,6,14,7,0,5,3,4,5,,
+4,Arrow and Radar,1,14,7,6,11,13,4,6,6,7,3,"Quite visually overwhelming, harder on the eyes and harder to know how accurate without the green lights.",
+4,Lights and Radar,2,15,4,12,13,13,2,7,6,2,3,,
+6,Arrow,1,2,0,1,18,2,1,1,2,4,7,no pretty straightforward,more vibrant colour change
+6,Lights,1,7,3,3,16,6,5,2,2,3,5,"not as intuitive, or precises",more smooth gradient
+6,Radar,1,1,0,0,19,0,1,3,2,2,7,no,"maybe more vibrant colour change, and smoother animation"
+6,Arrow and Radar,1,1,2,1,19,1,0,7,5,6,6,no,no
+6,Lights and Radar,1,3,1,1,19,3,2,5,5,3,6,no,no
+6,Arrow and Lights,1,2,2,0,19,1,1,5,5,5,6,no,no
+7,Lights,2,2,1,5,19,12,1,2,3,1,7,Extra steps were needed to confirm when i was at the source of the sound,A distinct image for when the sound is 'within arms reach'
+7,Arrow,2,1,1,3,19,8,1,3,3,5,7,no,The arrow jittering was a little too visually stimulating and although clear took up a bit too much of my field of view
+7,Radar,1,2,1,3,20,8,0,1,1,2,7,If the sound source was in a wall the green would disappear from the radar,A more distinct visual change when reaching the sound location
+7,Lights and Radar,1,2,1,3,19,11,0,2,3,3,7,no,no
+7,Arrow and Radar,1,2,1,3,19,11,1,5,4,5,7,The Arrow was useful for confirming exact location once close but was lowkey visually distracting most of the time,The arrow acts as a stronger visual confirmation but i think a less distracting option would be better
+7,Arrow and Lights,1,1,1,3,20,12,1,5,5,5,7,,Arrow is too distracting
+8,Lights,2,1,2,3,20,8,0,1,1,1,7,no,increasing the amount discrete levels when approaching the target making it easier to locate the sound
+8,Radar,0,0,1,2,20,3,0,1,1,1,7,no,no
+8,Arrow,0,1,0,4,20,5,0,1,1,1,7,no,have some sort of indication when the arrow is out of view of the user (when arrow goes behind the person)
+8,Lights and Radar,1,1,0,4,20,20,0,1,2,1,7,no,no
+8,Arrow and Lights,1,1,0,4,20,6,0,1,2,2,7,no,no
+8,Arrow and Radar,1,1,0,4,20,4,0,2,2,2,7,no,no
+9,Radar,1,6,1,1,18,2,1,1,1,1,6,,
+9,Arrow,0,3,2,2,19,4,0,2,2,3,7,,
+9,Lights,2,7,6,2,15,8,10,4,2,4,5,,
+9,Arrow and Lights,2,7,5,2,18,6,3,5,3,5,7,,
+9,Arrow and Radar,0,4,2,2,19,5,5,2,2,3,7,,
+9,Lights and Radar,0,2,2,2,18,5,3,2,2,2,7,,
+10,Arrow,2,4,3,6,16,8,2,5,3,3,5,,
+10,Radar,2,10,9,7,13,7,6,6,5,4,6,,
+10,Lights,2,13,7,8,12,12,5,4,4,4,5,,
+10,Arrow and Radar,2,10,7,6,10,7,2,4,3,2,6,,
+10,Arrow and Lights,2,10,5,4,15,6,3,4,3,2,6,,
+10,Lights and Radar,2,10,5,5,16,11,2,5,5,2,6,,
+12,Arrow,2,3,4,5,20,2,2,2,1,6,5,No,No
+12,Lights,2,3,3,5,16,5,2,3,3,6,5,,
+12,Radar,2,2,2,5,20,2,2,2,1,7,7,,
+12,Arrow and Radar,2,2,3,5,20,2,0,1,1,7,7,,
+12,Lights and Radar,3,2,3,5,19,2,0,1,1,7,7,,
+12,Arrow and Lights,3,3,3,5,17,4,1,3,2,6,6,,
+13,Lights,2,5,2,4,17,5,3,3,3,5,3,,
+13,Arrow,2,5,6,5,10,8,12,3,3,5,4,,
+13,Radar,3,4,5,5,17,14,10,3,3,5,6,,
+13,Lights and Radar,3,3,4,6,19,4,6,3,3,3,6,,
+13,Arrow and Radar,3,6,6,5,17,6,8,3,3,5,5,,
+13,Arrow and Lights,4,5,7,4,10,6,13,5,3,4,2,"lights didnt seem to synchronise with the arrow.
+How am I supposed to know if im successful",

@@ -67,6 +67,7 @@ def print_result(result: mp.tasks.audio.AudioClassifierResult, timestamp_ms: int
     if result and result.classifications:
         top = result.classifications[0].categories[0]
         last_classification = f"{top.category_name} ({top.score:.2f})"
+        
 
 
 def process_text(text):
