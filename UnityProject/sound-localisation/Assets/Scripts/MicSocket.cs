@@ -10,8 +10,8 @@ public class MicSocket : MonoBehaviour, IMicSocket
 
     public float angle { get; private set; }
     public int vad { get; private set; }
-    public float realDistance {get; private set; } = 1f;
-    public float distanceProxy {get; private set; } = 0.3f;
+    public float realDistance {get; private set; } 
+    public float distanceProxy {get; private set; } 
     public float realAngle {get; private set;}
 
     public bool isConnected { get; private set; } = false;
@@ -65,6 +65,8 @@ public class MicSocket : MonoBehaviour, IMicSocket
                 realAngle = angle;
                 vad = (int)json["vad"];
                 classification = (string)json["classification"];
+                realDistance = (float)json["distance"];
+                distanceProxy = (float)json["distance"];
             };
 
             candidate.ConnectAsync();

@@ -6867,7 +6867,7 @@ PrefabInstance:
     - target: {fileID: 2728902658200667494, guid: 895f6f3c2d334633b5800312285058d2,
         type: 3}
       propertyPath: m_Enabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2728902658200667494, guid: 895f6f3c2d334633b5800312285058d2,
         type: 3}
@@ -6934,12 +6934,27 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6321641679068453239, guid: 895f6f3c2d334633b5800312285058d2,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6454594071094758631, guid: 895f6f3c2d334633b5800312285058d2,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7313654230448209575, guid: 895f6f3c2d334633b5800312285058d2,
         type: 3}
       propertyPath: m_Name
       value: XR Interaction Setup
       objectReference: {fileID: 0}
     - target: {fileID: 7690080512698956844, guid: 895f6f3c2d334633b5800312285058d2,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8677371567480465662, guid: 895f6f3c2d334633b5800312285058d2,
         type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -7225,13 +7240,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a46022eb178434046a63c982a058d32c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  micSocketBehaviour: {fileID: 0}
-  binSize: 30
-  angleText: {fileID: 655329225}
-  fadeSpeed: 3
-  visibleDuration: 1
-  currentTimer: 0
-  currentAlpha: 0
 --- !u!1 &1779453227
 GameObject:
   m_ObjectHideFlags: 0
