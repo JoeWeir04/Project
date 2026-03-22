@@ -8,6 +8,7 @@ import asyncio
 import json
 import sys
 import time
+import numpy as np
 
 
 MODEL_PATH = "../classifier.tflite"
@@ -22,8 +23,10 @@ last_classification = "Waiting"
 last_transcript = ""
 last_vad = 0
 last_angle = 0
+last_distance = 0
 timestamp = 0
 classifier = None
+RMS_SCALE = 20
 
 clients = set()
 
@@ -36,10 +39,10 @@ async def broadcast_loop():
                 "vad": last_vad,
                 "angle": last_angle,
                 "classification": last_classification,
-                "transcript": last_transcript
+                "transcript": last_transcript,
+                "distance": last_distance     
             }
             message = json.dumps(data)
-
             dead_clients = set()
             for client in list(clients):
                 try:
@@ -67,7 +70,6 @@ def print_result(result: mp.tasks.audio.AudioClassifierResult, timestamp_ms: int
     if result and result.classifications:
         top = result.classifications[0].categories[0]
         last_classification = f"{top.category_name} ({top.score:.2f})"
-        
 
 
 def process_text(text):
@@ -79,7 +81,15 @@ async def main_loop():
     global classifier, timestamp, last_vad, last_angle
 
     def audio_callback(indata, frames, time_info, status):
-        global timestamp
+        global timestamp, last_distance
+        rms = np.sqrt(np.mean(indata[:, 0] ** 2))
+        last_distance_temp = min(1.0, rms * RMS_SCALE)
+        if (last_distance_temp < 0.4):
+            last_distance = 0.2
+        elif (last_distance_temp < 0.7):
+            last_distance = 0.5
+        else:
+            last_distance = 1
         audio_data = containers.AudioData.create_from_array(indata[:, 0], SAMPLE_RATE)
         classifier.classify_async(audio_data, timestamp)
         timestamp += TIME_INCREMENT
@@ -110,8 +120,6 @@ async def main_loop():
                     if len(data) == 6 and data[0] == 0x06 and data[1] == 0x36:
                         last_vad = data[2]
                         last_angle = (data[3] << 8) | data[4]
-                        #print("\033[K", end='')
-                        #print(f" VAD={vad} | Angle={angle}° | classification={last_classification} | Transcript = {last_transcript}" , end='\r', flush=True)
                     await asyncio.sleep(0.01)
             except KeyboardInterrupt:
                 print()
