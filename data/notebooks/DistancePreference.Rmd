@@ -1,0 +1,77 @@
+
+---
+title: "Distance Preference Analysis"
+output: html_notebook
+---
+```{r setup, message=FALSE, warning=FALSE}
+#Install only if needed
+#install.packages("rlang")
+#install.packages("ggplot2")
+#install.packages("tidyverse")
+#install.packages("likert")
+library(ggplot2)
+library(tidyverse)
+library(likert)
+library(ggstats)
+library(dplyr)
+```
+# Read CSV
+```{r}
+raw_data <- read.csv("../processed/AllVisualisations_cleaned.csv", 
+                     header = TRUE, stringsAsFactors = FALSE)
+
+# Remove first two rows (metadata?) and reset rownames
+data <- raw_data[-c(1,2), ]
+rownames(data) <- NULL
+
+head(data)
+```
+
+```{r}
+library(tidyr)
+library(stringr)
+
+distance_prefs <- data %>%
+  select(Q2_1, Q2_2, Q2_3) %>%
+  rename(
+    Near   = Q2_1,
+    Medium = Q2_2,
+    Far    = Q2_3
+  ) %>%
+  # pivot to long so each row is one response
+  pivot_longer(cols = everything(), names_to = "Distance", values_to = "Selection") %>%
+  # split comma-separated selections into individual rows
+  separate_rows(Selection, sep = ",") %>%
+  mutate(
+    Selection = str_trim(Selection),
+    Distance = factor(Distance, levels = c("Near", "Medium", "Far"))
+  ) %>%
+  filter(Selection != "") %>%
+  # count how many times each visualisation was picked per distance
+  count(Distance, Selection) %>%
+  mutate(Selection = factor(Selection, levels = c(
+    "Arrow", "Radar", "Lights",
+    "Arrow,Radar", "Radar,Lights", "Arrow,Lights"  
+  )))
+```
+
+```{r, fig.height=6, fig.width=9}
+pref_plot <- ggplot(distance_prefs, aes(x = Distance, y = n, fill = Selection)) +
+  geom_col(position = "dodge") +
+  labs(
+    title = "Preferred Visualisation by Distance",
+    x = "Visualisation",
+    y = "Number of Participants",
+    fill = "Distance"
+  ) +
+  theme_minimal()
+  
+
+ggsave(
+  filename = "../graphs/Preference_By_Distance.pdf",
+  plot = pref_plot,
+  width = 9,
+  height = 6,
+  units = "in"
+)
+```

@@ -1,0 +1,92 @@
+---
+title: "Visual Load Likert Analysis"
+output: html_notebook
+---
+```{r setup, message=FALSE, warning=FALSE}
+#Install only if needed
+#install.packages("rlang")
+#install.packages("ggplot2")
+#install.packages("tidyverse")
+#install.packages("likert")
+library(ggplot2)
+library(tidyverse)
+library(likert)
+library(ggstats)
+library(dplyr)
+```
+# Read CSV
+```{r}
+raw_data <- read.csv("../processed/PerVisualisation_cleaned.csv", 
+                     header = TRUE, stringsAsFactors = FALSE)
+
+# Remove first two rows (metadata?) and reset rownames
+data <- raw_data[-c(1,2), ]
+rownames(data) <- NULL
+
+head(data)
+```
+
+```{r}
+# Convert visual load questions to numeric
+# Convert questions to numeric
+data$Q5_1 <- as.numeric(data$Q5_1)
+data$Q5_2 <- as.numeric(data$Q5_2)
+data$Q5_3 <- as.numeric(data$Q5_3)
+
+visual_load_by_vis <- data %>%
+  select(Q2, Q5_1, Q5_2, Q5_3) %>%
+  rename(
+    Visualisation = Q2,
+    `Visually demanding` = Q5_1,
+    `Information overwhelming` = Q5_2,
+    `Interfered with awareness` = Q5_3
+  )
+
+# Define Likert scale labels
+likert_levels <- c(
+  "Strongly disagree",
+  "Disagree",
+  "Somewhat disagree",
+  "Neutral",
+  "Somewhat agree",
+  "Agree",
+  "Strongly agree"
+)
+
+# Convert to ordered factors
+visual_load_by_vis <- visual_load_by_vis %>%
+  mutate(across(`Visually demanding`:`Interfered with awareness`,
+                ~ factor(.x, levels = 1:7, labels = likert_levels, ordered = TRUE)))
+visual_load_by_vis$Visualisation <- factor(
+  visual_load_by_vis$Visualisation,
+  levels = c(
+    "Arrow",
+    "Radar",
+    "Lights",
+    "Arrow and Radar",
+    "Arrow and Lights",
+    "Lights and Radar"
+  )
+)
+
+```
+
+```{r, fig.height=10, fig.width=8}
+vl_plot <- gglikert(
+  visual_load_by_vis,
+  include = `Visually demanding`:`Interfered with awareness`,
+  facet_rows = vars(Visualisation),  # one row per visualisation
+  y_label_wrap = 25,
+  labels_size = 3,
+  totals_include_center = TRUE
+) +
+  ggtitle("Visual Load Per Visualisation")
+ggsave(
+  filename = "../graphs/Visual_Load_Per_Visualisation.pdf",  # output file
+  plot = vl_plot,                                 # the plot object
+  width = 8,                                      # width in inches
+  height = 10,                                    # height in inches
+  units = "in"
+)
+```
+

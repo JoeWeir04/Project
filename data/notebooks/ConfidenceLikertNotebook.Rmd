@@ -1,0 +1,90 @@
+---
+title: "Confidence Likert Analysis"
+output: html_notebook
+---
+```{r setup, message=FALSE, warning=FALSE}
+#Install only if needed
+#install.packages("rlang")
+#install.packages("ggplot2")
+#install.packages("tidyverse")
+#install.packages("likert")
+library(ggplot2)
+library(tidyverse)
+library(likert)
+library(ggstats)
+library(dplyr)
+```
+# Read CSV
+```{r}
+raw_data <- read.csv("../processed/PerVisualisation_cleaned.csv", 
+                     header = TRUE, stringsAsFactors = FALSE)
+
+# Remove first two rows (metadata?) and reset rownames
+data <- raw_data[-c(1,2), ]
+rownames(data) <- NULL
+
+head(data)
+```
+
+```{r}
+# Convert visual load questions to numeric
+# Convert questions to numeric
+data$Q6_1 <- as.numeric(data$Q6_1)
+
+confidence_by_vis <- data %>%
+  select(Q2, Q6_1) %>%
+  rename(
+    Visualisation = Q2,
+    `Confidence` = Q6_1,
+  )
+
+# Define Likert scale labels
+likert_levels <- c(
+  "Strongly disagree",
+  "Disagree",
+  "Somewhat disagree",
+  "Neutral",
+  "Somewhat agree",
+  "Agree",
+  "Strongly agree"
+)
+
+# Convert to ordered factors
+confidence_by_vis <- confidence_by_vis %>%
+  mutate(Confidence = factor(Confidence, levels = 1:7, labels = likert_levels, ordered = TRUE))
+confidence_by_vis$Visualisation <- factor(
+  confidence_by_vis$Visualisation,
+  levels = c(
+    "Arrow",
+    "Radar",
+    "Lights",
+    "Arrow and Radar",
+    "Arrow and Lights",
+    "Lights and Radar"
+  )
+)
+
+```
+
+```{r, fig.height=10, fig.width=8}
+items_df <- confidence_by_vis %>%
+  select(Confidence) %>%
+  as.data.frame()
+
+conf_likert <- likert(
+  items = items_df,
+  grouping = confidence_by_vis$Visualisation
+)
+
+conf_plot <- plot(conf_likert) +
+  ggtitle("Confidence Per Visualisation")
+
+ggsave(
+  filename = "../graphs/Confidence_Per_Visualisation.pdf",
+  plot = conf_plot,
+  width = 8,
+  height = 10,
+  units = "in"
+)
+```
+

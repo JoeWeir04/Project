@@ -1,0 +1,71 @@
+---
+title: "Visual Load Likert Analysis"
+output: html_notebook
+---
+```{r setup, message=FALSE, warning=FALSE}
+#Install only if needed
+#install.packages("rlang")
+#install.packages("ggplot2")
+#install.packages("tidyverse")
+#install.packages("likert")
+library(ggplot2)
+library(tidyverse)
+library(likert)
+library(ggstats)
+library(dplyr)
+```
+# Read CSV
+```{r}
+raw_data <- read.csv("../processed/AllVisualisations_cleaned.csv", 
+                     header = TRUE, stringsAsFactors = FALSE)
+
+# Remove first two rows (metadata?) and reset rownames
+data <- raw_data[-c(1,2), ]
+rownames(data) <- NULL
+
+head(data)
+```
+
+```{r}
+data$Q1_1 <- as.numeric(data$Q1_1)
+data$Q1_2 <- as.numeric(data$Q1_2)
+data$Q1_3 <- as.numeric(data$Q1_3)
+data$Q1_4 <- as.numeric(data$Q1_4)
+data$Q1_5 <- as.numeric(data$Q1_5)
+data$Q1_6 <- as.numeric(data$Q1_6)
+
+rankings <- data %>%
+  select(Q1_1, Q1_2, Q1_3, Q1_4, Q1_5, Q1_6) %>%
+  rename(
+    `Arrow`            = Q1_1,
+    `Radar`            = Q1_2,
+    `Lights`           = Q1_3,
+    `Arrow and Radar`  = Q1_4,
+    `Radar and Lights` = Q1_5,
+    `Lights and Arrow` = Q1_6
+  ) %>%
+  mutate(across(everything(),
+                ~ factor(.x, levels = 1:6,
+                          labels = c("1st","2nd","3rd","4th","5th","6th"),
+                          ordered = TRUE)))
+```
+
+```{r, fig.height=6, fig.width=9}
+rank_plot <- gglikert(
+  rankings,
+  sort = "ascending",         # sorts rows so best-ranked vis appears at top
+  sort_method = "mean",
+  labels_size = 3,
+  totals_include_center = FALSE
+) +
+  #scale_fill_brewer(palette = "RdYlGn", direction = -1) +  # green=1st, red=6th
+  ggtitle("Visualisation Rankings (1st = Best, 6th = Worst)")
+
+ggsave(
+  filename = "../graphs/Visualisation_Rankings.pdf",
+  plot = rank_plot,
+  width = 9,
+  height = 6,
+  units = "in"
+)
+```
