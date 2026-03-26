@@ -1,6 +1,8 @@
 import csv
 from collections import defaultdict
 import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
 
 
 def main():
@@ -8,6 +10,7 @@ def main():
 
     tlx_fields = ["Q4_1", "Q4_2", "Q4_3", "Q4_4", "Q4_5", "Q4_6"]
     scores = defaultdict(list)
+    rows_for_table = []
 
     with open(input_file, newline='', encoding='utf-8') as infile:
 
@@ -24,8 +27,10 @@ def main():
                     tlx_values.append(int(row[f]))
             tlx_score = sum(tlx_values)/len(tlx_values)
             scores[visualisation].append(tlx_score)
+            rows_for_table.append({"Visualisation": visualisation, "TLX Score": tlx_score})
 
     create_plot(scores)
+    create_table(rows_for_table)
 
 
 def create_plot(scores):
@@ -45,11 +50,37 @@ def create_plot(scores):
                 boxprops=boxprops, medianprops=medianprops)
     plt.xticks(fontsize=8)
     plt.xticks(range(1, len(labels)+1), labels)
-    plt.xlabel("Visualization",  labelpad=10)
+    plt.xlabel("Visualisation",  labelpad=10)
     plt.ylabel("NASA TLX Score",  labelpad=10)
     plt.title("NASA TLX Distribution by Visualisation", pad=20)
+    plt.ylim(0, 10)
+    plt.yticks(np.arange(0, 11, 1))
     plt.ylim(bottom=0)
-    plt.savefig(f"graphs/NASA_TLX_violin_box.svg", format="svg")
+    plt.savefig("graphs/NASA_TLX_violin_box.pdf", format="pdf")
+    plt.close()
+
+
+def create_table(rows_for_table):
+    df = pd.DataFrame(rows_for_table)
+    summary = df.groupby("Visualisation", sort=False)["TLX Score"].agg(
+        n="count",
+        Mean="mean",
+        Median="median",
+        SD="std",
+        Min="min",
+        Max="max"
+    ).reset_index()
+
+    summary["Range"] = summary["Max"] - summary["Min"]
+    summary = summary.round({
+        "Mean": 2,
+        "Median": 2,
+        "SD": 2,
+        "Min": 2,
+        "Max": 2,
+        "Range": 2
+    })
+    summary.to_csv("tables/NasaTLX_Summary.csv", index=False)
 
 
 if __name__ == "__main__":

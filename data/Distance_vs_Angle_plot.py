@@ -10,13 +10,13 @@ def plot_distance_vs_angle():
         subset = df[df["Visualisation"] == vis]
         plt.scatter(subset["Distance"],subset["Angle Error"], label=vis, alpha=0.7)
 
-    plt.xlabel("Distance (Metres)")
-    plt.ylabel("Angle Error (Degrees)")
-    plt.title("Distance vs Angle Error by Visualisation")
+    plt.xlabel("Distance to Target (m)")
+    plt.ylabel("Anglular Error (°)")
+    plt.title("Distance vs Angular Error by Visualisation")
     plt.legend()
     plt.grid(True)
-    plt.savefig("graphs/Distance_vs_Angle.svg", format="svg")
-    plt.show()
+    plt.savefig("graphs/Distance_vs_Angle.pdf", format="pdf")
+    plt.close()
 
 
 if __name__ == "__main__":
