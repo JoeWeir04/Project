@@ -22,6 +22,7 @@ public class MicSocket : MonoBehaviour, IMicSocket
         "ws://172.20.10.2:8765",
         "ws://172.30.203.69:8765",
         "ws://192.168.0.19:8765",
+        
     };
     
 
