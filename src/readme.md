@@ -1,41 +1,54 @@
-# Readme
+# Manual
 
-Put a brief description of your code here. This should at least describe the file structure.
+### /code 
+This folder contains python scripts that can be run to estimate the location of spatial sounds using the miniDSP UMA 8 Microphone array. These scripts also broadcast these measures on the connected network using a sockets server.
+
+`OnBoardDoa.py` use's the UMA-8's onboard DOA method.
+
+`SPRPHATDOA.py` is the DOA method implemented in this project which uses the SPR-PHAT DOA method using the UMA-8's RAW mode.
+
+### /UnityProject
+This folder contains the unity project used for the wearable prototype and experiment.
+
+All scripts, scenes and assets used, such as images and materials, are stored in the subdirectory `/Assets`
+
+The prototype scene is located at `/Assets/Scenes/Passthrough_demo.unity`
+
+The experiment scene is located at `Assets/Scenes/VR.unity`
+
+The scripts used for each visualisation technique can be found in `Assets/Scripts`
 
 ## Build instructions
 
-**You must** include the instructions necessary to build and deploy this project successfully. If appropriate, also include 
-instructions to run automated tests. 
+### To run the prototype
+* Build the unity project to a quest 3 headset with all scenes included.
+* Connect the UMA-8 to a laptop, making sure the UMA-8 is running in the RAW advanced mode. 
+* Run `pip install requirements.txt` to install dependencies.
+* Run `python SPRPHATDoa.py` in the code folder to begin networking sound source locations to the headset.
+* Run the project on the quest 3 and hold down both primary buttons to boot into the prototype scene.
+
+### To run the experiment
+* Build the unity project to a quest 3 headset.
+* Open the project on the headset.
+* press the primary button on the right controller to log metrics and move onto next trial.
+* press the primary button on the left controller to swap visualisation.
+* press the menu button on the left controller to start the experiment.
+* After 10 trials a break will begin, press the left menu button to start the next condition.
+* Once the experiment has started all log data will be saved to the headset.
 
 ### Requirements
 
-List the all of the pre-requisites software required to set up your project (e.g. compilers, packages, libraries, OS, hardware)
+* Python 3.9 
+* Unity 2022.3.XX LTS
+* miniDSP UMA-8 USB mic array - V2.0 
+* Packages: listed in `requirements.txt`
+* Tested on Windows 10 and Windows 11
 
-For example:
-
-* Python 3.7
-* Packages: listed in `requirements.txt` 
-* Tested on Windows 10
-
-or another example:
-
-* Requires Raspberry Pi 3 
-* a Linux host machine with the `arm-none-eabi` toolchain (at least version `x.xx`) installed
-* a working LuaJIT installation > 2.1.0
-
-### Build steps
-
-List the steps required to build software. 
-
-Hopefully something simple like `pip install -e .` or `make` or `cd build; cmake ..`. In
-some cases you may have much more involved setup required.
 
 ### Test steps
 
-List steps needed to show your software works. This might be running a test suite, or just starting the program; but something that could be used to verify your code is working correctly.
+Run `SPRPHATDoa.py` in the code folder with the UMA-8 in RAW advanced mode to check that the script is working.
 
-Examples:
+Build and Run the Unity project to a quest 3 headset to check the project can build.
 
-* Run automated tests by running `pytest`
-* Start the software by running `bin/editor.exe` and opening the file `examples/example_01.bin`
 
