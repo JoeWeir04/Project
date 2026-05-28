@@ -50,13 +50,13 @@ scenarios <- data %>%
   select(Q3_1, Q3_2, Q3_3, Q3_4, Q3_5, Q3_6, Q3_7, Q3_8) %>%
   rename(
     `S1 Q1`  = Q3_1,
-    `S1 Q2'` = Q3_2,
+    `S1 Q2` = Q3_2,
     `S2 Q1`  = Q3_3,
-    `S2 Q2'` = Q3_4,
+    `S2 Q2` = Q3_4,
     `S3 Q1`  = Q3_5,
-    `S3 Q2'` = Q3_6,
+    `S3 Q2` = Q3_6,
     `S4 Q1`  = Q3_7,
-    `S4 Q2'` = Q3_8
+    `S4 Q2` = Q3_8
   ) %>%
   mutate(across(everything(),
                 ~ factor(.x, levels = 1:7, labels = likert_levels, ordered = TRUE)))
@@ -76,5 +76,54 @@ ggsave(
   width = 9,
   height = 6,
   units = "in"
+)
+
+
+```
+
+```{r}
+# Reshape Q2 data to long format per participant
+distance_long <- data %>%
+  select(Q4, Q2_1, Q2_2, Q2_3) %>%
+  rename(
+    PID    = Q4,
+    Near   = Q2_1,
+    Medium = Q2_2,
+    Far    = Q2_3
+  ) %>%
+  pivot_longer(
+    cols = c(Near, Medium, Far),
+    names_to  = "Distance",
+    values_to = "Visualisation"
+  ) %>%
+  mutate(
+    Distance = factor(Distance, levels = c("Near", "Medium", "Far")),
+    PID      = as.factor(PID)
+  )
+
+# Bump / slope chart: one line per participant
+participant_switch_plot <- ggplot(distance_long,
+                                  aes(x = Distance, y = Visualisation,
+                                      group = PID, colour = PID)) +
+  geom_line(linewidth = 0.8, alpha = 0.7) +
+  geom_point(size = 3, alpha = 0.9) +
+  scale_colour_discrete(limits = sort(as.numeric(levels(distance_long$PID))) %>% as.character()) +
+  labs(
+    title   = "Per-Participant Visualisation Choice by Distance",
+    x       = "Distance from Sound Source",
+    y       = "Preferred Visualisation",
+    colour  = "Participant"
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(legend.position = "right")
+
+print(participant_switch_plot)
+
+ggsave(
+  filename = "../graphs/Participant_Switch_by_Distance.pdf",
+  plot     = participant_switch_plot,
+  width    = 9,
+  height   = 6,
+  units    = "in"
 )
 ```
