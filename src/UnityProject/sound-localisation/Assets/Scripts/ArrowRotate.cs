@@ -29,6 +29,7 @@ public class ArrowRotate : MonoBehaviour
 
     void Update()
     {
+    
         if (!micSocket.isConnected) return;
         float angle;
         float distance = micSocket.distanceProxy; 
@@ -42,21 +43,36 @@ public class ArrowRotate : MonoBehaviour
             rotationspeed*Time.deltaTime);
             distance = micSocket.distanceProxy;
             Debug.Log($"This is the distance being set {distance}");
-            if(angleText != null)
-            {
-                angleText.text = $"Distance: {distance:F1}°";
-                
-            }
+    
             SetAlpha(distance);
         } else
         {
-            angle = micSocket.angle;
+            float socketAngle = micSocket.angle;
+            float cameraYaw = mainCamera.transform.eulerAngles.y;
+            float combinedAngle = socketAngle + cameraYaw;
+
+            Vector3 pos = transform.position;
+            pos.x = mainCamera.transform.position.x;
+            pos.z = mainCamera.transform.position.z;
+            transform.position = pos;
+
+
+
+            angle = combinedAngle;
             Quaternion targetRotation = Quaternion.Euler(0, angle, 0);
 
-            transform.localRotation = Quaternion.RotateTowards(
-            transform.localRotation,
+            transform.rotation = Quaternion.RotateTowards(
+            transform.rotation,
             targetRotation,
             rotationspeed*Time.deltaTime);
+
+            float arrowWorldY = transform.rotation.eulerAngles.y;
+
+            if(angleText != null)
+            {
+                angleText.text =  $"Socket Angle: {socketAngle:F1}\n" + $"Camera Yaw: {cameraYaw:F1}\n" + $"Combined:{combinedAngle:F1}\n" + $"Arrow World Y:{arrowWorldY:F1}\n";   
+            }
+
         }   
         Fade(distance);
     }
