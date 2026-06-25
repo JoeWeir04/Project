@@ -8,6 +8,10 @@ public class RadarLight : MonoBehaviour
 {
     public Image leftLight;
     public Image rightLight;
+    public Sprite leftSprite; 
+    public Sprite rightSprite; 
+    public Sprite redLeftLight;   // drag RadarNotch here in Inspector
+    public Sprite redRightLight;
     public Camera mainCamera;
     public TMP_Text logText;
     public GameObject arrow;
@@ -22,13 +26,20 @@ public class RadarLight : MonoBehaviour
     private float distanceFromCenter = 1f;
 
     public float facingThreshold = 30f;
+    private Color leftOriginalColor;
+    private Color rightOriginalColor;
+    
+    
     void Awake()
     {
         micSocket = micSocketBehaviour as IMicSocket;
         leftBaseScale = leftLight.rectTransform.localScale;
         rightBaseScale = rightLight.rectTransform.localScale;
+        leftOriginalColor = leftLight.color;
+        rightOriginalColor = rightLight.color;
         SetAlpha(leftLight,0f);
         SetAlpha(rightLight,0f);
+        
     }
 
     
@@ -122,6 +133,14 @@ public class RadarLight : MonoBehaviour
 
 void SetAlpha(Image image,float alpha)
     {
+        if (micSocket.isClose)
+        {
+            image.sprite = redLeftLight;
+        }
+        else
+        {
+            image.sprite = leftSprite;
+        }
         {
             Color c = image.color;
             c.a = alpha;

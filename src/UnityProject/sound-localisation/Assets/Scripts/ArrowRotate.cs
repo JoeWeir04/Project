@@ -17,22 +17,41 @@ public class ArrowRotate : MonoBehaviour
     private float currentAlpha = 0f;
     public bool isVR = true;
 
+    private Color[][] originalColors;
+    private bool[] isArrowPart;
+
 
     void Awake()
     {
         renderers = GetComponentsInChildren<Renderer>();
-        SetAlpha(0f);
-
         micSocket = micSocketBehaviour as IMicSocket;
+        originalColors = new Color[renderers.Length][];
+        isArrowPart = new bool[renderers.Length];
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            
+            Material[] mats = renderers[i].materials;
+            isArrowPart[i] = renderers[i].CompareTag("arrowPart");
+            originalColors[i] = new Color[mats.Length];
+            for (int j = 0; j < mats.Length; j++)
+            {
+                originalColors[i][j] = mats[j].color;
+            }
+        }
+
+        SetAlpha(0f);  
     }
 
 
     void Update()
     {
+
+
     
         if (!micSocket.isConnected) return;
         float angle;
-        float distance = micSocket.distanceProxy; 
+        float distance = micSocket.distanceProxy;
+        
         if (isVR){
             angle = micSocket.angle + mainCamera.transform.eulerAngles.y;
             Quaternion targetRotation = Quaternion.Euler(0, angle, 0);
@@ -42,7 +61,6 @@ public class ArrowRotate : MonoBehaviour
             targetRotation,
             rotationspeed*Time.deltaTime);
             distance = micSocket.distanceProxy;
-            Debug.Log($"This is the distance being set {distance}");
     
             SetAlpha(distance);
         } else
@@ -102,14 +120,17 @@ public class ArrowRotate : MonoBehaviour
 
     void SetAlpha(float alpha)
     {
-        foreach (Renderer r in renderers)
+        for (int i = 0; i < renderers.Length; i++)
         {
-            foreach(Material mat in r.materials)
+            Material[] mats = renderers[i].materials;
+            bool shouldTurnRed = micSocket.isClose && isArrowPart[i];
+            for (int j = 0; j < mats.Length; j++)
             {
-                Color c = mat.color;
+                Color c = shouldTurnRed ? Color.red : originalColors[i][j];
                 c.a = alpha;
-                mat.color = c;
+                mats[j].color = c;
             }
+            renderers[i].materials = mats;
         }
     }
 }

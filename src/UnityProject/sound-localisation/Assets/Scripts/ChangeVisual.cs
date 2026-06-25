@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine.InputSystem;
 using UnityEngine;
 using TMPro;
+using UnityEngine.Audio;
 
 public class ChangeVisual : MonoBehaviour
 {
@@ -12,6 +13,9 @@ public class ChangeVisual : MonoBehaviour
     public  List<GameObject> visuals;
     public int visualCounter = 0;
     public bool allowChange = true;
+    public AudioMixer audioMixer;
+    public string alarmVolumeParam = "Alarms";
+    public float targetVolume = 0f;
 
 
     private void Awake()
@@ -20,6 +24,7 @@ public class ChangeVisual : MonoBehaviour
         leftPrimaryButton.action.Enable();
         leftPrimaryButton.action.performed += OnButtonPress;
         SetVisual(visualCounter);
+
     }
 
 
@@ -37,7 +42,7 @@ public class ChangeVisual : MonoBehaviour
             return;
         }
         visualCounter ++;
-        if(visualCounter > 5)
+        if(visualCounter > 6)
         {
             visualCounter = 0;
         }
@@ -53,6 +58,7 @@ public class ChangeVisual : MonoBehaviour
         {
             v.SetActive(false);
         }
+        audioMixer.SetFloat(alarmVolumeParam, -80f);
         if(index < 3)
         {
 
@@ -72,6 +78,11 @@ public class ChangeVisual : MonoBehaviour
         {
             visuals[1].SetActive(true);
             visuals[2].SetActive(true);
+        }
+        else if (index == 6)
+        {
+            visuals[3].SetActive(true);
+            audioMixer.SetFloat(alarmVolumeParam, targetVolume);
         }
         if (visualizationText != null)
         {

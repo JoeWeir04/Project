@@ -19,14 +19,20 @@ public class SmoothRadarRotate : MonoBehaviour
     public Color normalColor = Color.green;
     public Color warningColor = Color.red;
     private float rotationspeed = 400f;
+    private Color originalColor;
+
+    public Sprite normalSprite;   
+    public Sprite warningSprite;
 
 
     void Awake()
     {
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
-        SetAlpha(0f);
-        
         micSocket = micSocketBehaviour as IMicSocket;
+        SetAlpha(0f);
+
+        
+        
     }
 
 
@@ -77,7 +83,9 @@ public class SmoothRadarRotate : MonoBehaviour
 
     void SetAlpha(float alpha)
     {
-        Color c = isWarning ? warningColor : normalColor;
+        spriteRenderer.sprite = micSocket.isClose ? warningSprite : normalSprite;
+
+        Color c = spriteRenderer.color;
         c.a = alpha;
         spriteRenderer.color = c;
     }

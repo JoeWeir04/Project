@@ -216,7 +216,7 @@ public class VRlogAngle : MonoBehaviour
 
     public void OnButtonPress(InputAction.CallbackContext context)
     {
-        if (!trialActive)
+        if (!trialActive && !isPractice)
         {
            return; 
         }   

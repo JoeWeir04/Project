@@ -17,6 +17,8 @@ public class MicSocketVR : MonoBehaviour, IMicSocket
     public float distanceProxy{get; private set; }
     public float realDistance {get; private set; }
 
+    public bool isClose {get; private set; }
+
     [Header("Distance Settings")]
     public float maxDistance = 10f; 
     public float minDistance = 0.5f;
@@ -26,6 +28,7 @@ public class MicSocketVR : MonoBehaviour, IMicSocket
     public float distanceNoise = 0.03f; 
     public float angleUpdateInterval = 0.05f; 
     private float nextAngleUpdateTime = 0f;
+    
 
 
 
@@ -117,7 +120,15 @@ public class MicSocketVR : MonoBehaviour, IMicSocket
         float distance = GetRealDistanceToUser(src);
         float normalized = Mathf.InverseLerp(maxDistance, minDistance, distance);
         normalized += Random.Range(-distanceNoise, distanceNoise);
-
+        
+        if (normalized > 0.85f)
+        {
+            isClose = true;
+        }
+        else
+        {
+            isClose = false;
+        }
         if (normalized < 0.4f)
         return 0.2f;   
         else if (normalized < 0.7f)

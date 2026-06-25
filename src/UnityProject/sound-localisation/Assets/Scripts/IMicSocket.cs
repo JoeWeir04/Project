@@ -7,6 +7,7 @@ public interface IMicSocket
     string classification { get; }
     float distanceProxy {get; }
     float realDistance {get; }
+    public bool isClose {get; }
     
     
 }

@@ -16,6 +16,7 @@ public class MicSocket : MonoBehaviour, IMicSocket
 
     public bool isConnected { get; private set; } = false;
     public string classification { get; private set; }
+    public bool isClose {get; private set; }
 
     private List<string> serverIPs = new List<string>
     {
