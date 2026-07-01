@@ -1542,7 +1542,7 @@ GameObject:
   - component: {fileID: 373380267}
   m_Layer: 7
   m_Name: Cube (1)
-  m_TagString: Untagged
+  m_TagString: arrowPart
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1686,6 +1686,8 @@ MonoBehaviour:
   currentAlpha: 0
   normalColor: {r: 0, g: 1, b: 0, a: 1}
   warningColor: {r: 1, g: 0, b: 0, a: 1}
+  normalSprite: {fileID: 0}
+  warningSprite: {fileID: 0}
 --- !u!1 &406028072
 GameObject:
   m_ObjectHideFlags: 0
@@ -2841,6 +2843,8 @@ MonoBehaviour:
   currentAlpha: 0
   normalColor: {r: 0, g: 1, b: 0, a: 1}
   warningColor: {r: 1, g: 0, b: 0, a: 1}
+  normalSprite: {fileID: 21300000, guid: 77f302b45bee6a240b294b8b79e48f46, type: 3}
+  warningSprite: {fileID: 21300000, guid: 2503e393b0a45a64cb3665196f9b9741, type: 3}
 --- !u!1 &655690125
 GameObject:
   m_ObjectHideFlags: 0
@@ -3492,6 +3496,9 @@ MonoBehaviour:
   - {fileID: 2013048001}
   visualCounter: 0
   allowChange: 1
+  audioMixer: {fileID: 0}
+  alarmVolumeParam: Alarms
+  targetVolume: 0
 --- !u!4 &931194064
 Transform:
   m_ObjectHideFlags: 0
@@ -4184,6 +4191,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   leftLight: {fileID: 713493494}
   rightLight: {fileID: 1486510262}
+  leftSprite: {fileID: 0}
+  rightSprite: {fileID: 0}
+  redLeftLight: {fileID: 0}
+  redRightLight: {fileID: 0}
   mainCamera: {fileID: 1016217941}
   logText: {fileID: 0}
   arrow: {fileID: 0}
@@ -4281,7 +4292,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0.120179415, y: -0.65700006, z: -0.003686428}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.85, y: 0.85, z: 0.85}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1976906715}
@@ -4460,7 +4471,7 @@ GameObject:
   - component: {fileID: 1303339279}
   m_Layer: 7
   m_Name: Cube (2)
-  m_TagString: Untagged
+  m_TagString: arrowPart
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -6376,7 +6387,7 @@ GameObject:
   - component: {fileID: 1956264770}
   m_Layer: 7
   m_Name: Cube (3)
-  m_TagString: Untagged
+  m_TagString: arrowPart
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -6722,6 +6733,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   leftLight: {fileID: 2080838525}
   rightLight: {fileID: 546354372}
+  leftSprite: {fileID: 21300000, guid: 7c9a9b3645f24364ca9fd8e485136bbe, type: 3}
+  rightSprite: {fileID: 21300000, guid: 7c9a9b3645f24364ca9fd8e485136bbe, type: 3}
+  redLeftLight: {fileID: 21300000, guid: 5158e7206564d6b419d1398eea94865e, type: 3}
+  redRightLight: {fileID: 21300000, guid: 5158e7206564d6b419d1398eea94865e, type: 3}
   mainCamera: {fileID: 232818402}
   logText: {fileID: 1959408352}
   arrow: {fileID: 2052659097}

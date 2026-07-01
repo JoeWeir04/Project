@@ -4,7 +4,7 @@ import numpy as np
 
 
 def create_plot_and_table(columnToGroupBy):
-    df = pd.read_csv("processed/VR_log_cleaned.csv")
+    df = pd.read_csv("processed/Processed_Distances.csv")
     grouped = df.groupby("Visualisation", sort=False)[columnToGroupBy]
 
     labels = []
@@ -70,3 +70,4 @@ if __name__ == "__main__":
     create_plot_and_table("Distance")
     create_plot_and_table("Angle Error")
     create_plot_and_table("Response Time")
+    create_plot_and_table("NavSpeed")

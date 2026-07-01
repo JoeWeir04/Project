@@ -134,7 +134,7 @@ def main():
     if missing_straight_line > 0:
         print(f"Warning: {missing_straight_line} trial(s) had a SpawnIndex/AudioIndex with no matching "
               f"entry in sourcePositions.csv (check the indexing offset)")
-
+    merged = merged.drop(columns=['SpawnName', 'AudioName','MovementEfficiency','ProximityScore'])
     merged.to_csv(OUTPUT_FILE, index=False)
     print(f"Done. Wrote {len(merged)} rows to {OUTPUT_FILE}")
 

@@ -62,7 +62,6 @@ public class ArrowRotate : MonoBehaviour
             rotationspeed*Time.deltaTime);
             distance = micSocket.distanceProxy;
     
-            SetAlpha(distance);
         } else
         {
             float socketAngle = micSocket.angle;
@@ -133,9 +132,16 @@ public class ArrowRotate : MonoBehaviour
                 }
                 else
                 {
-                    c.a = alpha-0.2f;
+                    if (alpha > 0.69f)
+                    {
+                        c.a = Mathf.Max(alpha - 0.5f, 0.10f);
+                    }
+                    else
+                    {
+                        c.a = Mathf.Max(alpha - 0.2f, 0.10f);
+                    }
+                    
                 }
-                
                 mats[j].color = c;
             }
             renderers[i].materials = mats;

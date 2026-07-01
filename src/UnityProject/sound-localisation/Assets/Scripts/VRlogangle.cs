@@ -94,13 +94,13 @@ public class VRlogAngle : MonoBehaviour
     void Start()
     {
         nextPathLogTime = Time.time + pathLogInterval;
-        filePath = Application.persistentDataPath + "/VR_log.csv";
+        filePath = Application.persistentDataPath + "/Experiment_log.csv";
         if (!File.Exists(filePath))
         {
             File.WriteAllText(filePath, "PID,Time,TrialIndex,SpawnIndex,AudioIndex,AudioAngle,absError,DistanceFromSource,ResponseTime,Visualisation\n");
         }
 
-        pathFilePath = Application.persistentDataPath + "/VR_paths.csv";
+        pathFilePath = Application.persistentDataPath + "/Experiment_paths.csv";
         if (!File.Exists(pathFilePath))
         {
             File.WriteAllText(pathFilePath, "PID,Time,TrialIndex,Visualisation,PosX,PosY,PosZ,RotY\n"
