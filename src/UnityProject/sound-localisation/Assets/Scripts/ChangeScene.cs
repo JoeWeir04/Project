@@ -10,7 +10,7 @@ public class ChangeScene : MonoBehaviour
 {
     public InputActionReference buttonA;
     public InputActionReference buttonB;
-    public string sceneToLoad = "PassthroughScene";
+    public string sceneToLoad = "";
     public float holdDuration = 1.5f;
     private float holdTimer = 0f;
     private bool loading = false;

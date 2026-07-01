@@ -127,7 +127,15 @@ public class ArrowRotate : MonoBehaviour
             for (int j = 0; j < mats.Length; j++)
             {
                 Color c = shouldTurnRed ? Color.red : originalColors[i][j];
-                c.a = alpha;
+                if (isArrowPart[i])
+                {
+                    c.a = alpha;
+                }
+                else
+                {
+                    c.a = alpha-0.2f;
+                }
+                
                 mats[j].color = c;
             }
             renderers[i].materials = mats;

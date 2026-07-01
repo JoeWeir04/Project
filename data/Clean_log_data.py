@@ -35,6 +35,8 @@ def main():
                     row["Visualisation"] = "Arrow & Lights"
                 case("6"):
                     row["Visualisation"] = "Lights & Radar"
+                case("7")
+                    row["Visualisation"] = "Control"
             if row["PID"] == "2":
                 if row["Visualisation"] == "Radar":
                     continue

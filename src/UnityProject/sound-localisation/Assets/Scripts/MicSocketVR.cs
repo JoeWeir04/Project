@@ -42,14 +42,23 @@ public class MicSocketVR : MonoBehaviour, IMicSocket
     
     void Start()
     {   
-        foreach (var src in audioSources)
+
+        if(audioSources.Count != 1)
         {
-            if (src != null)
+            foreach (var src in audioSources)
             {
-                src.Stop();
-                src.gameObject.SetActive(false);
+                if (src != null)
+                {
+                    src.Stop();
+                    src.gameObject.SetActive(false);
+                }
             }
         }
+        else
+        {
+            currentAudioSource = audioSources[0];
+        }
+
     }
 
     
