@@ -10,6 +10,8 @@ venv/
 /[Uu]ser[Ss]ettings/
 *.log
 
+src/UnityProject/sound-localisation/Assets/warehouseImport
+
 #ignore powerpoint with videos
 presentation/PresSlides.pptx
 
