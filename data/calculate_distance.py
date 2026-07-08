@@ -114,15 +114,14 @@ def main():
     
 
  
-    movement_efficiency = merged["StraightLineDistance"] / merged["DistanceTravelled"].replace(0, np.nan)
+    movement_efficiency = merged["NavDistance"] / merged["DistanceTravelled"].replace(0, np.nan)
     merged["MovementEfficiency"] = movement_efficiency.clip(upper=1.0)
 
-    proximity_score = 1 - (merged["Distance"] / merged["StraightLineDistance"])
+    proximity_score = 1 - (merged["Distance"] / merged["NavDistance"])
     merged["ProximityScore"] = proximity_score.clip(lower=0.0)
 
     merged["Effectiveness"] = merged["MovementEfficiency"] * merged["ProximityScore"]
-
-    merged["Speed"] =  merged["StraightLineDistance"]/merged["Response Time"]
+    
     merged["NavSpeed"] = merged["NavDistance"]/merged["Response Time"]
 
 
