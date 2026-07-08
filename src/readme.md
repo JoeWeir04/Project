@@ -3,6 +3,8 @@
 ### /code 
 This folder contains python scripts that can be run to estimate the location of spatial sounds using the miniDSP UMA 8 Microphone array. These scripts also broadcast these measures on the connected network using a sockets server.
 
+Some Data files, such as the transcripts and raw path data, were too large and not included in the file submission, they can be found at the repository `https://github.com/JoeWeir04/Project/` linked in the text file `LinkToRepo`
+
 `OnBoardDoa.py` use's the UMA-8's onboard DOA method.
 
 `SPRPHATDOA.py` is the DOA method implemented in this project which uses the SPR-PHAT DOA method using the UMA-8's RAW mode.

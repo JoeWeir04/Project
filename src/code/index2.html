@@ -108,7 +108,18 @@
 
     ws.onmessage = (evt) => {
       const data = JSON.parse(evt.data);
-      draw(data.sources || []);
+
+      const sources = [];
+
+      if (data.vad) {
+        sources.push({
+          angle: data.angle,
+          strength: data.distance,
+          classification: data.classification || "sound"
+        });
+      }
+
+      draw(sources);
     };
 
     ws.onerror = () => {
