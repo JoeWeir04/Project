@@ -11,6 +11,7 @@ public class VRlogAngle : MonoBehaviour
     public InputActionReference startExperimentButton;
     public TMP_Text logText;
     public TMP_Text ExperimentText;
+    public TMP_Text ExperimentTextClone;
     public XROrigin playerRig;
     private string filePath;
     public MicSocketVR micSocket;
@@ -18,7 +19,6 @@ public class VRlogAngle : MonoBehaviour
     private float trialStartTime;
     private bool trialActive = false;
     public ChangeVisual changeVisual;
-    public float TrialsPerVisualCount = 6;
     [SerializeField] private bool isPractice = true;
     private List<Trial> trials = new List<Trial>();
     private int currentTrialIndex = 0;
@@ -27,6 +27,8 @@ public class VRlogAngle : MonoBehaviour
     private string pidFilePath;
 
     public TMP_Text pidText;
+    public TMP_Text pidTextClone;
+
     public TMP_Text errorText;
     public float pathLogInterval = 0.16f;
     private float nextPathLogTime = 0f;
@@ -65,7 +67,11 @@ public class VRlogAngle : MonoBehaviour
                 });
             }
         }
+        int removeSpawnIndex = 4;
+        int removeAudioIndex = 1;
+        trials.RemoveAll(t => t.spawnIndex == removeSpawnIndex && t.audioIndex == removeAudioIndex);
         Shuffle(trials);
+        Debug.LogError($"Size of trials: {trials.Count}");
     }
 
 
@@ -77,7 +83,6 @@ public class VRlogAngle : MonoBehaviour
             (list[i], list[j]) = (list[j], list[i]);
         }
     }
-
 
     void SetSpawnPointsInvisible(){
         foreach (Transform spawn in spawnPoints)
@@ -132,7 +137,7 @@ public class VRlogAngle : MonoBehaviour
         currentPid = GetPid();
         if (pidText != null)
         {
-            pidText.text = $"PID: {currentPid+1}";
+            pidText.text = pidTextClone.text = $"PID: {currentPid+1}";
         }
         
     }
@@ -192,13 +197,13 @@ public class VRlogAngle : MonoBehaviour
         WritePid(currentPid);
         if (pidText != null)
         {
-            pidText.text = $"PID: {currentPid}";
+            pidText.text = pidTextClone.text = $"PID: {currentPid}";
         }
         isPractice = false;
         currentTrialIndex = 0;
         trialActive = true;
         GenerateTrials();   
-        ExperimentText.text = "Started";
+        ExperimentText.text = ExperimentTextClone.text =  "Started";
         Debug.Log("Logging enabled");
         CallNextSource();
         startExperimentButton.action.performed -= StartExperiment;
@@ -282,15 +287,23 @@ public class VRlogAngle : MonoBehaviour
         nextPathLogTime = Time.time + pathLogInterval;
         if (currentTrialIndex >= trials.Count)
         {
-            PlayClip(experimentFinish);
-            ExperimentText.text = "Finished";
-            trialActive = false;
-            return;
+            if (isPractice)
+            {
+                currentTrialIndex = 0;
+            }
+            else
+            {
+                PlayClip(experimentFinish);
+                ExperimentText.text = ExperimentTextClone.text = "Finished";
+                trialActive = false;
+                return;
+            }
+            
         }
-        if (currentTrialIndex % 10 == 0 && currentTrialIndex > 0 && onBreak==false)
+        if (currentTrialIndex % 7 == 0 && currentTrialIndex > 0 && onBreak==false && !isPractice)
         {
             PlayClip(conditionComplete);
-            ExperimentText.text = "Break";
+            ExperimentText.text = ExperimentTextClone.text = "Break";
             changeVisual.allowChange = true;
             onBreak = true;
             trialActive = false;
@@ -301,10 +314,10 @@ public class VRlogAngle : MonoBehaviour
         
         if (isPractice)
         {
-            ExperimentText.text = $"Practice";
+            ExperimentText.text = ExperimentTextClone.text = $"Practice";
         }
         else{
-            ExperimentText.text = $"Trial: {currentTrialIndex+1} / {trials.Count}";
+            ExperimentText.text = ExperimentTextClone.text = $"Trial: {currentTrialIndex+1} / {trials.Count}";
         }
         Trial t = trials[currentTrialIndex]; 
         trialStartTime = Time.time;

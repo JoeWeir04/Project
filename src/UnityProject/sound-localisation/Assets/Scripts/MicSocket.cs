@@ -69,6 +69,7 @@ public class MicSocket : MonoBehaviour, IMicSocket
                 classification = (string)json["classification"];
                 realDistance = (float)json["distance"];
                 distanceProxy = (float)json["distance"];
+                isClose = (bool)json["isClose"];
             };
 
             candidate.ConnectAsync();

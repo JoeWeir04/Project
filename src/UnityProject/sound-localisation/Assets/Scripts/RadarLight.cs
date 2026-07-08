@@ -10,7 +10,7 @@ public class RadarLight : MonoBehaviour
     public Image rightLight;
     public Sprite leftSprite; 
     public Sprite rightSprite; 
-    public Sprite redLeftLight;   // drag RadarNotch here in Inspector
+    public Sprite redLeftLight;  
     public Sprite redRightLight;
     public Camera mainCamera;
     public TMP_Text logText;
@@ -18,16 +18,33 @@ public class RadarLight : MonoBehaviour
     [SerializeField] private MonoBehaviour micSocketBehaviour;
     public IMicSocket micSocket;
     float currentAlpha = 0f;
+    private float currentLeftAlpha = 0f;
+    private float currentRightAlpha = 0f;
+    public float sideFadeSpeed = 5f;
     float currentTimer = 0f;
     public float visibleDuration = 1f;
     public float fadeSpeed = 3f;
     Vector3 leftBaseScale;
     Vector3 rightBaseScale;
+    private Vector3 leftTargetScale;
+    private Vector3 rightTargetScale;
+    public float scaleTransitionSpeed = 5f;
     private float distanceFromCenter = 1f;
 
     public float facingThreshold = 30f;
-    private Color leftOriginalColor;
-    private Color rightOriginalColor;
+
+    public float colorTransitionSpeed = 3f;
+    private float colorT = 0f;
+    public Color normalColor = Color.green;
+    public Color warningColor = Color.red;
+
+    public float pushOffset = 50f;
+    public float positionTransitionSpeed = 5f;
+    private Vector2 leftBasePos;
+    private Vector2 rightBasePos;
+    private Vector2 leftCurrentPos;
+    private Vector2 rightCurrentPos;
+    
     
     
     void Awake()
@@ -35,27 +52,24 @@ public class RadarLight : MonoBehaviour
         micSocket = micSocketBehaviour as IMicSocket;
         leftBaseScale = leftLight.rectTransform.localScale;
         rightBaseScale = rightLight.rectTransform.localScale;
-        leftOriginalColor = leftLight.color;
-        rightOriginalColor = rightLight.color;
+        leftTargetScale = leftBaseScale;
+        rightTargetScale = rightBaseScale;
+
+        leftBasePos = leftLight.rectTransform.anchoredPosition;
+        rightBasePos = rightLight.rectTransform.anchoredPosition;
+        leftCurrentPos = leftBasePos;
+        rightCurrentPos = rightBasePos;
+
         SetAlpha(leftLight,0f);
         SetAlpha(rightLight,0f);
         
     }
 
-    
-    void OnEnable()
-    {
-        //arrow.SetActive(false);
-    }
-
-    void OnDisable()
-    {
-        //arrow.SetActive(true);
-    }
-    
 
     void Update()
     {
+        UpdateScales();
+        UpdatePositions();
          if (!micSocket.isConnected) return;
 
         bool soundReceived = micSocket.vad == 1;
@@ -66,45 +80,77 @@ public class RadarLight : MonoBehaviour
 
         Vector3 newScale = leftBaseScale;
         newScale.y *= distanceScale;
-        leftLight.rectTransform.localScale = newScale;
-
+        leftTargetScale = newScale;
         Vector3 rightScale = rightBaseScale;
         rightScale.y *= distanceScale;
-        rightLight.rectTransform.localScale = rightScale;
+        rightTargetScale = rightScale;
 
         if (logText != null)
             {
                 logText.text = $"Angle: {angle} \n Facing threshold: {facingThreshold} \n bool: {angle <= facingThreshold || angle >= (360f - facingThreshold)}";
             }
+
+        Fade(soundReceived);
+        float targetLeftAlpha;
+        float targetRightAlpha;
+        
         if(angle <= facingThreshold || angle >= (360f - facingThreshold))
         {
-            SetAlpha(leftLight, 1f * currentAlpha);
-            SetAlpha(rightLight, 1f * currentAlpha);
-            Fade(soundReceived);
-            return;
-        }
-        
-        
-
-        bool showRight = angle < 180f;
-        bool showLeft  = !showRight;
-
-        
-        Fade(soundReceived);
-
-        float degreesFromCentre = Mathf.Abs(Mathf.DeltaAngle(angle, 0f));
-        distanceFromCenter = 1f - Mathf.Clamp(degreesFromCentre / 180f, 0f, 0.9f);
-
-        if (showRight)
-        {
-            SetAlpha(rightLight, distanceFromCenter * currentAlpha);
-            SetAlpha(leftLight, 0f);
+            targetLeftAlpha = currentAlpha;
+            targetRightAlpha = currentAlpha;
         }
         else
         {
-            SetAlpha(leftLight, distanceFromCenter * currentAlpha);
-            SetAlpha(rightLight, 0f);
-        }        
+            bool showRight = angle < 180f;
+
+            float degreesFromCentre = Mathf.Abs(Mathf.DeltaAngle(angle, 0f));
+            distanceFromCenter = 1f - Mathf.Clamp(degreesFromCentre / 180f, 0f, 0.9f);
+
+            if (showRight)
+            {
+                targetRightAlpha = distanceFromCenter * currentAlpha;
+                targetLeftAlpha = 0f;
+            }
+            else
+            {
+                targetLeftAlpha = distanceFromCenter * currentAlpha;
+                targetRightAlpha = 0f;
+            }     
+        }
+        
+        currentLeftAlpha = Mathf.MoveTowards(currentLeftAlpha, targetLeftAlpha, sideFadeSpeed * Time.deltaTime);
+        currentRightAlpha = Mathf.MoveTowards(currentRightAlpha, targetRightAlpha, sideFadeSpeed * Time.deltaTime);
+        SetAlpha(leftLight, currentLeftAlpha);
+        SetAlpha(rightLight, currentRightAlpha);
+    }
+
+    void UpdateScales()
+    {
+        leftLight.rectTransform.localScale = Vector3.MoveTowards(
+            leftLight.rectTransform.localScale,
+            leftTargetScale,
+            scaleTransitionSpeed * Time.deltaTime
+        );
+        rightLight.rectTransform.localScale = Vector3.MoveTowards(
+            rightLight.rectTransform.localScale,
+            rightTargetScale,
+            scaleTransitionSpeed * Time.deltaTime
+        );
+    }
+
+
+     void UpdatePositions()
+    {
+        bool isClose = micSocket.isConnected && micSocket.isClose;
+
+        Vector2 leftTargetPos = isClose ? leftBasePos + new Vector2(-pushOffset, 0f) : leftBasePos;
+        Vector2 rightTargetPos = isClose ? rightBasePos + new Vector2(pushOffset, 0f) : rightBasePos;
+
+        leftCurrentPos = Vector2.MoveTowards(leftCurrentPos, leftTargetPos, positionTransitionSpeed * Time.deltaTime);
+        rightCurrentPos = Vector2.MoveTowards(rightCurrentPos, rightTargetPos, positionTransitionSpeed * Time.deltaTime);
+
+        leftLight.rectTransform.anchoredPosition = leftCurrentPos;
+        rightLight.rectTransform.anchoredPosition = rightCurrentPos;
     }
 
 
@@ -128,21 +174,15 @@ public class RadarLight : MonoBehaviour
                 );
             }
         }
+        float targetT = micSocket.isClose ? 1f : 0f;
+        colorT = Mathf.MoveTowards(colorT, targetT, colorTransitionSpeed * Time.deltaTime);
     }
 
 
 void SetAlpha(Image image,float alpha)
     {
-        if (micSocket.isClose)
         {
-            image.sprite = redLeftLight;
-        }
-        else
-        {
-            image.sprite = leftSprite;
-        }
-        {
-            Color c = image.color;
+            Color c = Color.Lerp(normalColor, warningColor, colorT);
             c.a = alpha;
             image.color = c;
         }

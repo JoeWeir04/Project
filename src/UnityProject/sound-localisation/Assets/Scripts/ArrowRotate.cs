@@ -9,7 +9,7 @@ public class ArrowRotate : MonoBehaviour
     private IMicSocket micSocket;
     public TMP_Text angleText;
     public Camera mainCamera;
-    private float rotationspeed = 400f;
+    private float rotationspeed = 350f;
     public float visibleDuration = 1f;
     private float currentTimer = 0f;
     public float fadeSpeed = 3f;
@@ -19,6 +19,11 @@ public class ArrowRotate : MonoBehaviour
 
     private Color[][] originalColors;
     private bool[] isArrowPart;
+    public float colorTransitionSpeed = 3f;
+    private float colorT = 0f;
+    public Color normalColor = Color.green;
+    public Color warningColor = Color.red;
+
 
 
     void Awake()
@@ -45,9 +50,6 @@ public class ArrowRotate : MonoBehaviour
 
     void Update()
     {
-
-
-    
         if (!micSocket.isConnected) return;
         float angle;
         float distance = micSocket.distanceProxy;
@@ -97,22 +99,25 @@ public class ArrowRotate : MonoBehaviour
 
     void Fade(float distance)
     {
-        bool soundReceived = micSocket.vad ==1;
+        bool soundReceived = micSocket.vad == 1;
+        float targetAlpha;
+
         if (soundReceived)
         {
-            currentAlpha = distance;
+            targetAlpha = distance;
             currentTimer = visibleDuration;
         }
         else
         {
             currentTimer -= Time.deltaTime;
-            if(currentTimer <= 0)
-            {
-                currentAlpha = Mathf.MoveTowards(
-                    currentAlpha,0f,fadeSpeed * Time.deltaTime
-                );
-            }
+            targetAlpha = currentTimer > 0 ? currentAlpha : 0f;
         }
+
+        currentAlpha = Mathf.MoveTowards(
+            currentAlpha, targetAlpha, fadeSpeed * Time.deltaTime
+        );
+        float targetT = micSocket.isClose ? 1f : 0f;
+        colorT = Mathf.MoveTowards(colorT, targetT, colorTransitionSpeed * Time.deltaTime);
         SetAlpha(currentAlpha);
     }
     
@@ -124,14 +129,15 @@ public class ArrowRotate : MonoBehaviour
             Material[] mats = renderers[i].materials;
             bool shouldTurnRed = micSocket.isClose && isArrowPart[i];
             for (int j = 0; j < mats.Length; j++)
-            {
-                Color c = shouldTurnRed ? Color.red : originalColors[i][j];
+            {   
+                Color c = Color.Lerp(normalColor, warningColor, colorT);
                 if (isArrowPart[i])
                 {
                     c.a = alpha;
                 }
                 else
                 {
+                    c = originalColors[i][j];
                     if (alpha > 0.69f)
                     {
                         c.a = Mathf.Max(alpha - 0.5f, 0.10f);
