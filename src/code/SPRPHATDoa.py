@@ -9,7 +9,7 @@ Requirements:
 import numpy as np
 import sounddevice as sd
 import pyroomacoustics as pra
-from scipy.signal import find_peaks
+from scipy.signal import find_peaks, butter, sosfilt, sosfilt_zi
 import queue
 import threading
 import asyncio
@@ -20,12 +20,13 @@ import statistics
 import csv
 import sys
 
+
 # ------------------- USER PARAMETERS -------------------
-ENERGY_THRESHOLD = 0.00008
+ENERGY_THRESHOLD = 0.00006
 FS = 16000
 N_MICS = 8
-FRAME_SIZE = 1024
-HOP_SIZE = 512
+FRAME_SIZE = 2048
+HOP_SIZE = 256
 N_FFT = FRAME_SIZE
 SPEED_OF_SOUND = 343.0
 RADIUS = 0.04
@@ -36,6 +37,9 @@ DEVICE = None
 CENTER_INDEX = 0
 ANGLE_OFFSET = 90
 UMA8_NAME = "miniDSP micArray"
+HIGH_CUTOFF = 300
+LOW_CUTOFF = 3500
+ANGLE_SMOOTH = 0.7
 
 last_classification = "Waiting"
 last_transcript = ""
@@ -43,7 +47,7 @@ last_vad = 0
 last_angle = 0
 last_distance = 0
 RMS_SCALE = 900
-isClose = false
+isClose = False
 
 RECONNECT_DELAY = 2
 
@@ -53,6 +57,26 @@ clients = set()
 
 SAVE_ANGLES_BOOL = False
 angles = []
+
+
+bpf_sos = butter(
+    6,
+    [HIGH_CUTOFF, LOW_CUTOFF],
+    btype='bandpass',
+    fs=FS,
+    output='sos'
+)
+
+zi_init = sosfilt_zi(bpf_sos)
+bpf_zi = np.stack([zi_init] * (N_MICS - 1), axis=1)
+bpf_zi_lock = threading.Lock()
+
+
+def reset_filter_state():
+    global bpf_zi
+    zi_init = sosfilt_zi(bpf_sos)
+    with bpf_zi_lock:
+        bpf_zi = np.stack([zi_init] * (N_MICS - 1), axis=1)
 
 
 def find_uma8_device():
@@ -88,7 +112,7 @@ doa = pra.doa.SRP(mic_positions, fs=FS, nfft=N_FFT, c=SPEED_OF_SOUND,
 
 # ---------- helpers ----------
 win = np.hanning(FRAME_SIZE)
-audio_q = queue.Queue(maxsize=40)
+audio_q = queue.Queue(maxsize=5)
 ring_buffer = np.zeros((N_MICS-1, FRAME_SIZE), dtype=np.float32)
 
 
@@ -145,7 +169,10 @@ def sd_callback(indata, frames, time_info, status):
             return
     try:
         outer_mics = indata.T[1:, :]
-        audio_q.put_nowait(outer_mics.copy())
+        global bpf_zi
+        with bpf_zi_lock:
+            filtered, bpf_zi = sosfilt(bpf_sos, outer_mics, axis=1, zi=bpf_zi)
+        audio_q.put_nowait(filtered.copy())
     except queue.Full:
         pass
 
@@ -169,7 +196,7 @@ async def broadcast_loop():
                 "angle": last_angle,
                 "classification": last_classification,
                 "transcript": last_transcript,
-                "distance": last_distance   
+                "distance": last_distance,  
                 "isClose": isClose  
             }
             message = json.dumps(data)
@@ -182,7 +209,7 @@ async def broadcast_loop():
                     dead_clients.add(client)
             for client in dead_clients:
                 clients.discard(client)
-        await asyncio.sleep(0.05)
+        await asyncio.sleep(0.02)
 
 
 def processing_thread():
@@ -196,11 +223,10 @@ def processing_thread():
 
             dist_temp = min(1.0, rms * RMS_SCALE)
 
-            if (dist_temp > 0.85)
-                isClose = true
+            if (dist_temp > 0.85):
+                isClose = True
             else:
-                isClose = false
-
+                isClose = False
 
             if dist_temp < 0.4:
                 last_distance = 0.2
@@ -224,7 +250,8 @@ def processing_thread():
             if len(angles_deg) > 0:
                 for a, s in zip(angles_deg, strengths):
                     a_norm = normalize_angle_deg(float(a) + ANGLE_OFFSET)
-                    last_angle = a_norm
+                    
+                    last_angle = ANGLE_SMOOTH * a_norm + (1 - ANGLE_SMOOTH) * last_angle
                     #print(last_angle, last_distance)
                     if SAVE_ANGLES_BOOL:
                         if int(time.time() * 10) % 5 == 0:
@@ -248,6 +275,7 @@ def create_stream():
             callback=sd_callback,
             device=device_index
         )
+        reset_filter_state()
         stream.start()
         print(f"Audio stream opened successfully on device {device_index}")
         return stream
