@@ -47,6 +47,7 @@ last_vad = 0
 last_angle = 0
 last_distance = 0
 RMS_SCALE = 900
+isClose = false
 
 RECONNECT_DELAY = 2
 
@@ -187,7 +188,7 @@ async def websocket_handler(websocket):
 
 
 async def broadcast_loop():
-    global last_classification, last_transcript, last_vad, last_angle, last_distance
+    global last_classification, last_transcript, last_vad, last_angle, last_distance, isClose
     while True:
         if clients:
             data = {
@@ -195,7 +196,8 @@ async def broadcast_loop():
                 "angle": last_angle,
                 "classification": last_classification,
                 "transcript": last_transcript,
-                "distance": last_distance     
+                "distance": last_distance   
+                "isClose": isClose  
             }
             message = json.dumps(data)
             dead_clients = set()
@@ -211,7 +213,7 @@ async def broadcast_loop():
 
 
 def processing_thread():
-    global last_angle, last_distance, last_vad
+    global last_angle, last_distance, last_vad, isClose
     try:
         while True:
             block = audio_q.get()
@@ -220,6 +222,12 @@ def processing_thread():
             rms = np.sqrt(np.mean(block**2))
 
             dist_temp = min(1.0, rms * RMS_SCALE)
+
+            if (dist_temp > 0.85)
+                isClose = true
+            else:
+                isClose = false
+
 
             if dist_temp < 0.4:
                 last_distance = 0.2

@@ -14,19 +14,24 @@ public class SmoothRadarRotate : MonoBehaviour
     public float visibleDuration = 1f;
     public float currentTimer = 0f;
     public float currentAlpha = 0f;
-    private bool isWarning = false;
-    private static readonly Regex warningRegex = new Regex(@"\b(alarm|beep|horn|siren)\b", RegexOptions.IgnoreCase);
+
     public Color normalColor = Color.green;
     public Color warningColor = Color.red;
-    private float rotationspeed = 400f;
+    private float rotationspeed = 350f;
+    private Color originalColor;
+
+    public Sprite normalSprite;   
+    public float colorTransitionSpeed = 3f;
+    private float colorT = 0f;
 
 
     void Awake()
     {
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
-        SetAlpha(0f);
-        
         micSocket = micSocketBehaviour as IMicSocket;
+        spriteRenderer.sprite = normalSprite;
+        SetAlpha(0f);
+
     }
 
 
@@ -41,43 +46,43 @@ public class SmoothRadarRotate : MonoBehaviour
             transform.localRotation,
             targetRotation,
             rotationspeed*Time.deltaTime);
-        //transform.localRotation = Quaternion.Euler(0,0,angle-15f);
-        string classification = micSocket.classification;
-        isWarning = warningRegex.IsMatch(classification);
         
         if(angleText != null){
             angleText.text = $"Mic Angle: {angle:F1}°\n";
         }
-        SetAlpha(micSocket.distanceProxy);
         Fade();
     }
 
 
     void Fade()
     {
-        bool soundReceived = micSocket.vad ==1;
+        bool soundReceived = micSocket.vad == 1;
+        float targetAlpha;
+
         if (soundReceived)
         {
-            currentAlpha = micSocket.distanceProxy;
+            targetAlpha = micSocket.distanceProxy;
             currentTimer = visibleDuration;
         }
         else
         {
             currentTimer -= Time.deltaTime;
-            if(currentTimer <= 0)
-            {
-                currentAlpha = Mathf.MoveTowards(
-                    currentAlpha,0f,fadeSpeed * Time.deltaTime
-                );
-            }
+            targetAlpha = currentTimer > 0 ? currentAlpha : 0f;
         }
+
+        currentAlpha = Mathf.MoveTowards(
+            currentAlpha, targetAlpha, fadeSpeed * Time.deltaTime
+        );
+        float targetT = micSocket.isClose ? 1f : 0f;
+        colorT = Mathf.MoveTowards(colorT, targetT, colorTransitionSpeed * Time.deltaTime);
+
         SetAlpha(currentAlpha);
     }
 
 
     void SetAlpha(float alpha)
     {
-        Color c = isWarning ? warningColor : normalColor;
+        Color c = Color.Lerp(normalColor, warningColor, colorT);
         c.a = alpha;
         spriteRenderer.color = c;
     }

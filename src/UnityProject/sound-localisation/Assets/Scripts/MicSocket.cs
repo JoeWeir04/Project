@@ -16,12 +16,13 @@ public class MicSocket : MonoBehaviour, IMicSocket
 
     public bool isConnected { get; private set; } = false;
     public string classification { get; private set; }
+    public bool isClose {get; private set; }
 
     private List<string> serverIPs = new List<string>
     {
+        "ws://192.168.0.19:8765",
         "ws://172.20.10.2:8765",
         "ws://172.30.203.69:8765",
-        "ws://192.168.0.19:8765",
         
     };
     
@@ -68,6 +69,7 @@ public class MicSocket : MonoBehaviour, IMicSocket
                 classification = (string)json["classification"];
                 realDistance = (float)json["distance"];
                 distanceProxy = (float)json["distance"];
+                isClose = (bool)json["isClose"];
             };
 
             candidate.ConnectAsync();
