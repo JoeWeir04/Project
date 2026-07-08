@@ -142,11 +142,14 @@ public class ArrowRotate : MonoBehaviour
                     {
                         c.a = Mathf.Max(alpha - 0.5f, 0.10f);
                     }
+                    else if(alpha == 0)
+                    {
+                        c.a = 0;
+                    }
                     else
                     {
                         c.a = Mathf.Max(alpha - 0.2f, 0.10f);
                     }
-                    
                 }
                 mats[j].color = c;
             }
