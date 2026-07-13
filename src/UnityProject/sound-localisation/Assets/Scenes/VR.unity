@@ -2511,7 +2511,7 @@ Transform:
   m_GameObject: {fileID: 181941884}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -11.22, y: 1.49, z: -2.77}
+  m_LocalPosition: {x: -11.02, y: 1.49, z: -2.77}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5165,7 +5165,7 @@ Transform:
   m_GameObject: {fileID: 433953190}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -17.72, y: 1.49, z: -1.88}
+  m_LocalPosition: {x: -17.72, y: 1.49, z: 1.16}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -6326,7 +6326,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 526850882}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
@@ -8972,6 +8972,7 @@ MonoBehaviour:
   audioMixer: {fileID: 24100000, guid: f497f6fcac929634aaafbe6524f36ae9, type: 2}
   alarmVolumeParam: Alarms
   targetVolume: 0
+  isVR: 1
 --- !u!4 &807511443
 Transform:
   m_ObjectHideFlags: 0
@@ -10972,7 +10973,7 @@ Transform:
   m_GameObject: {fileID: 999036786}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 10.5, y: 0.919, z: -2.62}
+  m_LocalPosition: {x: 10.5, y: 0.919, z: -1.44}
   m_LocalScale: {x: 0.3501882, y: 0.010276422, z: 0.3501882}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -14313,7 +14314,7 @@ Transform:
   m_GameObject: {fileID: 1103354965}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 6.25, y: 1.49, z: 8.82}
+  m_LocalPosition: {x: 6.25, y: 1.49, z: 8.58}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -24671,7 +24672,7 @@ Transform:
   m_GameObject: {fileID: 2109517274}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.5, y: 1.49, z: 8.81}
+  m_LocalPosition: {x: -8.02, y: 1.49, z: 8.16}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

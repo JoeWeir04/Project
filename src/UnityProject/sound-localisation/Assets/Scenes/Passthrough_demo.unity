@@ -1747,6 +1747,7 @@ MonoBehaviour:
   audioMixer: {fileID: 24100000, guid: f497f6fcac929634aaafbe6524f36ae9, type: 2}
   alarmVolumeParam: Alarms
   targetVolume: 0
+  isVR: 0
 --- !u!4 &931194064
 Transform:
   m_ObjectHideFlags: 0

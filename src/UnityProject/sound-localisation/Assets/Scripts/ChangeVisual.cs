@@ -16,6 +16,7 @@ public class ChangeVisual : MonoBehaviour
     public AudioMixer audioMixer;
     public string alarmVolumeParam = "Alarms";
     public float targetVolume = 0f;
+    public bool isVR = true;
 
 
     private void Awake()
@@ -42,7 +43,11 @@ public class ChangeVisual : MonoBehaviour
             return;
         }
         visualCounter ++;
-        if(visualCounter > 6)
+        if(!isVR && visualCounter > 5)
+        {
+            visualCounter = 0;
+        }
+        else if(visualCounter > 6)
         {
             visualCounter = 0;
         }
@@ -79,7 +84,7 @@ public class ChangeVisual : MonoBehaviour
             visuals[1].SetActive(true);
             visuals[2].SetActive(true);
         }
-        else if (index == 6)
+        else if (index == 6 && isVR == true)
         {
             visuals[3].SetActive(true);
             audioMixer.SetFloat(alarmVolumeParam, targetVolume);
