@@ -32,10 +32,10 @@ public class RadarLight : MonoBehaviour
 
 
     [Header("Distance Color Encoding")]
-    public Color nearColor = Color.red;
-    public Color mediumColor = Color.yellow;
-    public Color farColor = Color.green;
-    private float colorTransitionSpeed = 0.5f;
+    private Color nearColor = new Color(253f / 255f, 231f / 255f, 37f / 255f);
+    private Color mediumColor = new Color(33f / 255f, 145f / 255f, 140f / 255f);
+    private Color farColor = new Color(68f / 255f, 1f / 255f, 84f / 255f);
+    private float colorTransitionSpeed = 3f;
     private Color currentColor;
 
     private const float farDistance = 0.2f;
@@ -62,6 +62,8 @@ public class RadarLight : MonoBehaviour
     {
         micSocket = micSocketBehaviour as IMicSocket;
         currentColor = farColor;
+        leftBaseScale = leftLight.rectTransform.localScale;
+        rightBaseScale = rightLight.rectTransform.localScale;
 
         SetColor(leftLight, currentColor, 0f);
         SetColor(rightLight, currentColor, 0f);
@@ -71,22 +73,13 @@ public class RadarLight : MonoBehaviour
 
     void Update()
     {
-        //UpdateScales();
-        //UpdatePositions();
+        UpdateScales();
         if (!micSocket.isConnected) return;
 
         bool soundReceived = micSocket.vad == 1;
         float distance = micSocket.distanceProxy;
         float cameraYaw = mainCamera.transform.eulerAngles.y;
         float angle = micSocket.angle;
-        float distanceScale = Mathf.Clamp(micSocket.distanceProxy, 0.2f, 1f);
-
-        Vector3 newScale = leftBaseScale;
-        newScale.y *= distanceScale;
-        leftTargetScale = newScale;
-        Vector3 rightScale = rightBaseScale;
-        rightScale.y *= distanceScale;
-        rightTargetScale = rightScale;
 
         if (logText != null)
             {
@@ -99,28 +92,49 @@ public class RadarLight : MonoBehaviour
         float targetLeftAlpha;
         float targetRightAlpha;
         
-        if(angle <= facingThreshold || angle >= (360f - facingThreshold))
+        if(angle <= facingThreshold/2 || angle >= (360f - facingThreshold/2))
         {
             targetLeftAlpha = currentAlpha;
             targetRightAlpha = currentAlpha;
+
+            Vector3 rScale = rightBaseScale;
+            rScale.y *= 1f;
+            rightTargetScale = rScale;
+
+            Vector3 lScale = leftBaseScale;
+            lScale.y *= 1f;
+            leftTargetScale = lScale;
         }
         else
         {
-            bool showRight = angle < 180f;
-
+            bool showRight = angle > 0f && angle < 180f;
             float degreesFromCentre = Mathf.Abs(Mathf.DeltaAngle(angle, 0f));
             distanceFromCenter = 1f - Mathf.Clamp(degreesFromCentre / 180f, 0f, 0.9f);
 
             if (showRight)
             {
-                targetRightAlpha = distanceFromCenter * currentAlpha;
+                Vector3 rScale = rightBaseScale;
+                rScale.y *= distanceFromCenter;
+                rightTargetScale = rScale;
+
+                leftTargetScale = leftBaseScale;
+                leftTargetScale.y = 0f;
+
                 targetLeftAlpha = 0f;
+                targetRightAlpha = currentAlpha;
             }
             else
             {
-                targetLeftAlpha = distanceFromCenter * currentAlpha;
+                Vector3 lScale = leftBaseScale;
+                lScale.y *= distanceFromCenter;
+                leftTargetScale = lScale;
+
+                rightTargetScale = rightBaseScale;
+                rightTargetScale.y = 0f;
+
+                targetLeftAlpha = currentAlpha;
                 targetRightAlpha = 0f;
-            }     
+            }   
         }
         
         currentLeftAlpha = Mathf.MoveTowards(currentLeftAlpha, targetLeftAlpha, sideFadeSpeed * Time.deltaTime);

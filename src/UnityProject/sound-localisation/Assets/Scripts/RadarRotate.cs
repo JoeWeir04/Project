@@ -21,10 +21,10 @@ public class SmoothRadarRotate : MonoBehaviour
     public Sprite normalSprite;   
 
     [Header("Distance Color Encoding")]
-    public Color nearColor = Color.red;
-    public Color mediumColor = Color.yellow;
-    public Color farColor = Color.green;
-    private float colorTransitionSpeed = 0.5f;
+    private Color nearColor = new Color(253f / 255f, 231f / 255f, 37f / 255f);
+    private Color mediumColor = new Color(33f / 255f, 145f / 255f, 140f / 255f);
+    private Color farColor = new Color(68f / 255f, 1f / 255f, 84f / 255f);
+    private float colorTransitionSpeed = 3f;
     private Color currentColor;
 
     private const float farDistance = 0.2f;
