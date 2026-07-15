@@ -8,21 +8,34 @@ public class ArrowRotate : MonoBehaviour
     [SerializeField] private MonoBehaviour micSocketBehaviour;
     private IMicSocket micSocket;
     public TMP_Text angleText;
+    public bool isVR = true;
     public Camera mainCamera;
     private float rotationspeed = 350f;
+
+    private Renderer[] renderers;
+    private bool[] isArrowPart;
+    private Color[][] originalColors;
+
+
+    [Header("Sound-Triggered Fade")]
     public float visibleDuration = 1f;
     private float currentTimer = 0f;
     public float fadeSpeed = 3f;
-    private Renderer[] renderers;
     private float currentAlpha = 0f;
-    public bool isVR = true;
 
-    private Color[][] originalColors;
-    private bool[] isArrowPart;
-    public float colorTransitionSpeed = 3f;
-    private float colorT = 0f;
-    public Color normalColor = Color.green;
-    public Color warningColor = Color.red;
+
+    [Header("Distance Color Encoding")]
+    public Color nearColor = Color.red;
+    public Color mediumColor = Color.yellow;
+    public Color farColor = Color.green;
+    private float colorTransitionSpeed = 0.5f;
+    private Color currentColor;
+
+    private const float farDistance = 0.2f;
+    private const float mediumDistance = 0.5f;
+    private const float nearDistance = 1f;
+
+
 
 
 
@@ -43,8 +56,8 @@ public class ArrowRotate : MonoBehaviour
                 originalColors[i][j] = mats[j].color;
             }
         }
-
-        SetAlpha(0f);  
+        currentColor = farColor;
+        SetColor(currentColor, 0f);
     }
 
 
@@ -93,18 +106,50 @@ public class ArrowRotate : MonoBehaviour
             }
 
         }   
-        Fade(distance);
+        UpdateColor(distance);
+        UpdateFade();
+        SetColor(currentColor,currentAlpha);
+
+    }
+
+    void UpdateColor(float distance)
+    {
+        Color targetColor = GetColorForDistance(distance);
+ 
+        currentColor = new Color(
+            Mathf.MoveTowards(currentColor.r, targetColor.r, colorTransitionSpeed * Time.deltaTime),
+            Mathf.MoveTowards(currentColor.g, targetColor.g, colorTransitionSpeed * Time.deltaTime),
+            Mathf.MoveTowards(currentColor.b, targetColor.b, colorTransitionSpeed * Time.deltaTime)
+        );
+
     }
 
 
-    void Fade(float distance)
+    Color GetColorForDistance(float distance)
+    {
+        if (distance <= farDistance)
+        {
+            return farColor;
+        }
+        else if (distance <= mediumDistance)
+        {
+            return mediumColor;
+        }
+        else
+        {
+            return nearColor;
+        }
+    }
+
+
+    void UpdateFade()
     {
         bool soundReceived = micSocket.vad == 1;
         float targetAlpha;
-
+ 
         if (soundReceived)
         {
-            targetAlpha = distance;
+            targetAlpha = 1f;
             currentTimer = visibleDuration;
         }
         else
@@ -112,48 +157,34 @@ public class ArrowRotate : MonoBehaviour
             currentTimer -= Time.deltaTime;
             targetAlpha = currentTimer > 0 ? currentAlpha : 0f;
         }
-
-        currentAlpha = Mathf.MoveTowards(
-            currentAlpha, targetAlpha, fadeSpeed * Time.deltaTime
-        );
-        float targetT = micSocket.isClose ? 1f : 0f;
-        colorT = Mathf.MoveTowards(colorT, targetT, colorTransitionSpeed * Time.deltaTime);
-        SetAlpha(currentAlpha);
+ 
+        currentAlpha = Mathf.MoveTowards(currentAlpha, targetAlpha, fadeSpeed * Time.deltaTime);
     }
-    
 
-    void SetAlpha(float alpha)
+
+    void SetColor(Color color, float alpha)
     {
         for (int i = 0; i < renderers.Length; i++)
         {
             Material[] mats = renderers[i].materials;
-            bool shouldTurnRed = micSocket.isClose && isArrowPart[i];
             for (int j = 0; j < mats.Length; j++)
-            {   
-                Color c = Color.Lerp(normalColor, warningColor, colorT);
+            {
+                Color c;
                 if (isArrowPart[i])
                 {
+                    c = color;
                     c.a = alpha;
                 }
                 else
                 {
                     c = originalColors[i][j];
-                    if (alpha > 0.69f)
-                    {
-                        c.a = Mathf.Max(alpha - 0.5f, 0.10f);
-                    }
-                    else if(alpha == 0)
-                    {
-                        c.a = 0;
-                    }
-                    else
-                    {
-                        c.a = Mathf.Max(alpha - 0.2f, 0.10f);
-                    }
+                    c.a = 0.4f;
                 }
                 mats[j].color = c;
             }
             renderers[i].materials = mats;
         }
     }
+
+
 }

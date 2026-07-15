@@ -20,8 +20,10 @@ public class VRlogAngle : MonoBehaviour
     private bool trialActive = false;
     public ChangeVisual changeVisual;
     [SerializeField] private bool isPractice = true;
-    private List<Trial> trials = new List<Trial>();
+    private List<Trial> experimentTrials = new List<Trial>();
+    private List<Trial> practiceTrials = new List<Trial>();
     private int currentTrialIndex = 0;
+    private int practiceTrialIndex = 0;
     public int currentPid = 0;
     public string pidFileName = "last_pid.txt";
     private string pidFilePath;
@@ -41,6 +43,7 @@ public class VRlogAngle : MonoBehaviour
     public AudioClip experimentFinish;     
     public AudioClip conditionBegun;
     public AudioClip conditionComplete;
+    public AudioClip conditionPraciceBegun;
 
 
 
@@ -52,15 +55,23 @@ public class VRlogAngle : MonoBehaviour
         
     }
 
-
-    void GenerateTrials()
+    private List<Trial> CurrentTrials => isPractice ? practiceTrials : experimentTrials;
+    private int CurrentTrialIndex
     {
-        trials.Clear();
+        get => isPractice ? practiceTrialIndex : currentTrialIndex;
+        set { if (isPractice) practiceTrialIndex = value; else currentTrialIndex = value; }
+    }
+
+
+    List<Trial> GenerateTrials()
+    {
+        List<Trial> tempTrials = new List<Trial>();
+        tempTrials.Clear();
         for (int s = 0; s < spawnPoints.Count; s++)
         {
             for (int a = 0; a < micSocket.audioSources.Count; a++)
             {
-                trials.Add(new Trial
+                tempTrials.Add(new Trial
                 {
                     spawnIndex = s,
                     audioIndex = a
@@ -69,9 +80,10 @@ public class VRlogAngle : MonoBehaviour
         }
         int removeSpawnIndex = 4;
         int removeAudioIndex = 1;
-        trials.RemoveAll(t => t.spawnIndex == removeSpawnIndex && t.audioIndex == removeAudioIndex);
-        Shuffle(trials);
-        Debug.LogError($"Size of trials: {trials.Count}");
+        tempTrials.RemoveAll(t => t.spawnIndex == removeSpawnIndex && t.audioIndex == removeAudioIndex);
+        Shuffle(tempTrials);
+        Debug.LogError($"Size of trials: {tempTrials.Count}");
+        return tempTrials;
     }
 
 
@@ -98,6 +110,8 @@ public class VRlogAngle : MonoBehaviour
 
     void Start()
     {
+        experimentTrials = GenerateTrials();
+        practiceTrials = GenerateTrials();
         nextPathLogTime = Time.time + pathLogInterval;
         filePath = Application.persistentDataPath + "/Experiment_log.csv";
         if (!File.Exists(filePath))
@@ -111,7 +125,6 @@ public class VRlogAngle : MonoBehaviour
             File.WriteAllText(pathFilePath, "PID,Time,TrialIndex,Visualisation,PosX,PosY,PosZ,RotY\n"
             );
         }
-        GenerateTrials();
         CallNextSource();
         SetSpawnPointsInvisible();
     }
@@ -202,19 +215,34 @@ public class VRlogAngle : MonoBehaviour
         isPractice = false;
         currentTrialIndex = 0;
         trialActive = true;
-        GenerateTrials();   
+        experimentTrials = GenerateTrials();   
         ExperimentText.text = ExperimentTextClone.text =  "Started";
         Debug.Log("Logging enabled");
         CallNextSource();
         startExperimentButton.action.performed -= StartExperiment;
+    }
+
+    private void NextConditionPractice(InputAction.CallbackContext ctx)
+    {
+        isPractice = true;
+        changeVisual.allowChange = false;
+        trialActive = false;
+        practiceTrialIndex = 0;
+        PlayClip(conditionPraciceBegun);
+        ExperimentText.text = ExperimentTextClone.text = "Practice";
+        startExperimentButton.action.performed -= NextConditionPractice;
         startExperimentButton.action.performed += NextCondition;
     }
 
     private void NextCondition(InputAction.CallbackContext ctx)
     {
+        isPractice = false;
         changeVisual.allowChange = false;
         trialActive = true;
+        onBreak = true; 
+        ExperimentText.text = ExperimentTextClone.text = "Press right button to begin";
         PlayClip(conditionBegun);
+        startExperimentButton.action.performed -= NextCondition;
     }
         
 
@@ -236,7 +264,7 @@ public class VRlogAngle : MonoBehaviour
             float distance = micSocket.realDistance;
             try
             {
-                File.AppendAllText(filePath, $"{currentPid},{Time.time},{currentTrialIndex-1},{trials[currentTrialIndex-1].spawnIndex},{trials[currentTrialIndex-1].audioIndex},{audioAngle},{absError},{distance},{responseTime},{visualisation}\n");
+                File.AppendAllText(filePath, $"{currentPid},{Time.time},{currentTrialIndex-1},{experimentTrials[currentTrialIndex-1].spawnIndex},{experimentTrials[currentTrialIndex-1].audioIndex},{audioAngle},{absError},{distance},{responseTime},{visualisation}\n");
             }
             catch(System.Exception)
             {
@@ -285,11 +313,15 @@ public class VRlogAngle : MonoBehaviour
     public void CallNextSource()
     {
         nextPathLogTime = Time.time + pathLogInterval;
-        if (currentTrialIndex >= trials.Count)
+        List<Trial> activeTrials = CurrentTrials;
+        int idx = CurrentTrialIndex;
+        
+        if (idx >= activeTrials.Count)
         {
             if (isPractice)
             {
-                currentTrialIndex = 0;
+                idx = 0;
+                CurrentTrialIndex = 0;
             }
             else
             {
@@ -298,15 +330,15 @@ public class VRlogAngle : MonoBehaviour
                 trialActive = false;
                 return;
             }
-            
         }
-        if (currentTrialIndex % 7 == 0 && currentTrialIndex > 0 && onBreak==false && !isPractice)
+        if (idx % 7 == 0 && idx > 0 && onBreak==false && !isPractice)
         {
             PlayClip(conditionComplete);
             ExperimentText.text = ExperimentTextClone.text = "Break";
             changeVisual.allowChange = true;
             onBreak = true;
             trialActive = false;
+            startExperimentButton.action.performed += NextConditionPractice;
             return;
         }
         onBreak = false;
@@ -317,16 +349,16 @@ public class VRlogAngle : MonoBehaviour
             ExperimentText.text = ExperimentTextClone.text = $"Practice";
         }
         else{
-            ExperimentText.text = ExperimentTextClone.text = $"Trial: {currentTrialIndex+1} / {trials.Count}";
+            ExperimentText.text = ExperimentTextClone.text = $"Trial: {idx+1} / {experimentTrials.Count}";
         }
-        Trial t = trials[currentTrialIndex]; 
+        Trial t = activeTrials[idx];
         trialStartTime = Time.time;
         playerRig.transform.SetPositionAndRotation(
             spawnPoints[t.spawnIndex].position,
             spawnPoints[t.spawnIndex].rotation
         );
         micSocket.NextSource(t.audioIndex);
-        currentTrialIndex++;
+        CurrentTrialIndex = idx + 1;
     }
 
     void PlayClip(AudioClip clip)

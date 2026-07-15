@@ -10,17 +10,14 @@ public class RadarLight : MonoBehaviour
     public Image rightLight;
     public Sprite leftSprite; 
     public Sprite rightSprite; 
-    public Sprite redLeftLight;  
-    public Sprite redRightLight;
     public Camera mainCamera;
     public TMP_Text logText;
-    public GameObject arrow;
     [SerializeField] private MonoBehaviour micSocketBehaviour;
     public IMicSocket micSocket;
     float currentAlpha = 0f;
     private float currentLeftAlpha = 0f;
     private float currentRightAlpha = 0f;
-    public float sideFadeSpeed = 5f;
+    public float sideFadeSpeed = 3f;
     float currentTimer = 0f;
     public float visibleDuration = 1f;
     public float fadeSpeed = 3f;
@@ -33,44 +30,50 @@ public class RadarLight : MonoBehaviour
 
     public float facingThreshold = 30f;
 
-    public float colorTransitionSpeed = 3f;
-    private float colorT = 0f;
-    public Color normalColor = Color.green;
-    public Color warningColor = Color.red;
 
+    [Header("Distance Color Encoding")]
+    public Color nearColor = Color.red;
+    public Color mediumColor = Color.yellow;
+    public Color farColor = Color.green;
+    private float colorTransitionSpeed = 0.5f;
+    private Color currentColor;
+
+    private const float farDistance = 0.2f;
+    private const float mediumDistance = 0.5f;
+    private const float nearDistance = 1f;
+
+
+    /*
     public float pushOffset = 50f;
     public float positionTransitionSpeed = 5f;
     private Vector2 leftBasePos;
     private Vector2 rightBasePos;
     private Vector2 leftCurrentPos;
     private Vector2 rightCurrentPos;
+
+    private const float farDistance = 0.2f;
+    private const float mediumDistance = 0.5f;
+    private const float nearDistance = 1f;
+    */
     
     
     
     void Awake()
     {
         micSocket = micSocketBehaviour as IMicSocket;
-        leftBaseScale = leftLight.rectTransform.localScale;
-        rightBaseScale = rightLight.rectTransform.localScale;
-        leftTargetScale = leftBaseScale;
-        rightTargetScale = rightBaseScale;
+        currentColor = farColor;
 
-        leftBasePos = leftLight.rectTransform.anchoredPosition;
-        rightBasePos = rightLight.rectTransform.anchoredPosition;
-        leftCurrentPos = leftBasePos;
-        rightCurrentPos = rightBasePos;
+        SetColor(leftLight, currentColor, 0f);
+        SetColor(rightLight, currentColor, 0f);
 
-        SetAlpha(leftLight,0f);
-        SetAlpha(rightLight,0f);
-        
     }
 
 
     void Update()
     {
-        UpdateScales();
-        UpdatePositions();
-         if (!micSocket.isConnected) return;
+        //UpdateScales();
+        //UpdatePositions();
+        if (!micSocket.isConnected) return;
 
         bool soundReceived = micSocket.vad == 1;
         float distance = micSocket.distanceProxy;
@@ -91,6 +94,8 @@ public class RadarLight : MonoBehaviour
             }
 
         Fade(soundReceived);
+        UpdateColor(distance);
+        
         float targetLeftAlpha;
         float targetRightAlpha;
         
@@ -120,8 +125,9 @@ public class RadarLight : MonoBehaviour
         
         currentLeftAlpha = Mathf.MoveTowards(currentLeftAlpha, targetLeftAlpha, sideFadeSpeed * Time.deltaTime);
         currentRightAlpha = Mathf.MoveTowards(currentRightAlpha, targetRightAlpha, sideFadeSpeed * Time.deltaTime);
-        SetAlpha(leftLight, currentLeftAlpha);
-        SetAlpha(rightLight, currentRightAlpha);
+        
+        SetColor(leftLight, currentColor, currentLeftAlpha);
+        SetColor(rightLight, currentColor, currentRightAlpha);
     }
 
     void UpdateScales()
@@ -139,9 +145,9 @@ public class RadarLight : MonoBehaviour
     }
 
 
+    /*
      void UpdatePositions()
     {
-        bool isClose = micSocket.isConnected && micSocket.isClose;
 
         Vector2 leftTargetPos = isClose ? leftBasePos + new Vector2(-pushOffset, 0f) : leftBasePos;
         Vector2 rightTargetPos = isClose ? rightBasePos + new Vector2(pushOffset, 0f) : rightBasePos;
@@ -152,13 +158,13 @@ public class RadarLight : MonoBehaviour
         leftLight.rectTransform.anchoredPosition = leftCurrentPos;
         rightLight.rectTransform.anchoredPosition = rightCurrentPos;
     }
+    */
 
 
     void Fade(bool soundReceived)
     {
         if (soundReceived)
         {
-            
             currentAlpha = 1f;
             currentTimer = visibleDuration;
         }
@@ -167,24 +173,46 @@ public class RadarLight : MonoBehaviour
             currentTimer -= Time.deltaTime;
             if (currentTimer <= 0f)
             {
-                currentAlpha = Mathf.MoveTowards(
-                    currentAlpha,
-                    0f,
-                    fadeSpeed * Time.deltaTime
-                );
+                currentAlpha = Mathf.MoveTowards(currentAlpha, 0f, fadeSpeed * Time.deltaTime);
             }
         }
-        float targetT = micSocket.isClose ? 1f : 0f;
-        colorT = Mathf.MoveTowards(colorT, targetT, colorTransitionSpeed * Time.deltaTime);
     }
-
-
-void SetAlpha(Image image,float alpha)
+ 
+    void UpdateColor(float distance)
     {
+        Color targetColor = GetColorForDistance(distance);
+ 
+        currentColor = new Color(
+            Mathf.MoveTowards(currentColor.r, targetColor.r, colorTransitionSpeed * Time.deltaTime),
+            Mathf.MoveTowards(currentColor.g, targetColor.g, colorTransitionSpeed * Time.deltaTime),
+            Mathf.MoveTowards(currentColor.b, targetColor.b, colorTransitionSpeed * Time.deltaTime)
+        );
+
+    }
+ 
+ 
+    Color GetColorForDistance(float distance)
+    {
+        if (distance <= farDistance)
         {
-            Color c = Color.Lerp(normalColor, warningColor, colorT);
-            c.a = alpha;
-            image.color = c;
+            return farColor;
+        }
+        else if (distance <= mediumDistance)
+        {
+            return mediumColor;
+        }
+        else
+        {
+            return nearColor;
         }
     }
+
+
+    void SetColor(Image image, Color color, float alpha)
+    {
+        Color c = color;
+        c.a = alpha;
+        image.color = c;
+    }
+
 }
