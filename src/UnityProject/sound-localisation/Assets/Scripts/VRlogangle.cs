@@ -11,7 +11,6 @@ public class VRlogAngle : MonoBehaviour
     public InputActionReference startExperimentButton;
     public TMP_Text logText;
     public TMP_Text ExperimentText;
-    public TMP_Text ExperimentTextClone;
     public XROrigin playerRig;
     private string filePath;
     public MicSocketVR micSocket;
@@ -43,7 +42,8 @@ public class VRlogAngle : MonoBehaviour
     public AudioClip experimentFinish;     
     public AudioClip conditionBegun;
     public AudioClip conditionComplete;
-    public AudioClip conditionPraciceBegun;
+    public AudioClip firstPractice;
+    public AudioClip conditionPracticeBegun;
 
 
 
@@ -145,9 +145,10 @@ public class VRlogAngle : MonoBehaviour
         aButton.action.Enable();
         aButton.action.performed += OnButtonPress;
         startExperimentButton.action.Enable();
-        startExperimentButton.action.performed += StartExperiment;
+        startExperimentButton.action.performed += changeVisualFalse;
         pidFilePath = Path.Combine(Application.persistentDataPath, pidFileName);
         currentPid = GetPid();
+        changeVisual.allowChange = true;
         if (pidText != null)
         {
             pidText.text = pidTextClone.text = $"PID: {currentPid+1}";
@@ -216,10 +217,19 @@ public class VRlogAngle : MonoBehaviour
         currentTrialIndex = 0;
         trialActive = true;
         experimentTrials = GenerateTrials();   
-        ExperimentText.text = ExperimentTextClone.text =  "Started";
+        ExperimentText.text =  "Started";
         Debug.Log("Logging enabled");
         CallNextSource();
         startExperimentButton.action.performed -= StartExperiment;
+    }
+
+    private void changeVisualFalse(InputAction.CallbackContext ctx)
+    {
+        PlayClip(firstPractice);
+        changeVisual.allowChange = false;
+        startExperimentButton.action.performed -= changeVisualFalse          ;
+        startExperimentButton.action.performed += StartExperiment;
+
     }
 
     private void NextConditionPractice(InputAction.CallbackContext ctx)
@@ -228,8 +238,8 @@ public class VRlogAngle : MonoBehaviour
         changeVisual.allowChange = false;
         trialActive = false;
         practiceTrialIndex = 0;
-        PlayClip(conditionPraciceBegun);
-        ExperimentText.text = ExperimentTextClone.text = "Practice";
+        PlayClip(conditionPracticeBegun);
+        ExperimentText.text  = "Practice";
         startExperimentButton.action.performed -= NextConditionPractice;
         startExperimentButton.action.performed += NextCondition;
     }
@@ -240,7 +250,8 @@ public class VRlogAngle : MonoBehaviour
         changeVisual.allowChange = false;
         trialActive = true;
         onBreak = true; 
-        ExperimentText.text = ExperimentTextClone.text = "Press right button to begin";
+        ExperimentText.text = "Press button to begin";
+        ExperimentText.fontSize -= 20f;
         PlayClip(conditionBegun);
         startExperimentButton.action.performed -= NextCondition;
     }
@@ -297,7 +308,7 @@ public class VRlogAngle : MonoBehaviour
             int visualisation = changeVisual.visualCounter + 1;
 
             string line =
-                $"{currentPid},{Time.time},{trialIndexForLog},{visualisation},{pos.x},{pos.y},{pos.z},{rotY}\n";
+                $"{currentPid},{Time.time},{trialIndexForLog},{visualisation},f{pos.x},{pos.y},{pos.z},{rotY}\n";
             File.AppendAllText(pathFilePath, line);
         }
         catch (System.Exception)
@@ -312,6 +323,7 @@ public class VRlogAngle : MonoBehaviour
 
     public void CallNextSource()
     {
+        ExperimentText.fontSize = 45f;
         nextPathLogTime = Time.time + pathLogInterval;
         List<Trial> activeTrials = CurrentTrials;
         int idx = CurrentTrialIndex;
@@ -326,7 +338,7 @@ public class VRlogAngle : MonoBehaviour
             else
             {
                 PlayClip(experimentFinish);
-                ExperimentText.text = ExperimentTextClone.text = "Finished";
+                ExperimentText.text = "Finished";
                 trialActive = false;
                 return;
             }
@@ -334,7 +346,7 @@ public class VRlogAngle : MonoBehaviour
         if (idx % 7 == 0 && idx > 0 && onBreak==false && !isPractice)
         {
             PlayClip(conditionComplete);
-            ExperimentText.text = ExperimentTextClone.text = "Break";
+            ExperimentText.text = "Break";
             changeVisual.allowChange = true;
             onBreak = true;
             trialActive = false;
@@ -346,10 +358,10 @@ public class VRlogAngle : MonoBehaviour
         
         if (isPractice)
         {
-            ExperimentText.text = ExperimentTextClone.text = $"Practice";
+            ExperimentText.text = $"Practice";
         }
         else{
-            ExperimentText.text = ExperimentTextClone.text = $"Trial: {idx+1} / {experimentTrials.Count}";
+            ExperimentText.text = $"Trial: {idx+1} / {experimentTrials.Count}";
         }
         Trial t = activeTrials[idx];
         trialStartTime = Time.time;

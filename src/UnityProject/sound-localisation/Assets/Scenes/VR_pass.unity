@@ -1396,10 +1396,7 @@ MonoBehaviour:
   visibleDuration: 1
   currentTimer: 0
   currentAlpha: 0
-  normalColor: {r: 0, g: 1, b: 0, a: 1}
-  warningColor: {r: 1, g: 0, b: 0, a: 1}
   normalSprite: {fileID: 21300000, guid: d4cbf5ddbd4f2c7468b4b72626678788, type: 3}
-  colorTransitionSpeed: 3
 --- !u!1001 &634453389
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1678,6 +1675,56 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2067868259}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &827057037
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 827057039}
+  - component: {fileID: 827057038}
+  m_Layer: 0
+  m_Name: ChangeScene2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &827057038
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 827057037}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b7939fbade58134bb390c803b575d42, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  buttonA: {fileID: 2966496677000256798, guid: c348712bda248c246b8c49b3db54643f, type: 3}
+  buttonB: {fileID: -3438913033953081741, guid: c348712bda248c246b8c49b3db54643f,
+    type: 3}
+  sceneToLoad: Passthrough_demo
+  holdDuration: 1
+  logtext: {fileID: 0}
+--- !u!4 &827057039
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 827057037}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -2.8325605, y: 5.8512087, z: 4.9452667}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &931194062
 GameObject:
@@ -2185,13 +2232,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   micSocketBehaviour: {fileID: 482700020}
   angleText: {fileID: 2074023253}
+  isVR: 0
   mainCamera: {fileID: 232818402}
   visibleDuration: 1
   fadeSpeed: 2
-  isVR: 0
-  colorTransitionSpeed: 3
-  normalColor: {r: 0, g: 1, b: 0, a: 1}
-  warningColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!1 &1219430525
 GameObject:
   m_ObjectHideFlags: 0
@@ -4211,22 +4255,14 @@ MonoBehaviour:
   rightLight: {fileID: 546354372}
   leftSprite: {fileID: 21300000, guid: 7c9a9b3645f24364ca9fd8e485136bbe, type: 3}
   rightSprite: {fileID: 21300000, guid: 7c9a9b3645f24364ca9fd8e485136bbe, type: 3}
-  redLeftLight: {fileID: 21300000, guid: 5158e7206564d6b419d1398eea94865e, type: 3}
-  redRightLight: {fileID: 21300000, guid: 5158e7206564d6b419d1398eea94865e, type: 3}
   mainCamera: {fileID: 232818402}
   logText: {fileID: 1959408352}
-  arrow: {fileID: 2052659097}
   micSocketBehaviour: {fileID: 482700020}
   sideFadeSpeed: 5
   visibleDuration: 1
   fadeSpeed: 3
   scaleTransitionSpeed: 5
   facingThreshold: 30
-  colorTransitionSpeed: 3
-  normalColor: {r: 0, g: 1, b: 0, a: 1}
-  warningColor: {r: 1, g: 0, b: 0, a: 1}
-  pushOffset: 50
-  positionTransitionSpeed: 5
 --- !u!114 &2013048004
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4847,3 +4883,4 @@ SceneRoots:
   - {fileID: 1670399888}
   - {fileID: 1600066267}
   - {fileID: 166111038}
+  - {fileID: 827057039}

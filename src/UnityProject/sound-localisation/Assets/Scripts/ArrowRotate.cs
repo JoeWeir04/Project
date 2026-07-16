@@ -18,16 +18,16 @@ public class ArrowRotate : MonoBehaviour
 
 
     [Header("Sound-Triggered Fade")]
-    public float visibleDuration = 1f;
+    private float visibleDuration = 1f;
     private float currentTimer = 0f;
-    public float fadeSpeed = 3f;
+    private float fadeSpeed = 3f;
     private float currentAlpha = 0f;
 
 
     [Header("Distance Color Encoding")]
     private Color nearColor = new Color(253f / 255f, 231f / 255f, 37f / 255f);
-    private Color mediumColor = new Color(33f / 255f, 145f / 255f, 140f / 255f);
-    private Color farColor = new Color(68f / 255f, 1f / 255f, 84f / 255f);
+    private Color mediumColor = new Color(85f / 255f, 198f / 255f, 104f / 255f);
+    private Color farColor = new Color(35f / 255f, 137f / 255f, 141f / 255f);
     private float colorTransitionSpeed = 3f;
     private Color currentColor;
     private const float farDistance = 0.2f;
@@ -62,7 +62,12 @@ public class ArrowRotate : MonoBehaviour
 
     void Update()
     {
-        if (!micSocket.isConnected) return;
+        if (micSocket == null || !micSocket.isConnected)
+        {
+            currentAlpha = Mathf.MoveTowards(currentAlpha, 0f, fadeSpeed * Time.deltaTime);
+            SetColor(currentColor, currentAlpha);
+            return;
+        } 
         float angle;
         float distance = micSocket.distanceProxy;
         
@@ -177,7 +182,7 @@ public class ArrowRotate : MonoBehaviour
                 else
                 {
                     c = originalColors[i][j];
-                    c.a = 0.4f;
+                    c.a = alpha * 0.4f;
                 }
                 mats[j].color = c;
             }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using WebSocketSharp; 
 using Newtonsoft.Json.Linq;
 using UnityEngine;
+using TMPro;
 
 public class MicSocket : MonoBehaviour, IMicSocket
 {
@@ -18,90 +19,129 @@ public class MicSocket : MonoBehaviour, IMicSocket
     public string classification { get; private set; }
     public bool isClose {get; private set; }
 
-    private List<string> serverIPs = new List<string>
-    {
-        "ws://172.20.10.2:8765",
-        "ws://192.168.0.19:8765",
-        "ws://172.30.203.69:8765",
-        
-    };
+    private const string serverIP = "ws://172.20.10.2:8765";
+    public float retryDelay = 2f;
+    public float connectTimeout = 3f;
+    private bool shouldReconnect = true; // set false in OnDestroy to stop retry loop
+    private Coroutine connectRoutine;
+    public TMP_Text debug_text;
     
 
     void Start()
     {
-        StartCoroutine(TryConnectToServer());
+        
+        connectRoutine = StartCoroutine(ConnectLoop());
+    }
+
+    IEnumerator ConnectLoop()
+    {
+        while (shouldReconnect)
+        {
+            yield return StartCoroutine(TryConnectToServer());
+            if (shouldReconnect)
+            {
+                Debug.Log($"Retrying connection in {retryDelay} seconds...");
+                yield return new WaitForSeconds(retryDelay);
+            }
+        }
     }
 
     IEnumerator TryConnectToServer()
     {
-        foreach (string ip in serverIPs){
-            Debug.Log($"Connecting to websocket {ip}");
-            WebSocket candidate = new WebSocket(ip); //laptop IP
-
-            bool connectionAttemptFinished = false;
-            bool connectionSucceeded = false;
-
-            candidate.OnOpen += (sender,e) =>
-            {
-                isConnected = true;
-                connectionSucceeded = true;
-                connectionAttemptFinished = true;
-                Debug.Log("Websocket Connected!");
-            };
-            candidate.OnError += (sender, e) =>
-            {
-                connectionAttemptFinished = true;
-                Debug.Log($"Websocket error: {e.Message}");
-            };
-            candidate.OnClose += (sender,e) =>
-            {
-                isConnected = false;
-                connectionAttemptFinished = true;
-                Debug.Log($"Websocket disconnected! Code: {e.Code}, Reason: {e.Reason}");
-            };
-            candidate.OnMessage += (sender, e) => 
-            {   
-                //Debug.Log("message received" + e.Data);
-                JObject json = JObject.Parse(e.Data);
-                angle = (float)json["angle"];
-                realAngle = angle;
-                vad = (int)json["vad"];
-                classification = (string)json["classification"];
-                realDistance = (float)json["distance"];
-                distanceProxy = (float)json["distance"];
-                isClose = (bool)json["isClose"];
-            };
-
-            candidate.ConnectAsync();
-
-            float timer = 0f;
-            float timeout = 2f;
-            
-            while (!connectionAttemptFinished && timer < timeout)
-            {
-                timer += Time.deltaTime;
-                yield return null;
-            }
-
-            if (connectionSucceeded)
-            {
-                ws = candidate;
-                isConnected = true;
-                yield break;
-            }
-            candidate.Close();
-            yield return new WaitForSeconds(0.2f); // let close settle
+        
+        Debug.Log($"Connecting to websocket {serverIP}");
+        if (debug_text != null)
+        {
+            debug_text.text = "Trying to connect to laptop";
         }
-         Debug.LogError("Could not connect to any WebSocket server.");
+        WebSocket candidate = new WebSocket(serverIP); //laptop IP
+
+        bool connectionAttemptFinished = false;
+        bool connectionSucceeded = false;
+        bool disconnected = false;
+
+        candidate.OnOpen += (sender,e) =>
+        {
+            isConnected = true;
+            connectionSucceeded = true;
+            connectionAttemptFinished = true;
+            if(debug_text != null)
+            {
+                debug_text.text = "";
+            }
+           
+            Debug.Log("Websocket Connected!");
+        };
+        candidate.OnError += (sender, e) =>
+        {
+            connectionAttemptFinished = true;
+            Debug.Log($"Websocket error: {e.Message}");
+        };
+        candidate.OnClose += (sender,e) =>
+        {
+            isConnected = false;
+            connectionAttemptFinished = true;
+            disconnected = true;
+            Debug.Log($"Websocket disconnected! Code: {e.Code}, Reason: {e.Reason}");
+        };
+        candidate.OnMessage += (sender, e) => 
+        {   
+            //Debug.Log("message received" + e.Data);
+            JObject json = JObject.Parse(e.Data);
+            angle = (float)json["angle"];
+            realAngle = angle;
+            vad = (int)json["vad"];
+            classification = (string)json["classification"];
+            realDistance = (float)json["distance"];
+            distanceProxy = (float)json["distance"];
+            isClose = (bool)json["isClose"];
+        };
+
+        candidate.ConnectAsync();
+
+        float timer = 0f;
+        
+        while (!connectionAttemptFinished && timer < connectTimeout)
+        {
+            if (debug_text != null)
+            {
+                debug_text.text = "Trying to connect to laptop";
+            }
+            timer += Time.deltaTime;
+            yield return null;
+        }
+
+        if (!connectionSucceeded)
+        {
+            try { candidate.Close(); }
+            catch (System.Exception ex) { Debug.LogWarning($"Error closing failed candidate: {ex.Message}"); }
+            yield break;
+        }
+        ws = candidate;
+        isConnected = true;
+        while (!disconnected && shouldReconnect)
+        {
+            if (debug_text != null)
+            {
+                debug_text.text = "Trying to connect to laptop";
+            }
+            
+            yield return null;
+        }
+
+        isConnected = false;
     }
 
 
     void OnDestroy(){
+        shouldReconnect = false;
+        if (connectRoutine != null)
+        {
+            StopCoroutine(connectRoutine);
+        }
         if (ws != null){
             ws.Close();
         }
         
     }
-
-    
 }

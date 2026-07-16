@@ -22,8 +22,8 @@ public class SmoothRadarRotate : MonoBehaviour
 
     [Header("Distance Color Encoding")]
     private Color nearColor = new Color(253f / 255f, 231f / 255f, 37f / 255f);
-    private Color mediumColor = new Color(33f / 255f, 145f / 255f, 140f / 255f);
-    private Color farColor = new Color(68f / 255f, 1f / 255f, 84f / 255f);
+    private Color mediumColor = new Color(85f / 255f, 198f / 255f, 104f / 255f);
+    private Color farColor = new Color(35f / 255f, 137f / 255f, 141f / 255f);
     private float colorTransitionSpeed = 3f;
     private Color currentColor;
 
@@ -46,6 +46,12 @@ public class SmoothRadarRotate : MonoBehaviour
 
     void Update()
     {
+        if (micSocket == null || !micSocket.isConnected)
+        {
+            currentAlpha = Mathf.MoveTowards(currentAlpha, 0f, fadeSpeed * Time.deltaTime);
+            SetColor(currentColor, currentAlpha);
+            return;
+        } 
         if (!micSocket.isConnected) return;
         float angle = micSocket.angle;
         
