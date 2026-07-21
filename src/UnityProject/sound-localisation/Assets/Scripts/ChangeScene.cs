@@ -14,7 +14,6 @@ public class ChangeScene : MonoBehaviour
     public float holdDuration = 1.5f;
     private float holdTimer = 0f;
     private bool loading = false;
-    public TMP_Text logtext;
 
 
     void OnEnable()
@@ -38,7 +37,6 @@ public class ChangeScene : MonoBehaviour
 
         if (aPressed && bPressed && !loading)
         {
-            logtext.text = "Both buttons pressed";
             holdTimer += Time.deltaTime;
             if (holdTimer >= holdDuration)
             {
