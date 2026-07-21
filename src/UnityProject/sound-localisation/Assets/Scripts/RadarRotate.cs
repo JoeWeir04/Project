@@ -22,8 +22,8 @@ public class SmoothRadarRotate : MonoBehaviour
 
     [Header("Distance Color Encoding")]
     private Color nearColor = new Color(253f / 255f, 231f / 255f, 37f / 255f);
-    private Color mediumColor = new Color(85f / 255f, 198f / 255f, 104f / 255f);
-    private Color farColor = new Color(35f / 255f, 137f / 255f, 141f / 255f);
+    private Color mediumColor = new Color(40f / 255f, 174f / 255f, 128f / 255f);
+    private Color farColor = new Color(42f / 255f, 120f / 255f, 142f / 255f);
     private float colorTransitionSpeed = 3f;
     private Color currentColor;
 
