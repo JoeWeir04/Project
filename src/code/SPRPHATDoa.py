@@ -46,7 +46,8 @@ last_transcript = ""
 last_vad = 0
 last_angle = 0
 last_distance = 0
-RMS_SCALE = 900
+RMS_SCALE = 1800
+isClose = False
 
 RECONNECT_DELAY = 2
 
