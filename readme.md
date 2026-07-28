@@ -24,12 +24,13 @@
 </tr>
 </table>
 
-
+## Where to find what
 
 * `data/` data acquired during this project
 * `src/` source code for this project, this folder contains a readme and **manual describing how to build and run the software**
 * `status_report/` status report
-* `dissertation/` **copy of paper**
+* `dissertation/` **copy of dissertation that this project and paper is being further developed from**
+* `paper/` **soon to come - copy of paper**
 * `presentation/` presentation for my project
 
 
