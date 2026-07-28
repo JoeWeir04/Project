@@ -4,14 +4,24 @@ A prototype that is capable of visualising spatial sound in Augmented Reality us
 Also includes a scene in the unity project that includes a simulated warehouse which was used to evaluate the prototype and the different visualisation techniques created.
 
 **Images of prototype** being used in real world with each different visualisation created.
-<img width="300" height="150" alt="radar" src="https://github.com/user-attachments/assets/0650708a-8122-4546-8b25-b32276ffa770" />
-<img width="300" height="150" alt="lights" src="https://github.com/user-attachments/assets/c41a62fd-b124-4f72-8cbe-8bd705b504fd" />
-<img width="300" height="150" alt="arrow" src="https://github.com/user-attachments/assets/1b02ce1f-a8e9-4bd5-ae72-b5d9cf71bc42" />
+
+<table>
+<tr>
+<td><img width="350" height="197" alt="radar" src="https://github.com/user-attachments/assets/0650708a-8122-4546-8b25-b32276ffa770" /></td>
+<td><img width="350" height="197" alt="lights" src="https://github.com/user-attachments/assets/c41a62fd-b124-4f72-8cbe-8bd705b504fd" /></td>
+<td><img width="350" height="197" alt="arrow" src="https://github.com/user-attachments/assets/1b02ce1f-a8e9-4bd5-ae72-b5d9cf71bc42" /></td>
+</tr>
+</table>
 
 **Images of the visualisations,** and combinations of, being used in the simulated warehouse scene used for evaluating each visualisation technique.
-<img width="300" height="150" alt="Arrow (3)" src="https://github.com/user-attachments/assets/13a96acc-c6b7-4629-9b17-9f14cb4a34d5" />
-<img width="300" height="150" alt="Radar Lights" src="https://github.com/user-attachments/assets/d9de234e-a97f-4cb6-a01f-f64e6ad2e133" />
-<img width="300" height="150" alt="Arrow Radar" src="https://github.com/user-attachments/assets/916426a6-e897-4404-851e-1ca6625919e8" />
+
+<table>
+<tr>
+<td><img width="350" height="197" alt="Arrow" src="https://github.com/user-attachments/assets/13a96acc-c6b7-4629-9b17-9f14cb4a34d5" /></td>
+<td><img width="350" height="197" alt="Radar Lights" src="https://github.com/user-attachments/assets/d9de234e-a97f-4cb6-a01f-f64e6ad2e133" /></td>
+<td><img width="350" height="197" alt="Arrow Radar" src="https://github.com/user-attachments/assets/916426a6-e897-4404-851e-1ca6625919e8" /></td>
+</tr>
+</table>
 
 
 
