@@ -122,7 +122,7 @@ public class VRlogAngle : MonoBehaviour
         pathFilePath = Application.persistentDataPath + "/Experiment_paths.csv";
         if (!File.Exists(pathFilePath))
         {
-            File.WriteAllText(pathFilePath, "PID,Time,TrialIndex,Visualisation,PosX,PosY,PosZ,RotY\n"
+            File.WriteAllText(pathFilePath, "PID,Time,TrialIndex,SpawnIndex,AudioIndex,Visualisation,PosX,PosY,PosZ,RotY\n"
             );
         }
         CallNextSource();
@@ -132,7 +132,7 @@ public class VRlogAngle : MonoBehaviour
 
     void Update()
     {
-        if(!isPractice && trialActive &&Time.time >= nextPathLogTime)
+        if(!isPractice && trialActive && !onBreak && Time.time >= nextPathLogTime)
         {
             LogPathSample();
             nextPathLogTime = Time.time + pathLogInterval; 
@@ -308,7 +308,7 @@ public class VRlogAngle : MonoBehaviour
             int visualisation = changeVisual.visualCounter + 1;
 
             string line =
-                $"{currentPid},{Time.time},{trialIndexForLog},{visualisation},f{pos.x},{pos.y},{pos.z},{rotY}\n";
+                $"{currentPid},{Time.time},{trialIndexForLog},{experimentTrials[currentTrialIndex-1].spawnIndex},{experimentTrials[currentTrialIndex-1].audioIndex},{visualisation},f{pos.x},{pos.y},{pos.z},{rotY}\n";
             File.AppendAllText(pathFilePath, line);
         }
         catch (System.Exception)
