@@ -78,9 +78,12 @@ public class VRlogAngle : MonoBehaviour
                 });
             }
         }
-        int removeSpawnIndex = 4;
+        int removeSpawnIndex = 2;
         int removeAudioIndex = 1;
+        int removeSpawnIndex2 = 0;
+        int removeAudioIndex2 = 15;
         tempTrials.RemoveAll(t => t.spawnIndex == removeSpawnIndex && t.audioIndex == removeAudioIndex);
+        tempTrials.RemoveAll(t => t.spawnIndex == removeSpawnIndex2 && t.audioIndex == removeAudioIndex2);
         Shuffle(tempTrials);
         Debug.LogError($"Size of trials: {tempTrials.Count}");
         return tempTrials;
@@ -308,7 +311,7 @@ public class VRlogAngle : MonoBehaviour
             int visualisation = changeVisual.visualCounter + 1;
 
             string line =
-                $"{currentPid},{Time.time},{trialIndexForLog},{experimentTrials[currentTrialIndex-1].spawnIndex},{experimentTrials[currentTrialIndex-1].audioIndex},{visualisation},f{pos.x},{pos.y},{pos.z},{rotY}\n";
+                $"{currentPid},{Time.time},{trialIndexForLog},{experimentTrials[currentTrialIndex-1].spawnIndex},{experimentTrials[currentTrialIndex-1].audioIndex},{visualisation},{pos.x},{pos.y},{pos.z},{rotY}\n";
             File.AppendAllText(pathFilePath, line);
         }
         catch (System.Exception)
