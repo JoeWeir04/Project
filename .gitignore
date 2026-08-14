@@ -12,6 +12,7 @@ venv/
 
 src/UnityProject/sound-localisation/Assets/warehouseImport
 
+data/VoucherReceipts
 #ignore powerpoint with videos
 presentation/PresSlides.pptx
 
