@@ -121,8 +121,9 @@ def main():
     merged["ProximityScore"] = proximity_score.clip(lower=0.0)
 
     merged["Effectiveness"] = merged["MovementEfficiency"] * merged["ProximityScore"]
-    
-    merged["NavSpeed"] = merged["NavDistance"]/merged["Response Time"]
+    # Clamp Response Time to a 1s floor to avoid inflated NavSpeed values
+    # from near-zero response times (likely misclicks/logging artifacts)
+    merged["NavSpeed"] = merged["NavDistance"]/merged["Response Time"].clip(lower=1)
 
 
     missing_paths = merged["DistanceTravelled"].isna().sum()

@@ -2,7 +2,7 @@ import csv
 
 
 def main():
-    input_file = "raw/AllVisualisations.csv"
+    input_file = "raw/AllVisualizations.csv"
     output_file = "processed/AllVisualisations_cleaned.csv"
 
     with open(input_file, newline='', encoding='utf-8') as infile, \

@@ -1,0 +1,73 @@
+Q1,Q2,Q3_1,Q4_1,Q4_2,Q4_3,Q4_4,Q4_5,Q4_6,Q12_1,Q12_2,Q10_1,Q10_2,Q10_3,Q10_4,Q5_1,Q5_2,Q5_3,Q11_1
+What is your Participant ID (PID)?,Which visualization have you just completed?,Misery Scale (MISC) - Misery Scale,NASA TLX for this visualization. - Mental Demand. How mentally demanding was the task?,NASA TLX for this visualization. - Physical Demand. How physically demanding was the task?,NASA TLX for this visualization. - Temporal Demand. How hurried or rushed was the pace of the task?,NASA TLX for this visualization. - Performance. How successful were you in accomplishing what you were asked to do?,NASA TLX for this visualization. - Effort. How hard did you have to work to accomplish your level of performance?,"NASA TLX for this visualization. - Frustration. How insecure, discouraged, irritated, stressed, and annoyed were you?",Performance. How successful were you in interpreting the direction of the sound using this visualisation.,Performance. How successful were you in interpreting the magnitude of the sound using this visualisation.,UMUX for this visualisation - This visualisation's capabilities meet my requirements,UMUX for this visualisation - Using this visualisation is a frustrating experience,UMUX for this visualisation - This visualisation is easy to use,UMUX for this visualisation - I have to spend too much time correcting things with this visualisation.,Visual load. - The amount of visual information was overwhelming.,Visual load. - The visualization interfered with my awareness of the environment.,Visual load. - This visualisation was distracting,Confidence Question - I felt confident using this visualisation to localise sounds in my environment.
+"{""ImportId"":""QID15_TEXT""}","{""ImportId"":""QID14""}","{""ImportId"":""QID10_1""}","{""ImportId"":""QID3_1""}","{""ImportId"":""QID3_2""}","{""ImportId"":""QID3_3""}","{""ImportId"":""QID3_4""}","{""ImportId"":""QID3_5""}","{""ImportId"":""QID3_6""}","{""ImportId"":""QID25_1""}","{""ImportId"":""QID25_2""}","{""ImportId"":""QID23_1""}","{""ImportId"":""QID23_2""}","{""ImportId"":""QID23_3""}","{""ImportId"":""QID23_4""}","{""ImportId"":""QID11_2""}","{""ImportId"":""QID11_3""}","{""ImportId"":""QID11_4""}","{""ImportId"":""QID24_1""}"
+44,Arrow,8,3,1,1,11,1,1,11,11,5,3,5,2,2,2,1,6
+44,Radar,8,1,1,1,12,8,1,14,14,6,2,6,2,2,1,1,5
+44,Lights,7,0,0,0,17,1,1,18,18,6,1,7,1,1,1,1,7
+44,Arrow and Radar,9,2,2,2,11,11,7,12,15,5,6,6,5,6,5,5,5
+44,Arrow and Lights,8,0,0,2,18,0,0,19,19,5,3,7,1,3,3,3,7
+44,Lights and Radar,9,1,0,1,16,8,1,18,18,5,3,6,3,3,3,3,5
+44,Control,9,11,1,2,8,16,12,2,1,4,5,3,5,1,1,1,1
+49,Arrow and Lights,1,11,11,12,13,9,10,15,14,5,3,5,3,3,4,3,6
+49,Control,1,15,13,9,11,13,14,11,12,5,6,3,4,6,5,5,5
+49,Lights,2,12,11,9,12,11,12,13,13,5,4,5,3,4,4,4,5
+49,Lights and Radar,2,12,10,9,14,12,11,13,13,5,3,5,3,5,4,4,6
+49,Arrow,3,17,16,9,11,15,16,12,12,2,6,3,5,6,5,5,5
+49,Arrow and Radar,2,14,13,9,13,12,14,14,14,3,4,3,5,5,4,4,5
+49,Radar,2,14,12,8,14,12,13,13,14,3,4,4,3,4,3,3,6
+6,Arrow and Radar,2,7,4,0,14,8,0,19,20,7,1,7,1,1,6,1,7
+6,Lights and Radar,1,11,13,0,20,15,6,20,20,5,4,3,5,3,5,2,5
+6,Radar,4,13,13,4,20,14,4,20,20,4,5,3,6,6,6,5,3
+6,Control,4,12,13,6,20,11,7,20,19,5,4,3,5,5,7,6,3
+6,Arrow,4,12,15,6,20,17,5,20,20,2,6,2,5,5,4,2,3
+6,Arrow and Lights,4,10,12,2,17,17,11,16,19,3,6,3,2,5,6,4,3
+6,Lights,3,8,6,3,18,17,3,20,20,4,5,3,2,2,4,3,3
+51,Arrow,2,7,0,11,12,12,1,12,10,5,3,4,4,4,4,4,5
+51,Lights,5,14,8,13,13,14,11,10,10,5,5,4,4,6,3,4,5
+51,Radar,6,16,15,13,11,16,12,13,12,5,6,3,5,6,3,4,5
+51,Arrow and Lights,4,8,11,11,13,11,10,11,11,5,4,4,4,5,4,4,5
+51,Arrow and Radar,7,12,12,13,11,15,12,11,12,3,5,5,5,5,4,4,4
+51,Control,7,15,11,13,6,10,12,8,9,4,4,4,4,5,5,4,2
+51,Lights and Radar,9,16,14,16,8,16,16,8,7,5,3,5,5,6,3,4,4
+52,Control,3,5,5,8,13,10,8,12,12,5,5,5,2,2,4,2,5
+52,Arrow and Lights,3,3,4,4,14,6,7,15,15,6,2,6,2,2,6,6,7
+52,Lights and Radar,2,5,5,5,15,6,3,16,16,7,2,6,2,4,3,3,6
+52,Lights,3,8,7,6,12,11,7,14,12,3,5,4,2,2,4,4,4
+52,Arrow and Radar,2,4,4,4,16,4,4,17,15,7,1,7,2,2,2,2,7
+52,Arrow,4,8,14,8,14,12,12,12,12,5,6,3,5,3,4,4,3
+52,Radar,2,8,7,7,15,6,6,15,15,5,3,5,2,3,6,5,6
+8,Arrow and Radar,0,1,5,3,16,3,0,13,12,6,1,7,1,1,5,1,6
+8,Radar,1,12,15,9,11,14,16,8,11,3,5,3,5,1,3,3,3
+8,Lights and Radar,0,12,13,6,15,11,6,18,19,7,2,6,5,2,1,1,7
+8,Arrow,0,1,1,0,17,2,0,20,12,7,1,7,1,5,5,4,6
+8,Control,1,14,17,14,18,9,12,17,17,5,4,5,5,1,1,5,5
+8,Lights,0,12,11,8,11,5,2,15,7,6,2,5,4,3,4,3,5
+8,Arrow and Lights,0,0,0,2,20,1,0,20,20,7,1,7,1,4,3,2,7
+9,Lights,1,14,2,10,18,14,12,10,18,5,3,3,4,1,3,1,5
+9,Arrow,1,2,2,10,20,2,2,20,20,7,1,7,1,4,4,6,7
+9,Arrow and Lights,1,2,2,10,20,2,0,20,20,7,7,7,1,6,4,5,7
+9,Radar,1,11,2,10,20,2,2,20,20,6,1,7,1,1,4,1,7
+9,Control,1,18,2,10,8,18,18,5,6,1,6,1,6,1,1,1,1
+9,Arrow and Radar,1,2,2,10,20,0,0,20,20,7,1,7,3,6,4,6,7
+9,Lights and Radar,1,2,2,10,20,0,0,20,20,7,1,7,1,4,4,1,7
+10,Control,0,3,3,5,8,12,2,7,7,2,3,3,5,2,2,2,2
+10,Lights and Radar,0,2,2,2,17,16,0,15,15,6,1,6,1,2,6,5,6
+10,Arrow and Lights,0,2,2,2,17,17,2,18,17,6,5,6,2,4,3,3,6
+10,Arrow and Radar,0,3,3,3,18,18,2,19,18,7,7,7,2,2,2,2,6
+10,Lights,0,11,3,3,15,14,8,12,13,4,5,5,5,5,6,6,5
+10,Radar,0,4,4,4,18,4,5,17,17,6,2,6,2,2,2,2,6
+10,Arrow,0,1,2,2,18,3,2,18,18,6,1,7,2,1,1,1,6
+11,Radar,0,1,1,1,20,3,0,18,20,6,2,6,2,1,1,2,6
+11,Arrow and Radar,0,4,1,1,20,1,1,19,18,3,5,3,1,6,5,5,5
+11,Arrow,0,7,10,5,20,8,5,9,19,2,6,2,5,6,3,5,3
+11,Lights and Radar,1,11,4,8,16,13,4,14,17,5,2,4,6,3,5,3,5
+11,Lights,0,6,2,7,20,6,1,16,19,6,2,5,2,3,5,2,6
+11,Control,1,12,14,7,17,12,5,13,16,5,4,5,3,1,3,2,6
+11,Arrow and Lights,1,6,4,1,18,5,8,19,19,5,5,5,2,5,5,6,5
+13,Lights,4,5,8,10,0,10,15,10,5,2,6,2,6,1,1,1,2
+13,Arrow and Lights,4,5,10,5,15,10,12,18,11,5,3,4,4,3,3,3,5
+13,Arrow,4,5,12,5,18,12,10,20,15,6,3,6,4,2,2,2,6
+13,Control,4,12,14,5,15,15,10,15,17,4,4,4,4,1,1,1,4
+13,Radar,4,12,15,5,16,15,13,16,11,4,5,4,5,2,2,2,4
+13,Lights and Radar,4,11,14,5,15,12,11,17,17,5,3,5,3,3,2,2,6
+13,Arrow and Radar,4,12,15,5,15,13,12,16,14,3,4,3,4,5,4,5,4
