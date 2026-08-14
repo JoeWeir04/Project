@@ -11,7 +11,6 @@ def main():
         reader = csv.DictReader(infile)
         fieldnames = reader.fieldnames[17:]
         writer = csv.DictWriter(outfile, fieldnames=fieldnames)
-
         writer.writeheader()
 
         for row in reader:

@@ -29,8 +29,10 @@ public class NavMeshDistanceExporter : MonoBehaviour
             {
                 Debug.Log($"For spawn: {spawn} and audio: {audio}");
                 Vector3 audioPos = audio.position;
-                audioPos.y -= 0.95f;
-                float dist = NavMeshDistanceCalculator.GetPathLength(spawn.position, audioPos);
+                audioPos.y = 0.918f;
+                Vector3 spawnPos = spawn.position;
+                spawnPos.y = 0.918f;
+                float dist = NavMeshDistanceCalculator.GetPathLength(spawnPos, audioPos);
                 sb.AppendLine($"{spawn.name},{audio.name},{dist}");
             }
         }

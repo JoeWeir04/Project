@@ -3,8 +3,8 @@ import numpy as np
 
 SOURCES_FILE = "raw/sourcePositions.csv"
 NAV_FILE = "raw/navmeshDistances.csv"
-PATHS_FILE = "processed/VR_paths_cleaned.csv"
-LOG_FILE = "processed/VR_log_cleaned.csv"
+PATHS_FILE = "processed/Final_VR_paths_cleaned.csv"
+LOG_FILE = "processed/Final_VR_log_cleaned.csv"
 OUTPUT_FILE = "processed/Processed_Distances.csv"
 
 
