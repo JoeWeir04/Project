@@ -69,7 +69,6 @@ public class MicSocket : MonoBehaviour, IMicSocket
             {
                 debug_text.text = "";
             }
-           
             Debug.Log("Websocket Connected!");
         };
         candidate.OnError += (sender, e) =>
@@ -80,12 +79,20 @@ public class MicSocket : MonoBehaviour, IMicSocket
         candidate.OnClose += (sender,e) =>
         {
             isConnected = false;
+            if (debug_text != null)
+            {
+                debug_text.text = "Trying to connect to laptop";
+            }
             connectionAttemptFinished = true;
             disconnected = true;
             Debug.Log($"Websocket disconnected! Code: {e.Code}, Reason: {e.Reason}");
         };
         candidate.OnMessage += (sender, e) => 
         {   
+            if (debug_text != null)
+            {
+                debug_text.text = "";
+            }
             //Debug.Log("message received" + e.Data);
             JObject json = JObject.Parse(e.Data);
             angle = (float)json["angle"];
@@ -119,13 +126,12 @@ public class MicSocket : MonoBehaviour, IMicSocket
         }
         ws = candidate;
         isConnected = true;
+        if (debug_text != null)
+            {
+                debug_text.text = "";
+            }
         while (!disconnected && shouldReconnect)
         {
-            if (debug_text != null)
-            {
-                debug_text.text = "Trying to connect to laptop";
-            }
-            
             yield return null;
         }
 
