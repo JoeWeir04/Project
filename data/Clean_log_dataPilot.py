@@ -2,13 +2,12 @@ import csv
 
 
 def main():
-    input_file1 = "raw/Experiment_logFinalH1.csv"
-    input_file1 = "raw/Experiment_logFinalH2.csv"
-    output_file = "processed/Final_VR_log_cleaned.csv"
+    input_file = "raw/VR_log.csv"
+    output_file = "processed/VR_log_cleaned.csv"
 
     pids_to_remove = {"1", "5", "11"}  # remove pids not refering to participants
-    
-    with open(input_file1, newline='', encoding='utf-8') as infile, \
+
+    with open(input_file, newline='', encoding='utf-8') as infile, \
          open(output_file, "w", newline='', encoding='utf-8') as outfile:
 
         reader = csv.DictReader(infile)
