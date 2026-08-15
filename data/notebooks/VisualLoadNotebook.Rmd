@@ -55,7 +55,7 @@ likert_levels <- c(
 
 # Convert to ordered factors
 visual_load_by_vis <- visual_load_by_vis %>%
-  mutate(across(`Visually demanding`:`Interfered with awareness`,
+  mutate(across(`Information was overwhelming`:`This visualisation was distracting`,
                 ~ factor(.x, levels = 1:7, labels = likert_levels, ordered = TRUE)))
 visual_load_by_vis$Visualisation <- factor(
   visual_load_by_vis$Visualisation,
@@ -65,7 +65,8 @@ visual_load_by_vis$Visualisation <- factor(
     "Lights",
     "Arrow and Radar",
     "Arrow and Lights",
-    "Lights and Radar"
+    "Lights and Radar",
+    "Control"
   )
 )
 
@@ -74,7 +75,7 @@ visual_load_by_vis$Visualisation <- factor(
 ```{r, fig.height=10, fig.width=8}
 vl_plot <- gglikert(
   visual_load_by_vis,
-  include = `Visually demanding`:`Interfered with awareness`,
+  include = `Information was overwhelming`:`This visualisation was distracting`,
   facet_rows = vars(Visualisation),  # one row per visualisation
   y_label_wrap = 25,
   labels_size = 3,

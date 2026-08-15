@@ -29,13 +29,13 @@ head(data)
 ```{r}
 # Convert visual load questions to numeric
 # Convert questions to numeric
-data$Q6_1 <- as.numeric(data$Q6_1)
+data$Q6_1 <- as.numeric(data$Q11_1)
 
 confidence_by_vis <- data %>%
-  select(Q2, Q6_1) %>%
+  select(Q2, Q11_1) %>%
   rename(
     Visualisation = Q2,
-    `Confidence` = Q6_1,
+    `Confidence` = Q11_1,
   )
 
 # Define Likert scale labels
@@ -60,8 +60,21 @@ confidence_by_vis$Visualisation <- factor(
     "Lights",
     "Arrow and Radar",
     "Arrow and Lights",
-    "Lights and Radar"
+    "Lights and Radar",
+    "Control"
   )
+)
+
+group_order <- confidence_by_vis %>%
+  mutate(Confidence_num = as.numeric(Confidence)) %>%
+  group_by(Visualisation) %>%
+  summarise(mean_conf = mean(Confidence_num, na.rm = TRUE)) %>%
+  arrange(mean_conf) %>%   # ascending -> lowest ends up at bottom
+  pull(Visualisation)
+
+confidence_by_vis$Visualisation <- factor(
+  confidence_by_vis$Visualisation,
+  levels = group_order
 )
 
 ```

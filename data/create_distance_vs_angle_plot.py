@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 
 
 def plot_distance_vs_angle():
-    df = pd.read_csv("processed/VR_log_cleaned.csv")
+    df = pd.read_csv("processed/Final_VR_log_cleaned.csv")
 
     plt.figure(figsize=(8,6))
     for vis in df["Visualisation"].unique():
