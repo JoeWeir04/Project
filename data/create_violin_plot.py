@@ -71,3 +71,4 @@ if __name__ == "__main__":
     create_plot_and_table("Angle Error")
     create_plot_and_table("Response Time")
     create_plot_and_table("NavSpeed")
+    create_plot_and_table("Effectiveness")

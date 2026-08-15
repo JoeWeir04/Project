@@ -37,9 +37,9 @@ visual_load_by_vis <- data %>%
   select(Q2, Q5_1, Q5_2, Q5_3) %>%
   rename(
     Visualisation = Q2,
-    `Visually demanding` = Q5_1,
-    `Information overwhelming` = Q5_2,
-    `Interfered with awareness` = Q5_3
+    `Information was overwhelming` = Q5_1,
+    `Interfered with environment` = Q5_2,
+    `This visualisation was distracting` = Q5_3
   )
 
 # Define Likert scale labels

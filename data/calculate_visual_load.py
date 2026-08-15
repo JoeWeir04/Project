@@ -8,7 +8,9 @@ import pandas as pd
 def main():
     input_file = "processed/PerVisualisation_cleaned.csv"
 
-    tlx_fields = ["Q4_1", "Q4_2", "Q4_3", "Q4_4", "Q4_5", "Q4_6"]
+    # All three items are worded the same direction (higher = more visual load)
+    vl_fields = ["Q5_1", "Q5_2", "Q5_3"]
+
     scores = defaultdict(list)
     rows_for_table = []
 
@@ -19,15 +21,12 @@ def main():
         next(reader)
         for row in reader:
             visualisation = row["Q2"]
-            tlx_values = []
-            for f in tlx_fields:
-                if f == "Q4_4":
-                    tlx_values.append(20-int(row[f]))
-                else:
-                    tlx_values.append(int(row[f]))
-            tlx_score = sum(tlx_values)/len(tlx_values)
-            scores[visualisation].append(tlx_score)
-            rows_for_table.append({"Visualisation": visualisation, "TLX Score": tlx_score})
+
+            vl_values = [int(row[f]) for f in vl_fields]
+            vl_score = sum(vl_values) / len(vl_values)
+
+            scores[visualisation].append(vl_score)
+            rows_for_table.append({"Visualisation": visualisation, "Visual Load Score": vl_score})
 
     create_plot(scores)
     create_table(rows_for_table)
@@ -38,31 +37,30 @@ def create_plot(scores):
     data = list(scores.values())
 
     plt.figure(figsize=(9, 6))
-    plt.violinplot(data, positions=range(1, len(data)+1), widths=0.8)
+    plt.violinplot(data, positions=range(1, len(data) + 1), widths=0.8)
 
     flierprops = dict(marker='o', markerfacecolor='none',
-                      markersize=4, linestyle='none')  # smaller red dots
-    boxprops = dict(facecolor='lightblue', color='black')  
+                       markersize=4, linestyle='none')
+    boxprops = dict(facecolor='lightblue', color='black')
     medianprops = dict(color='black')
 
-    plt.boxplot(data, positions=range(1, len(data)+1), widths=0.3,
+    plt.boxplot(data, positions=range(1, len(data) + 1), widths=0.3,
                 patch_artist=True, showfliers=True, flierprops=flierprops,
                 boxprops=boxprops, medianprops=medianprops)
     plt.xticks(fontsize=8)
-    plt.xticks(range(1, len(labels)+1), labels)
-    plt.xlabel("Visualisation",  labelpad=10)
-    plt.ylabel("NASA TLX Score",  labelpad=10)
-    plt.title("NASA TLX Distribution by Visualisation", pad=20)
-    plt.ylim(0, 20)
-    plt.yticks(np.arange(0, 21, 2))
-    plt.ylim(bottom=0)
-    plt.savefig("graphs/NASA_TLX_violin_box.pdf", format="pdf")
+    plt.xticks(range(1, len(labels) + 1), labels)
+    plt.xlabel("Visualisation", labelpad=10)
+    plt.ylabel("Visual Load Score", labelpad=10)
+    plt.title("Visual Load Distribution by Visualisation", pad=20)
+    plt.ylim(1, 7)
+    plt.yticks(np.arange(1, 8, 1))
+    plt.savefig("graphs/VisualLoad_violin_box.pdf", format="pdf")
     plt.close()
 
 
 def create_table(rows_for_table):
     df = pd.DataFrame(rows_for_table)
-    summary = df.groupby("Visualisation", sort=False)["TLX Score"].agg(
+    summary = df.groupby("Visualisation", sort=False)["Visual Load Score"].agg(
         n="count",
         Mean="mean",
         Median="median",
@@ -80,7 +78,7 @@ def create_table(rows_for_table):
         "Max": 2,
         "Range": 2
     })
-    summary.to_csv("tables/NasaTLX_Summary.csv", index=False)
+    summary.to_csv("tables/VisualLoad_Summary.csv", index=False)
 
 
 if __name__ == "__main__":

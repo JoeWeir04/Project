@@ -3,8 +3,8 @@ import numpy as np
 
 SOURCES_FILE = "raw/sourcePositions.csv"
 NAV_FILE = "raw/navmeshDistances.csv"
-PATHS_FILE = "processed/VR_paths_cleaned.csv"
-LOG_FILE = "processed/VR_log_cleaned.csv"
+PATHS_FILE = "processed/Final_VR_paths_cleaned.csv"
+LOG_FILE = "processed/Final_VR_log_cleaned.csv"
 OUTPUT_FILE = "processed/Processed_Distances.csv"
 
 
@@ -121,8 +121,9 @@ def main():
     merged["ProximityScore"] = proximity_score.clip(lower=0.0)
 
     merged["Effectiveness"] = merged["MovementEfficiency"] * merged["ProximityScore"]
-    
-    merged["NavSpeed"] = merged["NavDistance"]/merged["Response Time"]
+    # Clamp Response Time to a 1s floor to avoid inflated NavSpeed values
+    # from near-zero response times (likely misclicks/logging artifacts)
+    merged["NavSpeed"] = merged["NavDistance"]/merged["Response Time"].clip(lower=1)
 
 
     missing_paths = merged["DistanceTravelled"].isna().sum()

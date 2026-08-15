@@ -1,18 +1,25 @@
 import csv
-
+import pandas as pd
 
 def main():
     input_file1 = "raw/Experiment_logFinalH1.csv"
-    input_file1 = "raw/Experiment_logFinalH2.csv"
+    input_file2 = "raw/Experiment_logFinalH2.csv"
     output_file = "processed/Final_VR_log_cleaned.csv"
 
-    pids_to_remove = {"1", "5", "11"}  # remove pids not refering to participants
+    df1 = pd.read_csv(input_file1)
+    df2 = pd.read_csv(input_file2)
+    df3 = pd.concat([df1,df2], ignore_index=True)
+    df3.to_csv("final.csv",index=False)
     
-    with open(input_file1, newline='', encoding='utf-8') as infile, \
-         open(output_file, "w", newline='', encoding='utf-8') as outfile:
+
+    pids_to_remove = {"1", "2","44", "3" ,"4", "5", "7", "12", "45", "46","47","53"}  # remove pids not refering to participants
+    
+    with open("final.csv", newline='', encoding='utf-8') as infile, \
+        open(output_file, "w", newline='', encoding='utf-8') as outfile:
 
         reader = csv.DictReader(infile)
         fieldnames = reader.fieldnames
+        print(fieldnames)
         fieldnames[fieldnames.index("DistanceFromSource")] = "Distance"
         fieldnames[fieldnames.index("absError")] = "Angle Error"
         fieldnames[fieldnames.index("ResponseTime")] = "Response Time"
@@ -21,8 +28,6 @@ def main():
         writer.writeheader()  # write the header row
 
         for row in reader:
-            if (int(row["TrialIndex"]) % 10 == 0):
-                continue
             match row["Visualisation"]:
                 case("1"):
                     row["Visualisation"] = "Arrow"
@@ -36,17 +41,20 @@ def main():
                     row["Visualisation"] = "Arrow & Lights"
                 case("6"):
                     row["Visualisation"] = "Lights & Radar"
-                case("7")
+                case("7"):
                     row["Visualisation"] = "Control"
-            if row["PID"] == "2":
-                if row["Visualisation"] == "Radar":
-                    continue
-                row["PID"] = "3"
+            if row["PID"] == "14":
+                row["PID"] = "13"
+                row["TrialIndex"] = int(row["TrialIndex"]) + 7
                 writer.writerow(row)
-            elif row["PID"] == "3" and int(row["TrialIndex"]) <= 9:
-                continue
+            elif row["PID"] == "50":
+                row["PID"] = "49"
+                row["TrialIndex"] = int(row["TrialIndex"]) + 21
+                writer.writerow(row)
             elif row["PID"] not in pids_to_remove:
                 writer.writerow(row)
+    final = pd.read_csv(output_file)
+    print("Total participants: ", final['PID'].nunique())
 
 
 if __name__ == "__main__":
