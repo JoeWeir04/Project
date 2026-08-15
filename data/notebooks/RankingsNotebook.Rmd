@@ -33,20 +33,22 @@ data$Q1_3 <- as.numeric(data$Q1_3)
 data$Q1_4 <- as.numeric(data$Q1_4)
 data$Q1_5 <- as.numeric(data$Q1_5)
 data$Q1_6 <- as.numeric(data$Q1_6)
+data$Q1_7 <- as.numeric(data$Q1_7)
 
 rankings <- data %>%
-  select(Q1_1, Q1_2, Q1_3, Q1_4, Q1_5, Q1_6) %>%
+  select(Q1_1, Q1_2, Q1_3, Q1_4, Q1_5, Q1_6, Q1_7) %>%
   rename(
     `Arrow`            = Q1_1,
     `Radar`            = Q1_2,
     `Lights`           = Q1_3,
     `Arrow and Radar`  = Q1_4,
     `Radar and Lights` = Q1_5,
-    `Lights and Arrow` = Q1_6
+    `Lights and Arrow` = Q1_6,
+    `Control` = Q1_7
   ) %>%
   mutate(across(everything(),
-                ~ factor(.x, levels = 1:6,
-                          labels = c("1st","2nd","3rd","4th","5th","6th"),
+                ~ factor(.x, levels = 1:7,
+                          labels = c("1st","2nd","3rd","4th","5th","6th","7th"),
                           ordered = TRUE)))
 ```
 
@@ -59,7 +61,7 @@ rank_plot <- gglikert(
   totals_include_center = FALSE
 ) +
   #scale_fill_brewer(palette = "RdYlGn", direction = -1) +  # green=1st, red=6th
-  ggtitle("Visualisation Rankings (1st = Best, 6th = Worst)")
+  ggtitle("Visualisation Rankings (1st = Best, 7th = Worst)")
 
 ggsave(
   filename = "../graphs/Visualisation_Rankings.pdf",
