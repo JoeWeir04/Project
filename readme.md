@@ -26,12 +26,14 @@
 
 ## Where to find what
 
-* `data/` data acquired during this project
+* `data/` data acquired during this project - read me within this folder details what data was collected and where
 * `src/` source code for this project, this folder contains a readme and **manual describing how to build and run the software**
-* `status_report/` status report
 * `dissertation/` **copy of dissertation that this project and paper is being further developed from**
 * `paper/` **soon to come - copy of paper**
 * `presentation/` presentation for my project
+* `video/` Video demo of the studies visualisations
+
+
 
 
 

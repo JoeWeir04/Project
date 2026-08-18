@@ -8,19 +8,23 @@ Put a brief description of your code here. This should at least describe the fil
 ## Build instructions
 
 ### To run the prototype
+* Update the serverIP variable in the mic socket script to the IP of the laptop connected to the wifi you will be using for the prototype, the script is located at `UnityProject/sound-localisation/Assets/scripts/MicSocket`
 * Build the unity project to a quest 3 headset with all scenes included
 * Connect the UMA-8 to a laptop, making sure the UMA-8 is running in the RAW advanced mode. 
 * Run `pip install requirements.txt` to install dependencies
 * Run `python SPRPHATDoa.py` in the code folder to begin networking sound source locations to the headset.
-* Run the project on the quest 3 and hold down both primary buttons to boot into the prototype scene
+
+* Ensure that both the headset and laptop are connected to the same wifi ideally a hotspot to ensure a stable connectionl
+* Run the project on the quest 3 and hold down both primary buttons to boot into the prototype scene,
+
 
 ### To run the experiment
 * Build the unity project to a quest 3 headset
 * Open the project on the headset
 * press the primary button on the right controller to log metrics and move onto next trial
 * press the primary button on the left controller to swap visualisation
-* press the menu button on the left controller to start the experiment
-* After 10 trials a break will begin, press the left menu button to start the next condition.
+* press the menu button on the left controller to start practice for each condition and press it again to begin the condition
+* After 7 trials a break will begin, press the left menu button to start the next condition practice and then once again to begin the trial
 * Once the experiment has started all log data will be saved to the headset.
 
 ### Requirements

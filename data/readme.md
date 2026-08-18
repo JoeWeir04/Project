@@ -4,7 +4,7 @@ This folder contains graphs created from scripts in the data parent folder. All 
 
 ## /transcripts
 
-This folder contains all coded transcripts from participants as word documents in the naming convention `Interview [number].docx`. It also contains a word document of all codes - `Codes.docx`, and an excel sheet of all coded exerpts `Codes.xlsx`.
+This folder contains all coded transcripts from participants as word documents in the naming convention `PID[number]Interview.docx`. It also contains  an excel sheet of all coded exerpts, the second sheet in this spreadsheet contains all the codes found in order `Int_Codes.xlsx`.
 
 ## /raw 
 This folder contains data that was collected through logging on the meta quest 3 headset's, these files are `Experiment_logFinalH1.csv`,`Experiment_logFinalH2.csv` and `Experiment_pathsFinalH1.csv`, `Experiment_pathsFinalH2.csv` . This folder also contains data from microphone array benchmarking, These can be found in `\raw\benchmarking` and the files are the csv files named with `angles[number].csv` and the excel file `Benchmark.xlsx`.
@@ -60,6 +60,11 @@ This folder contains the signed project ethics checklist. It also contains the i
 
 # Instructions for creating all graphs and tables from data 
 - Run all the following commands in terminal within the \data folder, graphs will be produced which can be found in `\graphs` as well as tables found in `\tables`
+
+## Virtual Environment cd
+- It is important to first activate the virtual environment before running the scripts below 
+- This can be done by running the command: `.\venv\Scripts\activate` from the Project directory.
+- It is also important to run `pip install requirements.txt` to install dependencies
 
 ## Getting data cleaned and distances calculated
 - Run `Clean_log_data.py`

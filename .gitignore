@@ -10,6 +10,7 @@ venv/
 /[Uu]ser[Ss]ettings/
 *.log
 
+/video/VideoDemo.mp4
 src/UnityProject/sound-localisation/Assets/warehouseImport
 
 data/VoucherReceipts

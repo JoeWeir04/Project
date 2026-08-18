@@ -1,0 +1,14 @@
+PID,Near,Medium,Far,Switched
+44,Lights,"Arrow,Lights","Arrow,Lights",True
+49,Lights,"Radar,Lights","Radar,Lights",True
+6,Lights,"Arrow,Radar,Lights","Arrow,Radar",True
+51,"Arrow,Radar","Arrow,Radar","Arrow,Radar",False
+52,"Arrow,Lights","Arrow,Radar",Radar,True
+7,Radar,Arrow,Arrow,True
+8,"Arrow,Lights",Arrow,"Arrow,Lights",True
+53,"Arrow,Lights",Arrow,Arrow,True
+9,"Arrow,Radar,Lights","Arrow,Radar","Arrow,Radar",True
+10,"Arrow,Radar","Arrow,Radar","Arrow,Radar",False
+11,"Radar,Lights","Radar,Lights","Arrow,Radar",True
+12,Arrow,Lights,Radar,True
+13,"Arrow,Radar",Radar,"Radar,Lights",True

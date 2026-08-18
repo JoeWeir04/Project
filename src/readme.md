@@ -1,4 +1,6 @@
-# Manual
+# Basic file structure and instructions
+
+### Manual found at `src/manual.md`
 
 ### /code 
 This folder contains python scripts that can be run to estimate the location of spatial sounds using the miniDSP UMA 8 Microphone array. These scripts also broadcast these measures on the connected network using a sockets server.
