@@ -12,3 +12,5 @@ PID,Near,Medium,Far,Switched
 11,"Radar,Lights","Radar,Lights","Arrow,Radar",True
 12,Arrow,Lights,Radar,True
 13,"Arrow,Radar",Radar,"Radar,Lights",True
+54,"Radar,Lights","Arrow,Radar","Arrow,Radar",True
+15,"Radar,Lights","Radar,Lights","Arrow,Lights",True

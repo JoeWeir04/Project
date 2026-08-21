@@ -42,6 +42,12 @@ def create_plot_and_table(columnToGroupBy):
             plt.ylabel(f"{columnToGroupBy} (s)",  labelpad=10)
             plt.title(f"{columnToGroupBy} Distribution by Visualisation", pad=20)
             plt.yticks(np.arange(0, all_values.max() + 5, 5.0))
+        case("NavSpeed"):
+            plt.ylabel(f"ShortestPath/Response Time",  labelpad=10)
+            plt.title(f"{columnToGroupBy} Distribution by Visualisation", pad=20)
+        case("Effectiveness"):
+            plt.ylabel(r"$E_{nav}$", labelpad=10)
+            plt.title(f"{columnToGroupBy} Distribution by Visualisation", pad=20)
     plt.ylim(bottom=0)
     plt.savefig(f"graphs/{columnToGroupBy.replace(' ', '_')}Graph.pdf", format="pdf")
     plt.close()

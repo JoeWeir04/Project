@@ -1,15 +1,15 @@
 Measure,Visualisation,n,Mean,Median,SD,Min,Max,Range
-Direction,Arrow,10,15.4,15.0,4.55,9.0,20.0,11.0
-Magnitude,Arrow,10,14.9,13.5,3.98,10.0,20.0,10.0
-Direction,Radar,10,15.4,15.5,3.66,8.0,20.0,12.0
-Magnitude,Radar,10,15.4,14.5,3.66,11.0,20.0,9.0
-Direction,Lights,10,13.8,13.5,3.49,10.0,20.0,10.0
-Magnitude,Lights,10,13.5,13.0,5.19,5.0,20.0,15.0
-Direction,Arrow and Radar,10,16.0,16.5,3.3,11.0,20.0,9.0
-Magnitude,Arrow and Radar,10,15.8,15.0,3.01,12.0,20.0,8.0
-Direction,Arrow and Lights,10,17.1,18.0,2.85,11.0,20.0,9.0
-Magnitude,Arrow and Lights,10,16.5,18.0,3.54,11.0,20.0,9.0
-Direction,Lights and Radar,10,15.9,16.5,3.63,8.0,20.0,12.0
-Magnitude,Lights and Radar,10,16.2,17.0,3.91,7.0,20.0,13.0
-Direction,Control,10,11.0,11.5,5.58,2.0,20.0,18.0
-Magnitude,Control,10,11.6,12.0,5.82,1.0,19.0,18.0
+Direction,Arrow,12,15.75,17.5,4.2,9.0,20.0,11.0
+Magnitude,Arrow,12,15.25,16.0,3.7,10.0,20.0,10.0
+Direction,Radar,12,15.83,16.5,3.49,8.0,20.0,12.0
+Magnitude,Radar,12,15.83,16.0,3.49,11.0,20.0,9.0
+Direction,Lights,13,14.54,15.0,3.41,10.0,20.0,10.0
+Magnitude,Lights,13,14.31,14.0,4.87,5.0,20.0,15.0
+Direction,Arrow and Radar,11,16.27,17.0,3.26,11.0,20.0,9.0
+Magnitude,Arrow and Radar,11,16.09,15.0,3.02,12.0,20.0,8.0
+Direction,Arrow and Lights,12,17.33,18.0,2.64,11.0,20.0,9.0
+Magnitude,Arrow and Lights,12,16.67,17.5,3.23,11.0,20.0,9.0
+Direction,Lights and Radar,12,16.42,17.5,3.53,8.0,20.0,12.0
+Magnitude,Lights and Radar,12,16.0,17.0,3.95,7.0,20.0,13.0
+Direction,Control,12,11.92,12.5,5.48,2.0,20.0,18.0
+Magnitude,Control,12,12.5,14.0,5.68,1.0,19.0,18.0

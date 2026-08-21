@@ -66,6 +66,11 @@ This folder contains the signed project ethics checklist. It also contains the i
 - This can be done by running the command: `.\venv\Scripts\activate` from the Project directory.
 - It is also important to run `pip install requirements.txt` to install dependencies
 
+## Running the python scripts with bash script
+- Make sure to also activate the virtual environment in the bash terminal by running `source venv/Scripts/activate` from the Project directory 
+- Run `run_pipeline.sh` in a bash terminal to run all of the python scripts below in order
+- Please note that this will not run the R scripts mentioned below which must be run using R studio
+
 ## Getting data cleaned and distances calculated
 - Run `Clean_log_data.py`
 - Run `Clean_path_data.py`
@@ -76,9 +81,11 @@ This folder contains the signed project ethics checklist. It also contains the i
 ## Creating scores and plotting graphs
 - Run `create_nasa_tlx_plot.py`
 - Run `create_umux_plot.py`
-- Run `create_violin_plot.py` - this will create violin plots for angular error, distance to target, response time, nav speed, and effectiveness.
+- Run `create_violin_plot.py` - this will create violin plots for angular error, distance to target, response time, nav speed, and effectiveness (navigation effectiveness).
 - Run `calculate_visual_load.py`
 - Run `plot_performance_qs.py`
+- Run `create_distance_vs_angle_plot.py`
+- Run `plot_participant_distance_switch.py`
 
 ## Running R scripts to create graphs
 - The r notebooks can be found at `\data\notebooks`
