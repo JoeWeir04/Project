@@ -11,7 +11,7 @@ venv/
 *.log
 
 /video/VideoDemo.mp4
-src/UnityProject/sound-localisation/Assets/warehouseImport
+#src/UnityProject/sound-localisation/Assets/warehouseImport
 
 data/VoucherReceipts
 #ignore powerpoint with videos
