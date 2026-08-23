@@ -1,4 +1,4 @@
-# Visualising Spatial Sound in Augmented Reality: Evaluating Visualisation Techniques for Sound Source Localisation
+# Visual Cues for Spatial Sound: Evaluating Augmented Reality Visualisations for Locating Sounds
 * A prototype that is capable of visualising spatial sound in Augmented Reality using Unity and the Meta Quest 3 Headset.
     - Spatial sound sensed using Sound Source Localisation algorithm developed for the miniDSP UMA-8 microhpone array.
 * 3 visualisations techniques were created and evaluated against each other.
